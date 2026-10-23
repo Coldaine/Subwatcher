@@ -25,6 +25,7 @@ const I18N = {
     "menu.language": "Language",
     "tab.overview": "Overview",
     "tab.plans": "Plans",
+    "tab.tools": "Tools Hub",
     "tab.compare": "Compare",
     "tab.sizer": "Workload Sizer",
     "tab.calc": "Calculator",
@@ -368,6 +369,7 @@ const I18N = {
     "menu.language": "Sprache",
     "tab.overview": "Übersicht",
     "tab.plans": "Pläne",
+    "tab.tools": "Tools & Anbieter",
     "tab.compare": "Vergleich",
     "tab.sizer": "Workload-Rechner",
     "tab.calc": "Rechner",
@@ -708,6 +710,41 @@ let lang = "en";
 let theme = "light";
 let data = null;
 
+const KNOWN_PROVIDERS = new Set([
+  "anthropic", "augment", "bytedance", "command-code", "cursor", "github",
+  "jetbrains", "kilo", "kiro", "lovable", "moonshot", "ollama", "opencode",
+  "opendesign", "qoder", "replit", "standardcompute", "vercel", "warp", "zed"
+]);
+
+const KNOWN_PLANS = new Set([
+  "augment-business", "augment-standard", "claude-max-20x", "command-code-goat",
+  "command-code-max10", "command-code-max20", "command-code-pro", "copilot-business",
+  "copilot-enterprise", "copilot-max", "copilot-pro", "copilot-pro-plus", "cursor-pro",
+  "cursor-ultra", "jetbrains-ai-business-pro", "jetbrains-ai-business-ultimate",
+  "jetbrains-ai-pro", "jetbrains-ai-ultimate", "kilo-pass", "kilo-pass-199", "kilo-pass-49",
+  "kimi-allegretto", "kimi-allegro", "kimi-moderato", "kimi-vivace", "kiro-power",
+  "kiro-pro", "kiro-pro-max", "kiro-pro-plus", "lovable-business", "lovable-pro",
+  "ollama-max", "ollama-pro", "ollama-team", "opencode-go", "opencode-go-plus",
+  "opendesign-go", "opendesign-max", "opendesign-plus", "opendesign-pro", "qoder-pro",
+  "qoder-pro-plus", "qoder-teams", "qoder-ultra", "replit-core", "replit-pro",
+  "standardcompute-economy", "standardcompute-growth", "standardcompute-pro",
+  "standardcompute-proplus", "standardcompute-scale", "standardcompute-standard",
+  "standardcompute-starter", "trae-pro", "trae-pro-plus", "trae-ultra", "v0-business",
+  "v0-plus", "warp-build", "warp-business", "warp-max", "zed-pro"
+]);
+
+function providerSlug(prov) {
+  if (!prov) return "";
+  const s = String(prov).toLowerCase().trim().replace(/\s+/g, "-");
+  if (KNOWN_PROVIDERS.has(s)) return s;
+  if (s === "kimi" || s === "kimi.ai") return "moonshot";
+  if (s === "trae") return "bytedance";
+  if (s === "v0") return "vercel";
+  if (s === "claude") return "anthropic";
+  if (s === "copilot") return "github";
+  return "";
+}
+
 /* ---------------- Währung (einheitliche Anzeige, tägliche Kurse) ----------------
  * Alle Preise werden intern in USD geführt; die UI rechnet in die gewählte
  * Währung um. Kurse von open.er-api.com (kostenlos, täglich aktualisiert).
@@ -953,6 +990,7 @@ function renderAll() {
   renderStats();
   renderCalculator();
   renderCompareView();
+  renderToolsView();
   renderSizerView();
   renderSyncView();
   renderPlans();
@@ -1761,7 +1799,16 @@ function renderCell(col, c) {
     ? `<span class="rank-tag" title="${escapeHtml(t("calc.rankTitle"))}">#${calcRanks.get(c.planId)}</span>`
     : "";
   switch (col) {
-    case "plan": return `<td class="cell-head" data-label="${t("plans.th.plan")}"><span class="plan-cell"><span class="plan-avatar" style="--av: ${planColor(c.planName, c.provider)}">${escapeHtml(planInitials(c.planName, c.provider))}</span><span><span class="strong">${escapeHtml(c.planName)}</span>${rankTag}${noteMark(c)}<div class="muted" style="font-size: var(--fs-sm)">${escapeHtml(c.provider)}</div></span></span></td>`;
+    case "plan": {
+      const provSlug = providerSlug(c.provider);
+      const provLink = provSlug
+        ? `<a href="providers/${encodeURIComponent(provSlug)}/" class="provider-link" title="Open dedicated ${escapeHtml(c.provider)} tool page">${escapeHtml(c.provider)}</a>`
+        : escapeHtml(c.provider);
+      const planLink = KNOWN_PLANS.has(c.planId)
+        ? `<a href="plans/${encodeURIComponent(c.planId)}/" class="strong plan-link" title="Open dedicated ${escapeHtml(c.planName)} plan page">${escapeHtml(c.planName)}</a>`
+        : `<span class="strong">${escapeHtml(c.planName)}</span>`;
+      return `<td class="cell-head" data-label="${t("plans.th.plan")}"><span class="plan-cell"><span class="plan-avatar" style="--av: ${planColor(c.planName, c.provider)}">${escapeHtml(planInitials(c.planName, c.provider))}</span><span>${planLink}${rankTag}${noteMark(c)}<div class="muted" style="font-size: var(--fs-sm)">${provLink}</div></span></span></td>`;
+    }
     case "model": return `<td class="cell-sub" data-label="${t("plans.th.model")}"><span class="strong">${escapeHtml(c.model)}</span></td>`;
     case "score": return `<td data-label="${t("plans.th.score")}">${scoreStr}${scoreBar}</td>`;
     case "tokens": return `<td data-label="${rateTokensLabel()}"><span class="num">${fmtTokens(c.tokensPer)}</span></td>`;
@@ -3168,6 +3215,125 @@ function renderSyncView() {
   }
 }
 
+// Tools & Providers Hub
+let toolsFilterQuery = "";
+
+function renderToolsView() {
+  if (!data) return;
+  const filter = (toolsFilterQuery || "").toLowerCase().trim();
+
+  // 1. Providers / Tools Grid
+  const host = $("#tools-grid-host");
+  if (host) {
+    const provCards = [];
+    const providersList = [...KNOWN_PROVIDERS];
+
+    for (const slug of providersList) {
+      const plans = data.plans.filter(p => {
+        const ps = providerSlug(p.provider) || p.provider.toLowerCase().replace(/\s+/g, "-");
+        return ps === slug;
+      });
+
+      const provName = plans[0]?.provider || slug.replace(/-/g, " ");
+      const planCount = plans.length;
+      
+      const modelsSet = new Set();
+      let bestTokensPer = 0;
+      let minPrice = Infinity;
+      let maxPrice = 0;
+
+      for (const p of plans) {
+        const price = p.price?.monthlyUsd ?? (p.price?.currency === "CNY" ? p.price?.monthlyUsd : p.price?.paidPrice);
+        if (typeof price === "number") {
+          if (price < minPrice) minPrice = price;
+          if (price > maxPrice) maxPrice = price;
+        }
+        for (const row of p.modelRows ?? []) {
+          if (row.model) modelsSet.add(row.model);
+          const tokPerReq = tokensPerRequest(row);
+          const norm1 = row.normalizedPer1 ?? (row.normalizedPer10 != null ? row.normalizedPer10 / 10 : null);
+          const rate = tokPerReq && norm1 ? tokPerReq * norm1 : 0;
+          if (rate > bestTokensPer) bestTokensPer = rate;
+        }
+      }
+
+      const searchTarget = `${slug} ${provName} ${[...modelsSet].join(" ")} ${plans.map(p => p.name).join(" ")}`.toLowerCase();
+      if (filter && !searchTarget.includes(filter)) continue;
+
+      const topModels = [...modelsSet].slice(0, 3);
+      const priceText = minPrice < Infinity ? (minPrice === maxPrice ? fmtPrice(minPrice) : `${fmtPrice(minPrice)} – ${fmtPrice(maxPrice)}`) : "Listed in docs";
+      const rateText = bestTokensPer > 0 ? `${fmtTokens(rateOf(bestTokensPer))} / ${curSym()}` : "Quota managed";
+      const pageUrl = `providers/${encodeURIComponent(slug)}/`;
+
+      provCards.push(`
+        <div class="tool-card">
+          <div>
+            <div class="tool-card-head">
+              <span class="plan-avatar" style="--av: ${planColor(provName, provName)}; width: 36px; height: 36px; font-size: 14px;">
+                ${escapeHtml(planInitials(provName, provName))}
+              </span>
+              <div>
+                <div class="tool-card-title">${escapeHtml(provName)}</div>
+                <div class="tool-card-sub">${planCount} ${planCount === 1 ? "plan" : "plans"} tracked</div>
+              </div>
+            </div>
+
+            <div class="tool-card-body" style="margin-top: 14px;">
+              <div>
+                <span style="color: var(--text-3); display: block; margin-bottom: 2px;">Key models:</span>
+                <span style="color: var(--text);">${topModels.length > 0 ? escapeHtml(topModels.join(", ")) + (modelsSet.size > 3 ? ` +${modelsSet.size - 3}` : "") : "Proprietary agent"}</span>
+              </div>
+              <div class="tool-card-meta">
+                <span style="color: var(--text-3);">Pricing:</span>
+                <span style="font-weight: 600; color: var(--text);">${priceText}</span>
+              </div>
+              <div class="tool-card-meta">
+                <span style="color: var(--text-3);">Top yield:</span>
+                <span style="font-weight: 600; color: var(--accent);">${rateText}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tool-card-foot">
+            <a href="${pageUrl}" class="btn btn-primary" style="flex: 1; text-align: center; text-decoration: none; font-size: 11px;">
+              Open ${escapeHtml(provName)} UI →
+            </a>
+          </div>
+        </div>
+      `);
+    }
+
+    host.innerHTML = provCards.length > 0 ? provCards.join("") : `<div class="empty-state" style="grid-column: 1 / -1; padding: 24px; text-align: center; color: var(--text-3);">No tools match "${escapeHtml(toolsFilterQuery)}".</div>`;
+  }
+
+  // 2. 62 Standalone Plan Pages
+  const pillsHost = $("#plan-pills-host");
+  if (pillsHost) {
+    const planPills = [];
+    for (const planId of KNOWN_PLANS) {
+      const planObj = data.plans.find(p => p.id === planId);
+      const name = planObj ? planObj.name : planId.replace(/-/g, " ");
+      const prov = planObj ? planObj.provider : "";
+      const priceUsd = planObj?.price?.monthlyUsd ?? planObj?.price?.paidPrice;
+      const priceStr = typeof priceUsd === "number" ? fmtPrice(priceUsd) : "";
+
+      if (filter && !`${planId} ${name} ${prov}`.toLowerCase().includes(filter)) continue;
+
+      planPills.push(`
+        <a href="plans/${encodeURIComponent(planId)}/" class="plan-pill-item" title="Open standalone page for ${escapeHtml(name)}">
+          <div style="display: flex; flex-direction: column; gap: 2px; overflow: hidden;">
+            <span style="font-weight: 600; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${escapeHtml(name)}</span>
+            <span style="font-size: 10px; color: var(--text-3); text-transform: uppercase;">${escapeHtml(prov)}</span>
+          </div>
+          <span style="font-family: var(--pv-mono); font-size: 11px; color: var(--accent); white-space: nowrap; margin-left: 8px;">${priceStr || "View →"}</span>
+        </a>
+      `);
+    }
+
+    pillsHost.innerHTML = planPills.length > 0 ? planPills.join("") : `<div class="empty-state" style="grid-column: 1 / -1; padding: 24px; text-align: center; color: var(--text-3);">No plan deep-dives match "${escapeHtml(toolsFilterQuery)}".</div>`;
+  }
+}
+
 function initAdditionalViews() {
   // Presets
   const btnPro = $("#compare-preset-pro");
@@ -3237,6 +3403,15 @@ function initAdditionalViews() {
   bindSlider("#sizer-output", v => sizerOutput = v, renderSizerView);
   bindSlider("#sizer-budget", v => sizerBudget = v, renderSizerView);
 
+  // Tools Hub search filter
+  const toolsInput = $("#tools-filter-input");
+  if (toolsInput) {
+    toolsInput.addEventListener("input", (e) => {
+      toolsFilterQuery = e.target.value;
+      renderToolsView();
+    });
+  }
+
   // Sync Live Button
   const syncBtn = $("#sync-trigger-btn");
   if (syncBtn) syncBtn.addEventListener("click", async () => {
@@ -3267,6 +3442,7 @@ let currentView = "overview";
 const VIEW_ALIASES = {
   overview: "overview", stats: "overview", pareto: "overview",
   plans: "plans", models: "plans",
+  tools: "tools", providers: "tools", tool: "tools", provider: "tools",
   compare: "compare", showdown: "compare",
   sizer: "sizer", workload: "sizer",
   calc: "calc",
@@ -3298,6 +3474,7 @@ function showView(name) {
     });
     // Chart braucht nach dem Sichtbarwerden seine Größe: neu rendern
     if (view === "overview") requestAnimationFrame(() => renderDashboard());
+    if (view === "tools") renderToolsView();
     if (view === "compare") renderCompareView();
     if (view === "sizer") renderSizerView();
     if (view === "sync") renderSyncView();

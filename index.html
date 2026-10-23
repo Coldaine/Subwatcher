@@ -1564,6 +1564,121 @@ body.fbk-open { overflow: hidden; }
   justify-content: space-between;
   font-size: var(--fs-xs);
 }
+/* Tools Hub Styles */
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+.tool-card {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+  transition: border-color var(--pv-dur-base) var(--pv-ease), transform var(--pv-dur-base) var(--pv-ease);
+}
+.tool-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+.tool-card-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.tool-card-title {
+  font-weight: 700;
+  font-size: var(--fs-base);
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.tool-card-sub {
+  font-size: var(--fs-xs);
+  color: var(--text-3);
+  font-family: var(--pv-mono);
+  text-transform: uppercase;
+}
+.tool-card-body {
+  font-size: var(--fs-xs);
+  color: var(--text-2);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.tool-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: var(--pv-mono);
+  font-size: var(--fs-xs);
+  padding-top: 8px;
+  border-top: 1px solid var(--pv-hair);
+}
+.tool-card-foot {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.plan-link {
+  color: var(--text);
+  text-decoration: none;
+  transition: color var(--pv-dur-base) var(--pv-ease);
+}
+.plan-link:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+.provider-link {
+  color: var(--text-3);
+  text-decoration: none;
+  font-size: var(--fs-xs);
+  transition: color var(--pv-dur-base) var(--pv-ease);
+}
+.provider-link:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+.plan-pills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 8px;
+  margin-top: 14px;
+}
+.plan-pill-item {
+  background: var(--surface-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-decoration: none;
+  color: var(--text);
+  font-size: var(--fs-xs);
+  transition: border-color var(--pv-dur-base) var(--pv-ease), background-color var(--pv-dur-base) var(--pv-ease);
+}
+.plan-pill-item:hover {
+  border-color: var(--accent);
+  background: color-mix(in oklab, var(--accent) 8%, var(--surface-3));
+  color: var(--accent);
+}
+.hub-banner {
+  background: linear-gradient(135deg, color-mix(in oklab, var(--accent) 12%, var(--surface-2)), var(--surface-2));
+  border: 1px solid color-mix(in oklab, var(--accent) 30%, var(--line));
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
 </style>
   <link rel="canonical" href="https://vibeplan.cc/">
 <link rel="alternate" hreflang="en" href="https://vibeplan.cc/?lang=en">
@@ -1651,6 +1766,7 @@ body.fbk-open { overflow: hidden; }
   <nav class="tabs" id="tabs" role="tablist">
     <button class="tab active" type="button" role="tab" data-view="overview"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span data-i18n="tab.overview">Overview</span></button>
     <button class="tab" type="button" role="tab" data-view="plans"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span data-i18n="tab.plans">Plans</span></button>
+    <button class="tab" type="button" role="tab" data-view="tools"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><span data-i18n="tab.tools">Tools Hub</span></button>
     <button class="tab" type="button" role="tab" data-view="compare"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg><span data-i18n="tab.compare">Compare</span></button>
     <button class="tab" type="button" role="tab" data-view="sizer"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg><span data-i18n="tab.sizer">Workload Sizer</span></button>
     <button class="tab" type="button" role="tab" data-view="calc"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 12h2M12 12h2M16 12h0M8 16h2M12 16h2"/></svg><span data-i18n="tab.calc">Calculator</span></button>
@@ -1930,6 +2046,58 @@ body.fbk-open { overflow: hidden; }
   </section>
 
   </div><!-- /view-plans -->
+
+  <!-- ===== VIEW: TOOLS & PROVIDERS HUB ===== -->
+  <div class="view" id="view-tools">
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>Tools & Dedicated Provider UIs</h2>
+          <p class="panel-sub">Explore the full suite of tracked AI coding tools, IDEs, and coding agents. Every tool and subscription has its own dedicated, standalone deep-dive page built directly into this app.</p>
+        </div>
+      </div>
+
+      <div style="padding: 20px;">
+        <!-- Hub Quick Links Banner -->
+        <div class="hub-banner">
+          <div>
+            <div style="font-weight: 700; font-size: var(--fs-md); color: var(--text); margin-bottom: 4px;">Looking for comprehensive standalone landing pages?</div>
+            <div style="font-size: var(--fs-xs); color: var(--text-2);">Static search-optimized comparison and localized German portal generated from the latest dataset:</div>
+          </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <a href="coding-plan-comparison/" class="btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+              <span>Full Comparison Page ↗</span>
+            </a>
+            <a href="de/" class="btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+              <span>Deutsche Einstiegsseite ↗</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Search input for tools and plans -->
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 16px;">
+          <input type="search" id="tools-filter-input" class="rail-input" style="max-width: 380px; width: 100%;" placeholder="Filter tools, providers or plans...">
+          <div style="font-family: var(--pv-mono); font-size: var(--fs-xs); color: var(--text-3);" id="tools-count-badge">
+            20 Tool Ecosystems · 62 Dedicated Plan Pages
+          </div>
+        </div>
+
+        <!-- Section 1: Provider Tool Cards Grid -->
+        <div style="margin-top: 10px;">
+          <h3 style="font-size: var(--fs-base); margin-bottom: 4px;">Tool & Agent Ecosystems</h3>
+          <p style="font-size: var(--fs-xs); color: var(--text-2); margin-bottom: 14px;">Dedicated pages featuring pricing history, token metrics, and all available subscription tiers:</p>
+          <div id="tools-grid-host" class="tools-grid"></div>
+        </div>
+
+        <!-- Section 2: Dedicated Plan Pages Directory -->
+        <div style="margin-top: 36px; padding-top: 24px; border-top: 1px solid var(--line);">
+          <h3 style="font-size: var(--fs-base); margin-bottom: 4px;">62 Dedicated Plan Deep-Dives</h3>
+          <p style="font-size: var(--fs-xs); color: var(--text-2); margin-bottom: 14px;">Click any plan to open its dedicated standalone UI with rate calculation breakdown, allowance details, and historical logs:</p>
+          <div id="plan-pills-host" class="plan-pills-grid"></div>
+        </div>
+      </div>
+    </section>
+  </div><!-- /view-tools -->
 
   <!-- ===== VIEW: RECHNER ===== -->
   <div class="view" id="view-calc">
