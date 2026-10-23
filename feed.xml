@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>vibeplan.cc: AI coding plan comparison</title>
+  <subtitle>What $1 really buys in AI coding subscriptions: tokens and requests per dollar, published quotas, open data.</subtitle>
+  <id>https://vibeplan.cc/</id>
+  <link rel="self" href="https://vibeplan.cc/feed.xml"/>
+  <link rel="alternate" href="https://vibeplan.cc/"/>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <author><name>Kolja Knodel</name><uri>https://github.com/harrytyp</uri></author>
+  <rights>MIT</rights>
+  <entry>
+    <title>Add the seven Standard Compute plans</title>
+    <id>https://vibeplan.cc/#bf25193</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <link rel="alternate" href="https://github.com/harrytyp/coding-plan-comparison/commit/bf25193"/>
+    <summary>Add the seven Standard Compute plans</summary>
+  </entry>
+  <entry>
+    <title>Restructure README, add the wordmark banner</title>
+    <id>https://vibeplan.cc/#cdd5942</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <link rel="alternate" href="https://github.com/harrytyp/coding-plan-comparison/commit/cdd5942"/>
+    <summary>Restructure README, add the wordmark banner</summary>
+  </entry>
+  <entry>
+    <title>Also guard the root-mirror push against concurrent pushes</title>
+    <id>https://vibeplan.cc/#795c228</id>
+    <updated>2026-10-15T00:00:00Z</updated>
+    <link rel="alternate" href="https://github.com/harrytyp/coding-plan-comparison/commit/795c228"/>
+    <summary>Also guard the root-mirror push against concurrent pushes</summary>
+  </entry>
+  <entry>
+    <title>Rebase before pushing the daily snapshot so concurrent pushes cannot break the run</title>
+    <id>https://vibeplan.cc/#5df9cad</id>
+    <updated>2026-10-13T00:00:00Z</updated>
+    <link rel="alternate" href="https://github.com/harrytyp/coding-plan-comparison/commit/5df9cad"/>
+    <summary>Rebase before pushing the daily snapshot so concurrent pushes cannot break the run</summary>
+  </entry>
+  <entry>
+    <title>Extend the catalog with Copilot, OpenDesign tiers, free tiers and provider seats</title>
+    <id>https://vibeplan.cc/#07a095c</id>
+    <updated>2026-10-13T00:00:00Z</updated>
+    <link rel="alternate" href="https://github.com/harrytyp/coding-plan-comparison/commit/07a095c"/>
+    <summary>Extend the catalog with Copilot, OpenDesign tiers, free tiers and provider seats</summary>
+  </entry>
+  <entry>
+    <title>Add Warp, JetBrains, Trae, Zed, Replit, Kilo, v0, Bolt and Amazon Q as comparable plans</title>
+    <id>https://vibeplan.cc/#c395cc9</id>
+    <updated>2026-10-13T00:00:00Z</updated>
+    <link rel="alternate" href="https://github.com/harrytyp/coding-plan-comparison/commit/c395cc9"/>
+    <summary>Add Warp, JetBrains, Trae, Zed, Replit, Kilo, v0, Bolt and Amazon Q as comparable plans</summary>
+  </entry>
+  <entry>
+    <title>Mirror the generated pages into the site root with the dot form</title>
+    <id>https://vibeplan.cc/#045795c</id>
+    <updated>2026-10-13T00:00:00Z</updated>
+    <link rel="alternate" href="https://github.com/harrytyp/coding-plan-comparison/commit/045795c"/>
+    <summary>Mirror the generated pages into the site root with the dot form</summary>
+  </entry>
+  <entry>
+    <title>Committed page snapshot as last fallback for bot-blocked sources</title>
+    <id>https://vibeplan.cc/#a1e5a42</id>
+    <updated>2026-10-13T00:00:00Z</updated>
+    <link rel="alternate" href="https://github.com/harrytyp/coding-plan-comparison/commit/a1e5a42"/>
+    <summary>Committed page snapshot as last fallback for bot-blocked sources</summary>
+  </entry>
+  <entry>
+    <title>Fall back to the last good snapshot when a source serves a JS shell</title>
+    <id>https://vibeplan.cc/#f099503</id>
+    <updated>2026-10-13T00:00:00Z</updated>
+    <link rel="alternate" href="https://github.com/harrytyp/coding-plan-comparison/commit/f099503"/>
+    <summary>Fall back to the last good snapshot when a source serves a JS shell</summary>
+  </entry>
+  <entry>
+    <title>Plan history from the daily snapshots, shown on the plan pages</title>
+    <id>https://vibeplan.cc/#61ea3d2</id>
+    <updated>2026-10-13T00:00:00Z</updated>
+    <link rel="alternate" href="https://github.com/harrytyp/coding-plan-comparison/commit/61ea3d2"/>
+    <summary>Plan history from the daily snapshots, shown on the plan pages</summary>
+  </entry>
+  <entry>
+    <title>Keep the previous parse when a source delivers no data</title>
+    <id>https://vibeplan.cc/#6757b2f</id>
+    <updated>2026-10-13T00:00:00Z</updated>
+    <link rel="alternate" href="https://github.com/harrytyp/coding-plan-comparison/commit/6757b2f"/>
+    <summary>Keep the previous parse when a source delivers no data</summary>
+  </entry>
+  <entry>
+    <title>Follow Kimi's renamed China tiers so the CNY anchor survives</title>
+    <id>https://vibeplan.cc/#28805e7</id>
+    <updated>2026-10-13T00:00:00Z</updated>
+    <link rel="alternate" href="https://github.com/harrytyp/coding-plan-comparison/commit/28805e7"/>
+    <summary>Follow Kimi's renamed China tiers so the CNY anchor survives</summary>
+  </entry>
+  <entry>
+    <title>Record snapshot cache, retry and staleness handling</title>
+    <id>https://vibeplan.cc/#3b226c9</id>
+    <updated>2026-10-05T00:00:00Z</updated>
+    <link rel="alternate" href="https://github.com/harrytyp/coding-plan-comparison/commit/3b226c9"/>
+    <summary>Record snapshot cache, retry and staleness handling</summary>
+  </entry>
+  <entry>
+    <title>Restore snapshots from the last run, warn when a source goes stale</title>
+    <id>https://vibeplan.cc/#3df6363</id>
+    <updated>2026-10-05T00:00:00Z</updated>
+    <link rel="alternate" href="https://github.com/harrytyp/coding-plan-comparison/commit/3df6363"/>
+    <summary>Restore snapshots from the last run, warn when a source goes stale</summary>
+  </entry>
+  <entry>
+    <title>Retry transient source failures so one flaky source cannot kill the daily run</title>
+    <id>https://vibeplan.cc/#be08251</id>
+    <updated>2026-10-05T00:00:00Z</updated>
+    <link rel="alternate" href="https://github.com/harrytyp/coding-plan-comparison/commit/be08251"/>
+    <summary>Retry transient source failures so one flaky source cannot kill the daily run</summary>
+  </entry>
+  <entry>
+    <title>Long-tail pages for plans and providers, plus a German entry page</title>
+    <id>https://vibeplan.cc/#b753996</id>
+    <updated>2026-10-02T00:00:00Z</updated>
+    <link rel="alternate" href="https://github.com/harrytyp/coding-plan-comparison/commit/b753996"/>
+    <summary>Long-tail pages for plans and providers, plus a German entry page</summary>
+  </entry>
+  <entry>
+    <title>Record the Cloudflare setup (proxy, TLS, redirects, rollback)</title>
+    <id>https://vibeplan.cc/#687619d</id>
+    <updated>2026-10-02T00:00:00Z</updated>
+    <link rel="alternate" href="https://github.com/harrytyp/coding-plan-comparison/commit/687619d"/>
+    <summary>Record the Cloudflare setup (proxy, TLS, redirects, rollback)</summary>
+  </entry>
+  <entry>
+    <title>Preview build resolves the JSON-LD date placeholder</title>
+    <id>https://vibeplan.cc/#ff76c30</id>
+    <updated>2026-10-02T00:00:00Z</updated>
+    <link rel="alternate" href="https://github.com/harrytyp/coding-plan-comparison/commit/ff76c30"/>
+    <summary>Preview build resolves the JSON-LD date placeholder</summary>
+  </entry>
+  <entry>
+    <title>Indexnow, 404 page, font preload, repo-ready metadata</title>
+    <id>https://vibeplan.cc/#c38ed23</id>
+    <updated>2026-10-02T00:00:00Z</updated>
+    <link rel="alternate" href="https://github.com/harrytyp/coding-plan-comparison/commit/c38ed23"/>
+    <summary>Indexnow, 404 page, font preload, repo-ready metadata</summary>
+  </entry>
+  <entry>
+    <title>A static comparison page that targets \"coding plan comparison\"</title>
+    <id>https://vibeplan.cc/#5269ffd</id>
+    <updated>2026-10-02T00:00:00Z</updated>
+    <link rel="alternate" href="https://github.com/harrytyp/coding-plan-comparison/commit/5269ffd"/>
+    <summary>A static comparison page that targets \"coding plan comparison\"</summary>
+  </entry>
+  <entry>
+    <title>One price including the fee, no separate fee marker</title>
+    <id>https://vibeplan.cc/#82c67cf</id>
+    <updated>2026-10-02T00:00:00Z</updated>
+    <link rel="alternate" href="https://github.com/harrytyp/coding-plan-comparison/commit/82c67cf"/>
+    <summary>One price including the fee, no separate fee marker</summary>
+  </entry>
+  <entry>
+    <title>Generate the changelog from the repository commits</title>
+    <id>https://vibeplan.cc/#1fe46a4</id>
+    <updated>2026-10-02T00:00:00Z</updated>
+    <link rel="alternate" href="https://github.com/harrytyp/coding-plan-comparison/commit/1fe46a4"/>
+    <summary>Generate the changelog from the repository commits</summary>
+  </entry>
+  <entry>
+    <title>Mobile filter drawer with a visible handle, real Command Code fee</title>
+    <id>https://vibeplan.cc/#0100b06</id>
+    <updated>2026-10-02T00:00:00Z</updated>
+    <link rel="alternate" href="https://github.com/harrytyp/coding-plan-comparison/commit/0100b06"/>
+    <summary>Mobile filter drawer with a visible handle, real Command Code fee</summary>
+  </entry>
+  <entry>
+    <title>Repair the CSS the filter refactor broke, unstick the detail card</title>
+    <id>https://vibeplan.cc/#580ede9</id>
+    <updated>2026-10-02T00:00:00Z</updated>
+    <link rel="alternate" href="https://github.com/harrytyp/coding-plan-comparison/commit/580ede9"/>
+    <summary>Repair the CSS the filter refactor broke, unstick the detail card</summary>
+  </entry>
+  <entry>
+    <title>Add the OpenDesign Design Plan (Go)</title>
+    <id>https://vibeplan.cc/#6d9ce22</id>
+    <updated>2026-10-02T00:00:00Z</updated>
+    <link rel="alternate" href="https://github.com/harrytyp/coding-plan-comparison/commit/6d9ce22"/>
+    <summary>Add the OpenDesign Design Plan (Go)</summary>
+  </entry>
+  <entry>
+    <title>Filters into the rail menu, shortlist as its own panel, drop All plans</title>
+    <id>https://vibeplan.cc/#804490c</id>
+    <updated>2026-10-02T00:00:00Z</updated>
+    <link rel="alternate" href="https://github.com/harrytyp/coding-plan-comparison/commit/804490c"/>
+    <summary>Filters into the rail menu, shortlist as its own panel, drop All plans</summary>
+  </entry>
+  <entry>
+    <title>Real logo, favicons and a social card</title>
+    <id>https://vibeplan.cc/#93f9088</id>
+    <updated>2026-10-02T00:00:00Z</updated>
+    <link rel="alternate" href="https://github.com/harrytyp/coding-plan-comparison/commit/93f9088"/>
+    <summary>Real logo, favicons and a social card</summary>
+  </entry>
+  <entry>
+    <title>Mark the card processing fee Command Code adds to every price</title>
+    <id>https://vibeplan.cc/#7269834</id>
+    <updated>2026-10-02T00:00:00Z</updated>
+    <link rel="alternate" href="https://github.com/harrytyp/coding-plan-comparison/commit/7269834"/>
+    <summary>Mark the card processing fee Command Code adds to every price</summary>
+  </entry>
+  <entry>
+    <title>Stop rebuilding the chart on every mouse move</title>
+    <id>https://vibeplan.cc/#80619e1</id>
+    <updated>2026-10-02T00:00:00Z</updated>
+    <link rel="alternate" href="https://github.com/harrytyp/coding-plan-comparison/commit/80619e1"/>
+    <summary>Stop rebuilding the chart on every mouse move</summary>
+  </entry>
+  <entry>
+    <title>Move the status figures into the header</title>
+    <id>https://vibeplan.cc/#082b0b8</id>
+    <updated>2026-10-02T00:00:00Z</updated>
+    <link rel="alternate" href="https://github.com/harrytyp/coding-plan-comparison/commit/082b0b8"/>
+    <summary>Move the status figures into the header</summary>
+  </entry>
+</feed>

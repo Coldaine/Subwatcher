@@ -1,0 +1,42 @@
+{
+  "name": "coding-plan-comparison",
+  "version": "0.2.0",
+  "description": "Reproducible comparison of AI coding plan subscriptions. Fetch, parse, build: all data from live official sources, with change detection.",
+  "homepage": "https://harrytyp.github.io/coding-plan-comparison/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/harrytyp/coding-plan-comparison.git"
+  },
+  "bugs": {
+    "url": "https://github.com/harrytyp/coding-plan-comparison/issues"
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port=3000 --host=0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview",
+    "fetch": "node scripts/fetch.mjs",
+    "parse": "node scripts/parse-all.mjs",
+    "check": "node scripts/check.mjs",
+    "generate": "node scripts/build.mjs",
+    "update": "node scripts/fetch.mjs && node scripts/parse-all.mjs && node scripts/build.mjs",
+    "test": "node --test \"tests/*.test.mjs\"",
+    "sync:data": "curl -fsSL https://vibeplan.cc/data/latest.json -o public/data/latest.json && cp public/data/latest.json data/latest.json"
+  },
+  "dependencies": {
+    "@google/genai": "^2.4.0",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "esbuild": "^0.25.0",
+    "tsx": "^4.21.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.0"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT"
+}

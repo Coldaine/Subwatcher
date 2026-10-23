@@ -1,0 +1,24 @@
+# Handgeschriebene Changelog-Eintraege bis 2026-10-02 (vor der Automatik).
+# Aktiv ist data/changelog.yml, die scripts/changelog-from-git.mjs aus der
+# Git-Historie erzeugt. Diese Datei ist nur Archiv: sie wird nicht gebaut und
+# kann geloescht werden, wenn niemand sie mehr braucht.
+
+entries:
+  - date: 2026-09-13
+    text: "Raten pro 1 $ statt pro 10 $: Command Code Go zeigt, was 1 $ kauft, kein Stapeln nötig."
+    textEn: "Rates per $1 instead of per $10: Command Code Go shows what $1 buys, no stacking needed."
+  - date: 2026-09-13
+    text: "Neu: Budget-Rechner vergleicht Einzelpläne innerhalb deines Budgets."
+    textEn: "New: the budget calculator compares single plans within your budget."
+  - date: 2026-09-13
+    text: "Pareto-Standard: Tokens pro Geld gegen AI-Score; Preise in deiner Währung."
+    textEn: "Pareto default: tokens per money against AI score; prices in your currency."
+  - date: 2026-09-12
+    text: "AI-Scores lösen auf exakte Modell-Versionen auf (z. B. Muse Spark 1.3 statt generisch)."
+    textEn: "AI scores resolve to exact model versions (e.g. Muse Spark 1.3 instead of a generic family)."
+  - date: 2026-09-10
+    text: "Kimi-Zahlen korrigiert (waren 33–168× zu hoch); Spalte heißt ehrlich Tokens / $10."
+    textEn: "Kimi numbers corrected (were 33-168x too high); the column is honestly named Tokens / $10."
+  - date: 2026-09-10
+    text: "Checkout-Preise: Command Code GOAT kostet 10,77 $, nicht 10 $."
+    textEn: "Checkout prices: Command Code GOAT costs $10.77, not $10."

@@ -1,0 +1,2109 @@
+# Overrides, nur für Daten, die NICHT scrapebar sind (JS-SPA, Auth-APIs, undisclosed).
+# Alles Scrapebare kommt dynamisch aus sources.yml → cache/ → parsed/.
+# Diese Datei ist die manuelle Ergänzung; ein Cron-Agent prüft die Quellen und aktualisiert hier.
+
+overrides:
+  # GLM Preise: nur über JS/API (Auth nötig), daher manuell gepflegt.
+  # Quelle: open.bigmodel.cn/glm-coding (SPA); Quoten+Formel kommen dynamisch aus glm-coding-overview.
+  - id: glm-lite
+    price: { monthlyUsd: 16.5, paidPrice: 16.5, advertisedPrice: 16.5, currency: CNY, monthlyCny: 118, billingNote: "¥118/月 连续包月; 包季 8折 ¥94.4, 包年 7折 ¥82.6" }
+    lastVerified: 2026-08-28
+  - id: glm-pro
+    price: { monthlyUsd: 75, paidPrice: 75, advertisedPrice: 75, currency: CNY, monthlyCny: 538, billingNote: "¥538/月 连续包月; 包季 8折 ¥430.4, 包年 7折 ¥376.6" }
+    lastVerified: 2026-08-28
+  - id: glm-max
+    price: { monthlyUsd: 151, paidPrice: 151, advertisedPrice: 151, currency: CNY, monthlyCny: 1078, billingNote: "¥1078/月 连续包月; 包季 8折 ¥862.4, 包年 7折 ¥754.6" }
+    lastVerified: 2026-08-28
+
+  # MiniMax Token Plan: JS-SPA, Preise/Quoten nicht direkt scrapebar (bisher).
+  # Werte aus coding-plans-Tabelle (Rohdaten, zu verifizieren).
+  - id: minimax-starter
+    provider: minimax
+    name: MiniMax Token Plan
+    price: { monthlyUsd: 10, paidPrice: 10, advertisedPrice: 10 }
+    quota: { label: "5h", unit: prompts, amount: 100, window: "5h", refresh: rolling, disclosure: exact }
+    feedModels: ["MiniMax M3", "MiniMax M2.7", "MiniMax M2.5"]
+    meter: prompts
+    lastVerified: 2026-08-28
+    note: "Aus coding-plans-Tabelle; MiniMax-SPA nicht direkt parsebar. Prompts = 100/5h; Modellkosten aus Feed."
+
+  # ---------------------------------------------------------------------------
+  # Referenz-Plaene: die groessten Plaene ohne veröffentlichte Token-Quote.
+  # Preise/Quoten aus den offiziellen Seiten (Lesedatum je Eintrag), drittseitige
+  # Messungen stehen als Zitat mit Quelle im Notizfeld. Bewusst OHNE Modellzeilen:
+  # ohne veröffentlichte Quote gibt es keine Rate pro Dollar, also auch keinen
+  # Platz in der Rangliste. Details siehe docs/limits-research.md.
+  # ---------------------------------------------------------------------------
+
+  # OpenAI Codex / ChatGPT: offizielle Tabelle "local messages per five-hour period"
+  # je Modell und Tarif. 5h-Fenster = Durchsatz-Cap, deshalb keine Monatsrate.
+  # Quelle: developers.openai.com/codex/pricing (gelesen 2026-09-23)
+  - id: chatgpt-plus-codex
+    provider: openai
+    name: ChatGPT Plus (Codex)
+    price: { monthlyUsd: 20, paidPrice: 20, advertisedPrice: 20, currency: USD }
+    meter: messages
+    disclosure: reference
+    dataTierNote: "Official 5h message estimates per model from developers.openai.com/codex/pricing (read 2026-09-23)"
+    quotas:
+      - { label: "5h", unit: messages, amount: 150, min: 15, max: 150, window: "5h", refresh: rolling, disclosure: "official estimate" }
+    lastVerified: 2026-09-23
+    note: "OpenAI publishes local messages per five-hour period as ranges, not fixed limits. GPT-6 Astra 5-45, GPT-6 Sol 15-150, GPT-6 Luna 350-3,000, GPT-5.6 Sol 10-100, GPT-5.6 Terra 25-200, GPT-5.6 Luna 250-2,000, GPT-5.4 20-100, GPT-5.4 mini 60-350. Local messages and cloud chats share the allowance, weekly limits may also apply. Source: developers.openai.com/codex/pricing"
+    noteDe: "OpenAI veröffentlicht lokale Nachrichten pro Fünf-Stunden-Fenster als Bereiche, nicht als feste Limits. GPT-6 Astra 5-45, GPT-6 Sol 15-150, GPT-6 Luna 350-3.000, GPT-5.6 Sol 10-100, GPT-5.6 Terra 25-200, GPT-5.6 Luna 250-2.000, GPT-5.4 20-100, GPT-5.4 mini 60-350. Lokale Nachrichten und Cloud-Chats teilen sich das Kontingent, zusätzlich können Wochenlimits gelten. Quelle: developers.openai.com/codex/pricing"
+
+  - id: chatgpt-pro-codex-5x
+    provider: openai
+    name: ChatGPT Pro 5x (Codex)
+    price: { monthlyUsd: 100, paidPrice: 100, advertisedPrice: 100, currency: USD }
+    meter: messages
+    disclosure: reference
+    dataTierNote: "Official 5h message estimates per model (5x the Plus ranges) from developers.openai.com/codex/pricing (read 2026-09-23)"
+    quotas:
+      - { label: "5h", unit: messages, amount: 500, min: 50, max: 500, window: "5h", refresh: rolling, disclosure: "official estimate" }
+    lastVerified: 2026-09-23
+    note: "5x the Plus ranges per OpenAI: GPT-6 Astra 25-225, GPT-6 Sol 70-700, GPT-6 Luna 1,750-14,000, GPT-5.6 Sol 50-500, GPT-5.6 Terra 125-1,000, GPT-5.6 Luna 1,250-10,000. Source: developers.openai.com/codex/pricing"
+    noteDe: "Das Fünffache der Plus-Bereiche laut OpenAI: GPT-6 Astra 25-225, GPT-6 Sol 70-700, GPT-6 Luna 1.750-14.000, GPT-5.6 Sol 50-500, GPT-5.6 Terra 125-1.000, GPT-5.6 Luna 1.250-10.000. Quelle: developers.openai.com/codex/pricing"
+
+  - id: chatgpt-pro-codex-20x
+    provider: openai
+    name: ChatGPT Pro 20x (Codex)
+    price: { monthlyUsd: 200, paidPrice: 200, advertisedPrice: 200, currency: USD }
+    meter: messages
+    disclosure: reference
+    dataTierNote: "Official 5h message estimates per model (20x the Plus ranges) from developers.openai.com/codex/pricing (read 2026-09-23)"
+    quotas:
+      - { label: "5h", unit: messages, amount: 2000, min: 200, max: 2000, window: "5h", refresh: rolling, disclosure: "official estimate" }
+    lastVerified: 2026-09-23
+    note: "20x the Plus ranges per OpenAI: GPT-6 Astra 100-900, GPT-6 Sol 300-3,000, GPT-6 Luna 7,000-56,000, GPT-5.6 Sol 200-2,000, GPT-5.6 Terra 500-4,000, GPT-5.6 Luna 5,000-40,000. Source: developers.openai.com/codex/pricing"
+    noteDe: "Das Zwanzigfache der Plus-Bereiche laut OpenAI: GPT-6 Astra 100-900, GPT-6 Sol 300-3.000, GPT-6 Luna 7.000-56.000, GPT-5.6 Sol 200-2.000, GPT-5.6 Terra 500-4.000, GPT-5.6 Luna 5.000-40.000. Quelle: developers.openai.com/codex/pricing"
+
+  # Anthropic Claude: Preise offiziell, Quote nicht veröffentlicht. Die Bereiche
+  # unten sind drittseitige Messungen, klar als solche benannt.
+  - id: claude-pro
+    provider: anthropic
+    name: Claude Pro
+    price: { monthlyUsd: 20, paidPrice: 20, advertisedPrice: 20, currency: USD, billingNote: "Annual billing available at a discount (no amount published); usage credits can extend beyond the plan" }
+    meter: prompts
+    disclosure: reference
+    dataTierNote: "Anthropic publishes no token count. Third-party measured ranges in the note."
+    lastVerified: 2026-09-23
+    note: "Anthropic publishes no token count: rolling five-hour session limit plus a weekly limit, shared across Claude Code, claude.ai and Cowork. Third-party measurements (truefoundry.com/blog/claude-code-limits-explained, read 2026-09-23): about 10-45 prompts per 5h and 40-80 Sonnet hours per week. Community tracker Claude-Code-Usage-Monitor (plans.py, last updated 2026-07-05, labelled local_estimate) models 19,000 tokens per 5h window. Treat both as estimates, not limits."
+    noteDe: "Anthropic veröffentlicht keine Token-Zahl: rollierendes Fünf-Stunden-Fenster plus Wochenlimit, geteilt von Claude Code, claude.ai und Cowork. Drittseitige Messungen (truefoundry.com/blog/claude-code-limits-explained, gelesen 2026-09-23): etwa 10-45 Prompts pro 5h und 40-80 Sonnet-Stunden pro Woche. Der Community-Tracker Claude-Code-Usage-Monitor (plans.py, zuletzt 2026-07-05 aktualisiert, als local_estimate gekennzeichnet) modelliert 19.000 Token pro 5h-Fenster. Beides sind Schätzungen, keine Limits."
+
+  - id: claude-max-5x
+    provider: anthropic
+    name: Claude Max 5x
+    price: { monthlyUsd: 100, paidPrice: 100, advertisedPrice: 100, currency: USD, billingNote: "Monthly only; 5x the Pro allowance" }
+    meter: prompts
+    disclosure: reference
+    dataTierNote: "Anthropic publishes multipliers only (5x Pro), no token count. Third-party ranges in the note."
+    lastVerified: 2026-09-23
+    note: "Anthropic states 5x the Pro allowance. Third-party measurement (truefoundry.com, read 2026-09-23): about 50-225 prompts per 5h, 140-240 Sonnet hours plus 15-35 Opus hours per week. Community tracker models 88,000 tokens per 5h window (local_estimate, 2026-07-05)."
+    noteDe: "Anthropic nennt das Fünffache des Pro-Kontingents. Drittseitige Messung (truefoundry.com, gelesen 2026-09-23): etwa 50-225 Prompts pro 5h, 140-240 Sonnet-Stunden plus 15-35 Opus-Stunden pro Woche. Der Community-Tracker modelliert 88.000 Token pro 5h-Fenster (local_estimate, 2026-07-05)."
+
+  # Anthropic Claude Max 20x: gemessene Quote. Kein Anbieter veroeffentlicht die
+  # Token-Zahl, deshalb kommt sie aus einer Drittmessung (Proxy-Header + lokale
+  # Tokenlogs), die gegen zwei weitere Datensaetze kreuzvalidiert ist.
+  # Quelle: github.com/ArkNill/claude-code-hidden-problem-analysis
+  #   (02_RATELIMIT-HEADERS.md, DATASET-ARKNILL-20260422.md, CROSS-VALIDATION-20260422.md)
+  - id: claude-max-20x
+    provider: anthropic
+    name: Claude Max 20x
+    price: { monthlyUsd: 200, paidPrice: 200, advertisedPrice: 200, currency: USD, billingNote: "Monthly only; 20x the Pro allowance" }
+    meter: tokens
+    disclosure: measured
+    tag: "measured"
+    tagDe: "gemessen"
+    measured:
+      perPercentTokens: 1850000
+      perWindowTokens: 185000000
+      weeklyVisibleTokens: 1950000000
+      monthlyTokens: 8443500000
+      source: "github.com/ArkNill/claude-code-hidden-problem-analysis (02_RATELIMIT-HEADERS.md, DATASET-ARKNILL-20260422.md)"
+      method: "Proxy captured the anthropic-ratelimit-unified-* headers on every response: 1% of the 5h window costs 1.6-2.1M visible tokens. The week of Apr 7-13 2026 reached 99% of the weekly cap after about 1.95B visible tokens. Monthly = weekly x 4.33."
+      sample: "37,363 responses with rate-limit headers (45,884 requests total), one Max 20x account, Apr 1-22 2026; cross-validated against two further datasets (215K and 101K calls, Max 20x and Max 5x)"
+      directNote: "measured (third party, one account, Apr 2026)"
+    lastVerified: 2026-09-23
+    localModelPricing:
+      - { model: "Claude Opus 5.5", input: 4, cachedWrite: 5, cachedRead: 0.2, output: 20 }
+      - { model: "Claude Opus 5", input: 5, cachedWrite: 6.25, cachedRead: 0.5, output: 25 }
+      - { model: "Claude Sonnet 5", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 10 }
+      - { model: "Claude Haiku 4.5", input: 1, cachedWrite: 1.25, cachedRead: 0.1, output: 5 }
+      - { model: "Claude Fable 5.1", input: 10, cachedWrite: 12.5, cachedRead: 0.25, output: 50 }
+    note: "Measured, not published: Anthropic discloses no token count. Source: github.com/ArkNill/claude-code-hidden-problem-analysis. A third-party proxy measurement on one Max 20x account puts 1% of the five-hour window at 1.6-2.1M visible tokens (97% of them cache reads) and the weekly cap at about 1.95B visible tokens in the week of Apr 7-13 2026, when 99% was reached. Cross-validated against two independent datasets (215K and 101K calls). Monthly volume = weekly x 4.33. Model prices are Anthropic's own list prices, read 2026-09-23."
+    noteDe: "Gemessen, nicht veroeffentlicht: Anthropic nennt keine Token-Zahl. Quelle: github.com/ArkNill/claude-code-hidden-problem-analysis. Eine Drittmessung per Proxy auf einem Max-20x-Konto ergibt 1 % des Fuenf-Stunden-Fensters bei 1,6-2,1 Mio sichtbaren Token (97 % davon Cache-Reads) und das Wochenlimit bei rund 1,95 Mrd sichtbaren Token in der Woche 7. bis 13. April 2026, als 99 % erreicht wurden. Gegen zwei unabhaengige Datensaetze kreuzvalidiert (215K und 101K Calls). Monatsmenge = Woche x 4,33. Modellpreise sind Anthropics eigene Listenpreise, gelesen 2026-09-23."
+
+  # Cursor: Preis offiziell, enthaltenes Volumen nicht veröffentlicht.
+  - id: kiro-pro
+    provider: kiro
+    name: Kiro Pro
+    price: { monthlyUsd: 20, paidPrice: 20, advertisedPrice: 20, currency: USD }
+    meter: credits
+    disclosure: disclosed
+    dataTierNote: "Official monthly credit amount from kiro.dev; the credit-to-token rate is not published."
+    quotas:
+      - { label: "Monthly", unit: credits, amount: 1000, window: month, refresh: monthly, disclosure: exact }
+
+    lastVerified: 2026-09-23
+    creditPlan:
+      credits: 1000
+      source: "kiro.dev/docs/billing (Credits je Tarif, 2026-08-04) und kiro.dev/docs/models (Multiplikatoren, 2026-09-22)"
+      method: "Ein Task kostet auf Auto 1 Credit. Der Multiplikator eines Modells ist damit die Credit-Zahl pro Request: Requests pro Monat = Credits des Tarifs / Multiplikator."
+      note: "Official credit allowance and official per-model credit multipliers. One task costs 1 credit on Auto, so a model's multiplier is its credit cost per request: requests per month = plan credits / multiplier. Credits reset monthly and do not roll over; add-on credits cost $0.04 each. No token prices are published, so the table shows requests, not tokens. Source: kiro.dev/docs/billing and kiro.dev/docs/models (read 2026-09-23)."
+      noteDe: "Offizielles Credit-Kontingent und offizielle Credit-Multiplikatoren je Modell. Ein Task kostet auf Auto 1 Credit, der Multiplikator eines Modells ist damit seine Credit-Zahl pro Request: Requests pro Monat = Credits des Tarifs / Multiplikator. Credits verfallen monatlich; Zusatz-Credits kosten je 0,04 $. Token-Preise werden nicht veroeffentlicht, deshalb zeigt die Tabelle Requests statt Token. Quelle: kiro.dev/docs/billing und kiro.dev/docs/models (gelesen 2026-09-23)."
+      multipliers:
+        - { model: "Claude Opus 5", credits: 2.2 }
+        - { model: "Claude Sonnet 5", credits: 1.3 }
+        - { model: "Claude Haiku 4.5", credits: 0.4 }
+        - { model: "GPT-5.6 Sol", credits: 4.4 }
+        - { model: "GPT-5.6 Terra", credits: 2.2 }
+        - { model: "GPT-5.6 Luna", credits: 1.1 }
+        - { model: "Auto (Kiro router)", credits: 1.0 }
+        - { model: "GLM-5", credits: 0.5 }
+        - { model: "DeepSeek 3.2", credits: 0.25 }
+        - { model: "Qwen3 Coder Next", credits: 0.05 }
+  - id: kiro-pro-plus
+    provider: kiro
+    name: Kiro Pro+
+    price: { monthlyUsd: 40, paidPrice: 40, advertisedPrice: 40, currency: USD }
+    meter: credits
+    disclosure: disclosed
+    dataTierNote: "Official monthly credit amount from kiro.dev; the credit-to-token rate is not published."
+    quotas:
+      - { label: "Monthly", unit: credits, amount: 2000, window: month, refresh: monthly, disclosure: exact }
+
+    lastVerified: 2026-09-23
+    creditPlan:
+      credits: 2000
+      multipliers:
+        - { model: "Claude Opus 5", credits: 2.2 }
+        - { model: "Claude Sonnet 5", credits: 1.3 }
+        - { model: "Claude Haiku 4.5", credits: 0.4 }
+        - { model: "GPT-5.6 Sol", credits: 4.4 }
+        - { model: "GPT-5.6 Terra", credits: 2.2 }
+        - { model: "GPT-5.6 Luna", credits: 1.1 }
+        - { model: "Auto (Kiro router)", credits: 1.0 }
+        - { model: "GLM-5", credits: 0.5 }
+        - { model: "DeepSeek 3.2", credits: 0.25 }
+        - { model: "Qwen3 Coder Next", credits: 0.05 }
+  - id: kiro-pro-max
+    provider: kiro
+    name: Kiro Pro Max
+    price: { monthlyUsd: 100, paidPrice: 100, advertisedPrice: 100, currency: USD }
+    meter: credits
+    disclosure: disclosed
+    dataTierNote: "Official monthly credit amount from kiro.dev; the credit-to-token rate is not published."
+    quotas:
+      - { label: "Monthly", unit: credits, amount: 5000, window: month, refresh: monthly, disclosure: exact }
+
+    lastVerified: 2026-09-23
+    creditPlan:
+      credits: 5000
+      multipliers:
+        - { model: "Claude Opus 5", credits: 2.2 }
+        - { model: "Claude Sonnet 5", credits: 1.3 }
+        - { model: "Claude Haiku 4.5", credits: 0.4 }
+        - { model: "GPT-5.6 Sol", credits: 4.4 }
+        - { model: "GPT-5.6 Terra", credits: 2.2 }
+        - { model: "GPT-5.6 Luna", credits: 1.1 }
+        - { model: "Auto (Kiro router)", credits: 1.0 }
+        - { model: "GLM-5", credits: 0.5 }
+        - { model: "DeepSeek 3.2", credits: 0.25 }
+        - { model: "Qwen3 Coder Next", credits: 0.05 }
+  - id: kiro-power
+    provider: kiro
+    name: Kiro Power
+    price: { monthlyUsd: 200, paidPrice: 200, advertisedPrice: 200, currency: USD }
+    meter: credits
+    disclosure: disclosed
+    dataTierNote: "Official monthly credit amount from kiro.dev; the credit-to-token rate is not published."
+    quotas:
+      - { label: "Monthly", unit: credits, amount: 10000, window: month, refresh: monthly, disclosure: exact }
+
+  # Command Code Go (1 $): laut Doku der einzige Command-Code-Plan OHNE API-Zugang.
+  # Quelle: commandcode.ai/docs/plans/go ("Go is the only plan without API access"),
+  # geprüft 2026-09-13. Darum ist der Plan an die Command-Code-CLI gebunden.
+    lastVerified: 2026-09-23
+    creditPlan:
+      credits: 10000
+      multipliers:
+        - { model: "Claude Opus 5", credits: 2.2 }
+        - { model: "Claude Sonnet 5", credits: 1.3 }
+        - { model: "Claude Haiku 4.5", credits: 0.4 }
+        - { model: "GPT-5.6 Sol", credits: 4.4 }
+        - { model: "GPT-5.6 Terra", credits: 2.2 }
+        - { model: "GPT-5.6 Luna", credits: 1.1 }
+        - { model: "Auto (Kiro router)", credits: 1.0 }
+        - { model: "GLM-5", credits: 0.5 }
+        - { model: "DeepSeek 3.2", credits: 0.25 }
+        - { model: "Qwen3 Coder Next", credits: 0.05 }
+  # Command Code: die Preisseite schreibt an JEDEN Planpreis eine Gebuehr fuer
+  # Kartenzahlung (Satz erst im Checkout, "both shown before you continue").
+  # Deshalb steht hier EIN Preis inklusive Gebuehr: GOAT ist gemessen (10,78 $
+  # fuer den 10-$-Tarif am 2026-10-02 = 7,8 %), derselbe gemessene Satz liegt den
+  # uebrigen Tarifen zugrunde. Keine separate Gebuehren-Marke: Listenpreis und
+  # Gebuehr stehen in der billingNote, die Mechanik in Methodik-Schritt 7.
+  - id: command-code-go
+    price: { monthlyUsd: 1.08, paidPrice: 1.08, advertisedPrice: 1, currency: USD, billingNote: "list $1.00 + $0.08 card processing fee" }
+    tag: "CLI only"
+    tagDe: "nur CLI"
+    note: "No API access: the $1 Go credits can only be spent in the Command Code CLI, so this plan cannot be used from your own harness or agent. Every other Command Code plan includes API access. The price includes the card processing fee (rate measured on the GOAT tier, 7.8 %)."
+    noteDe: "Kein API-Zugang: Die Credits des 1-$-Plans lassen sich nur in der Command-Code-CLI ausgeben, der Plan ist damit nicht in einem eigenen Harness oder Agenten nutzbar. Alle anderen Command-Code-Plaene haben API-Zugang. Der Preis enthaelt die Gebuehr fuer Kartenzahlung (Satz am GOAT-Tarif gemessen, 7,8 %)."
+  - id: command-code-goat
+    price: { monthlyUsd: 10.78, paidPrice: 10.78, advertisedPrice: 10, currency: USD, billingNote: "paid $10.78 = list $10.00 + $0.78 card processing fee (measured 2026-10-02)" }
+    note: "The price is what was actually charged: $10.78 on 2026-10-02, so $0.78 card processing fee on the $10 tier. Command Code adds that fee to every plan and shows the exact rate only at checkout, so the same measured rate (7.8 %) applies to the other Command Code tiers."
+    noteDe: "Der Preis ist der tatsaechlich abgebuchte Betrag: 10,78 $ am 02.10.2026, also 0,78 $ Gebuehr fuer Kartenzahlung auf den 10-$-Tarif. Command Code schlaegt diese Gebuehr auf jeden Plan und zeigt den genauen Satz erst im Checkout, deshalb liegt derselbe gemessene Satz (7,8 %) den uebrigen Command-Code-Tarifen zugrunde."
+  - id: command-code-pro
+    price: { monthlyUsd: 21.56, paidPrice: 21.56, advertisedPrice: 20, currency: USD, billingNote: "list $20.00 + $1.56 card processing fee" }
+  - id: command-code-max10
+    price: { monthlyUsd: 107.8, paidPrice: 107.8, advertisedPrice: 100, currency: USD, billingNote: "list $100.00 + $7.80 card processing fee" }
+  - id: command-code-max20
+    price: { monthlyUsd: 215.6, paidPrice: 215.6, advertisedPrice: 200, currency: USD, billingNote: "list $200.00 + $15.60 card processing fee" }
+
+  # Amazon Q Developer: Free Tier mit 50 agentischen Requests pro Monat offiziell
+  # (aws.amazon.com/q/developer/pricing); Pro mit 1.000 agentischen Requests pro
+  # Nutzer und Monat laut AWS-Service-Quota-Doku (docs.aws.amazon.com).
+  - id: amazon-q-free
+    provider: aws
+    name: Amazon Q Developer Free
+    price: { monthlyUsd: 0, paidPrice: 0, advertisedPrice: 0, currency: USD }
+    meter: requests
+    disclosure: disclosed
+    tag: "official requests"
+    tagDe: "offizielle Requests"
+    requestPlan:
+      requests: 50
+      note: "50 agentic requests per month (Q&A chat plus agentic coding), official free-tier limit"
+    quotas:
+      - { label: "Monthly", unit: requests, amount: 50, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-09-23
+    note: "Official free-tier limit: 50 agentic requests per month for Q&A chat and agentic coding, available in the IDE and CLI. The Pro tier at $19 per user lists increased limits without a number, so it is not ranked. Source: aws.amazon.com/q/developer/pricing (read 2026-09-23)."
+    noteDe: "Offizielles Free-Tier-Limit: 50 agentische Requests pro Monat fuer Q&A-Chat und agentisches Coding, nutzbar in IDE und CLI. Der Pro-Tarif fuer 19 $ pro Nutzer nennt nur 'erhoehte Limits' ohne Zahl, deshalb steht er nicht in der Rangliste. Quelle: aws.amazon.com/q/developer/pricing (gelesen 2026-09-23)."
+
+  - id: amazon-q-pro
+    provider: aws
+    name: Amazon Q Developer Pro
+    price: { monthlyUsd: 19, paidPrice: 19, advertisedPrice: 19, currency: USD }
+    meter: requests
+    disclosure: partial
+    tag: "official requests"
+    tagDe: "offizielle Requests"
+    requestPlan:
+      requests: 1000
+      label: "Agent requests"
+      note: "requests (official monthly quota: 1,000 agentic requests per user per month)"
+    quotas:
+      - { label: "Monthly", unit: requests, amount: 1000, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official: the Amazon Q Developer service-quota page lists 1,000 agentic requests per user per month for Q Developer Pro (Q&A chat and agentic coding), on top of the 50 in the Free tier. Caveat: in that table the row is labelled agentic requests while the value text reads \"1,000 lines of code per month\", so the unit contradicts itself on Amazon's own page. The figure is therefore kept as published but marked partial, not exact. The pricing page itself quantifies Pro only as included with limits. Extras: 4,000 lines of code per month for Java upgrades (pooled per payer account), admin controls, IP indemnity. Source: docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/quotas.html and aws.amazon.com/q/developer/pricing (read 2026-10-13)."
+    noteDe: "Offiziell: Die Service-Quota-Seite von Amazon Q Developer nennt 1.000 agentische Requests pro Nutzer und Monat fuer Q Developer Pro (Q&A-Chat und agentisches Coding), zusaetzlich zu den 50 im Free-Tier. Hinweis: In dieser Tabelle heisst die Zeile agentische Requests, der Wert darunter liest sich aber \"1,000 lines of code per month\"; die Einheit widerspricht sich also auf Amazons eigener Seite. Die Zahl steht deshalb wie veroeffentlicht, aber als partial statt exakt. Die Preisseite selbst quantifiziert Pro nur als enthalten mit Limits. Extras: 4.000 Zeilen Code pro Monat fuer Java-Upgrades (pro Zahlerkonto gepoolt), Admin-Steuerung und IP-Indemnitaet. Quelle: docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/quotas.html und aws.amazon.com/q/developer/pricing (gelesen 2026-10-13)."
+
+  # ---------------------------------------------------------------------------
+  # Zweite Welle 2026-09-23: JetBrains AI, Gemini Code Assist, Augment Code, Cursor.
+  # Mengen-Basis ist ein Dollar-Volumen (Credits = 1 USD) oder eine offizielle
+  # Request-Menge; die Modellpreise kommen aus der Anbieterquelle.
+  # ---------------------------------------------------------------------------
+
+  # JetBrains AI: Credits je Tarif offiziell, 1 AI Credit = 1 USD Modellnutzung.
+  - id: jetbrains-ai-free
+    provider: jetbrains
+    name: JetBrains AI Free
+    price: { monthlyUsd: 0, paidPrice: 0, advertisedPrice: 0, currency: USD }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "credits = USD"
+    tagDe: "Credits = USD"
+    dollarPlan:
+      usd: 3
+      source: "jetbrains.com/help/ai-assistant/licensing-and-subscriptions.html (1 AI Credit = 1 USD)"
+      note: "3 AI Credits per 30 days, each credit is $1 of cloud-model usage"
+      models:
+      - { model: "Claude Opus 5.5", input: 4, cachedWrite: 5, cachedRead: 0.2, output: 20 }
+      - { model: "Claude Sonnet 5", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 10 }
+      - { model: "Claude Haiku 4.5", input: 1, cachedWrite: 1.25, cachedRead: 0.1, output: 5 }
+    quotas:
+      - { label: "30 days", unit: "AI credits (USD)", amount: 3, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-09-23
+    note: "Official: JetBrains AI Free includes 3 AI Credits per 30 days and each AI Credit is $1 of cloud-model usage. Modelled against Anthropic list prices (Opus 5.5, Sonnet 5, Haiku 4.5) because JetBrains routes to several providers and publishes no per-model token price. Source: jetbrains.com/help/ai-assistant/licensing-and-subscriptions.html and jetbrains.com/ai-ides/buy (read 2026-09-23)."
+    noteDe: "Offiziell: JetBrains AI Free enthaelt 3 AI Credits pro 30 Tage, ein AI Credit entspricht 1 $ Modellnutzung. Gerechnet gegen Anthropics Listenpreise (Opus 5.5, Sonnet 5, Haiku 4.5), weil JetBrains an mehrere Anbieter routet und keine eigenen Token-Preise veroeffentlicht. Quelle: jetbrains.com/help/ai-assistant/licensing-and-subscriptions.html und jetbrains.com/ai-ides/buy (gelesen 2026-09-23)."
+
+  - id: jetbrains-ai-pro
+    provider: jetbrains
+    name: JetBrains AI Pro
+    price: { monthlyUsd: 10, paidPrice: 10, advertisedPrice: 10, currency: USD, billingNote: "10 AI Credits per 30 days; yearly billing cheaper" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "credits = USD"
+    tagDe: "Credits = USD"
+    dollarPlan:
+      usd: 10
+      source: "jetbrains.com/help/ai-assistant/licensing-and-subscriptions.html (Credits entsprechen dem Abopreis, 1 Credit = 1 USD)"
+      note: "10 AI Credits per 30 days; the number of credits matches the subscription price, each credit is $1 of usage"
+      models:
+      - { model: "Claude Opus 5.5", input: 4, cachedWrite: 5, cachedRead: 0.2, output: 20 }
+      - { model: "Claude Sonnet 5", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 10 }
+      - { model: "Claude Haiku 4.5", input: 1, cachedWrite: 1.25, cachedRead: 0.1, output: 5 }
+    quotas:
+      - { label: "30 days", unit: "AI credits (USD)", amount: 10, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-09-23
+    note: "Official: 10 AI Credits per 30 days, and the credit count matches the subscription price with each credit worth $1 of cloud-model usage. Modelled against Anthropic list prices (JetBrains publishes no per-model token price). Top-ups are available and expire after 12 months. Source: jetbrains.com/help/ai-assistant/licensing-and-subscriptions.html (read 2026-09-23)."
+    noteDe: "Offiziell: 10 AI Credits pro 30 Tage, die Credit-Zahl entspricht dem Abopreis, ein Credit ist 1 $ Modellnutzung. Gerechnet gegen Anthropics Listenpreise (JetBrains veroeffentlicht keine eigenen Token-Preise). Top-ups sind moeglich und verfallen nach 12 Monaten. Quelle: jetbrains.com/help/ai-assistant/licensing-and-subscriptions.html (gelesen 2026-09-23)."
+
+  - id: jetbrains-ai-ultimate
+    provider: jetbrains
+    name: JetBrains AI Ultimate
+    price: { monthlyUsd: 30, paidPrice: 30, advertisedPrice: 30, currency: USD, billingNote: "35 AI Credits per 30 days (price plus a 5 credit bonus)" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "credits = USD"
+    tagDe: "Credits = USD"
+    dollarPlan:
+      usd: 35
+      source: "jetbrains.com/help/ai-assistant/licensing-and-subscriptions.html (Credits entsprechen dem Abopreis plus Bonus bei Ultimate)"
+      note: "35 AI Credits per 30 days: price plus a small bonus for the Ultimate tier"
+      models:
+      - { model: "Claude Opus 5.5", input: 4, cachedWrite: 5, cachedRead: 0.2, output: 20 }
+      - { model: "Claude Sonnet 5", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 10 }
+      - { model: "Claude Haiku 4.5", input: 1, cachedWrite: 1.25, cachedRead: 0.1, output: 5 }
+    quotas:
+      - { label: "30 days", unit: "AI credits (USD)", amount: 35, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-09-23
+    note: "Official: 35 AI Credits per 30 days, described as the subscription price plus a small bonus for this tier, each credit worth $1. Modelled against Anthropic list prices. Source: jetbrains.com/help/ai-assistant/licensing-and-subscriptions.html (read 2026-09-23)."
+    noteDe: "Offiziell: 35 AI Credits pro 30 Tage, laut Doku der Abopreis plus kleiner Bonus fuer diesen Tarif, ein Credit ist 1 $. Gerechnet gegen Anthropics Listenpreise. Quelle: jetbrains.com/help/ai-assistant/licensing-and-subscriptions.html (gelesen 2026-09-23)."
+
+  # Gemini Code Assist: offizielle Tagesquote fuer Agent-Modus und Gemini CLI.
+  - id: gemini-code-assist-individual
+    provider: google
+    name: Gemini Code Assist (individual, free)
+    price: { monthlyUsd: 0, paidPrice: 0, advertisedPrice: 0, currency: USD }
+    meter: requests
+    disclosure: disclosed
+    tag: "official requests"
+    tagDe: "offizielle Requests"
+    requestPlan:
+      requests: 7305
+      label: "Chat/agent requests"
+      note: "requests (240 chat requests per day x 30.44)"
+    quotas:
+      - { label: "Daily", unit: requests, amount: 240, window: day, refresh: daily, disclosure: exact }
+    lastVerified: 2026-09-23
+    note: "Official free individual tier: 240 chat requests and 6,000 code-related requests per day. Ranked on the chat/agent figure (240 x 30.44 = 7,305 per month); code completions are a separate, larger pool. Source: codeassist.google (read 2026-09-23)."
+    noteDe: "Offizieller kostenloser Einzeltarif: 240 Chat-Requests und 6.000 codebezogene Requests pro Tag. Gerechnet mit der Chat-/Agent-Zahl (240 x 30,44 = 7.305 pro Monat); Code-Vervollstaendigungen sind ein eigener, groesserer Topf. Quelle: codeassist.google (gelesen 2026-09-23)."
+
+  - id: gemini-code-assist-standard
+    provider: google
+    name: Gemini Code Assist Standard
+    price: { monthlyUsd: 19, paidPrice: 19, advertisedPrice: 22.8, currency: USD, billingNote: "$19 per user per month with annual commitment, $22.80 month-to-month" }
+    meter: requests
+    disclosure: disclosed
+    tag: "official requests"
+    tagDe: "offizielle Requests"
+    requestPlan:
+      requests: 45660
+      label: "Agent requests"
+      note: "requests (1,500 agent/Gemini CLI requests per user per day x 30.44)"
+    quotas:
+      - { label: "Daily", unit: requests, amount: 1500, window: day, refresh: daily, disclosure: exact }
+    lastVerified: 2026-09-23
+    note: "Official: 1,500 requests per user per day for agent mode and Gemini CLI (combined, aggregated across model versions), plus 6,000 code requests and 960 chat requests per day. Monthly = 1,500 x 30.44 = 45,660. One prompt can consume several model requests. Price: $19 per user per month with an upfront annual commitment ($22.80 monthly). Sources: developers.google.com/gemini-code-assist/resources/quotas and codeassist.google/products/business (read 2026-09-23)."
+    noteDe: "Offiziell: 1.500 Requests pro Nutzer und Tag fuer Agent-Modus und Gemini CLI (zusammen, ueber alle Modellversionen gezaehlt), dazu 6.000 Code-Requests und 960 Chat-Requests pro Tag. Monat = 1.500 x 30,44 = 45.660. Ein Prompt kann mehrere Modell-Requests verbrauchen. Preis: 19 $ pro Nutzer und Monat bei jaehrlicher Vorauszahlung (22,80 $ monatlich). Quellen: developers.google.com/gemini-code-assist/resources/quotas und codeassist.google/products/business (gelesen 2026-09-23)."
+
+  - id: gemini-code-assist-enterprise
+    provider: google
+    name: Gemini Code Assist Enterprise
+    price: { monthlyUsd: 45, paidPrice: 45, advertisedPrice: 54, currency: USD, billingNote: "$45 per user per month with annual commitment, $54 month-to-month" }
+    meter: requests
+    disclosure: disclosed
+    tag: "official requests"
+    tagDe: "offizielle Requests"
+    requestPlan:
+      requests: 60880
+      label: "Agent requests"
+      note: "requests (2,000 agent/Gemini CLI requests per user per day x 30.44)"
+    quotas:
+      - { label: "Daily", unit: requests, amount: 2000, window: day, refresh: daily, disclosure: exact }
+    lastVerified: 2026-09-23
+    note: "Official: 2,000 requests per user per day for agent mode and Gemini CLI, plus code customization and Gemini Cloud Assist. Monthly = 2,000 x 30.44 = 60,880. Price: $45 per user per month with annual commitment ($54 monthly). Sources: developers.google.com/gemini-code-assist/resources/quotas and codeassist.google/products/business (read 2026-09-23)."
+    noteDe: "Offiziell: 2.000 Requests pro Nutzer und Tag fuer Agent-Modus und Gemini CLI, dazu Code-Customization und Gemini Cloud Assist. Monat = 2.000 x 30,44 = 60.880. Preis: 45 $ pro Nutzer und Monat bei jaehrlicher Vorauszahlung (54 $ monatlich). Quellen: developers.google.com/gemini-code-assist/resources/quotas und codeassist.google/products/business (gelesen 2026-09-23)."
+
+  # Augment Code: Dollar-Volumen offiziell, gilt fuer LLM, Context Engine und Compute.
+  - id: augment-standard
+    provider: augment
+    name: Augment Code Standard
+    price: { monthlyUsd: 20, paidPrice: 20, advertisedPrice: 20, currency: USD, billingNote: "flat, up to 50 seats" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "usage in USD"
+    tagDe: "Nutzung in USD"
+    dollarPlan:
+      usd: 20
+      source: "augmentcode.com/pricing"
+      note: "$20 of usage per month across LLM, context engine and compute"
+      models:
+      - { model: "Claude Opus 5.5", input: 4, cachedWrite: 5, cachedRead: 0.2, output: 20 }
+      - { model: "Claude Sonnet 5", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 10 }
+      - { model: "Claude Haiku 4.5", input: 1, cachedWrite: 1.25, cachedRead: 0.1, output: 5 }
+    quotas:
+      - { label: "Monthly", unit: "USD usage", amount: 20, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-09-23
+    note: "Official: $20 of usage per month across LLM, Context Engine and compute, flat for up to 50 seats, top-ups pay as you go. The token-based rate is an upper bound because the allowance also covers context engine and compute. Modelled against Anthropic list prices. Source: augmentcode.com/pricing (read 2026-09-23)."
+    noteDe: "Offiziell: 20 $ Nutzung pro Monat ueber LLM, Context Engine und Compute, pauschal fuer bis zu 50 Sitze, Top-ups nach Verbrauch. Die tokenbasierte Rate ist eine Obergrenze, weil das Kontingent auch Context Engine und Compute abdeckt. Gerechnet gegen Anthropics Listenpreise. Quelle: augmentcode.com/pricing (gelesen 2026-09-23)."
+
+  - id: augment-business
+    provider: augment
+    name: Augment Code Business
+    price: { monthlyUsd: 100, paidPrice: 100, advertisedPrice: 100, currency: USD, billingNote: "flat, up to 50 seats" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "usage in USD"
+    tagDe: "Nutzung in USD"
+    dollarPlan:
+      usd: 100
+      source: "augmentcode.com/pricing"
+      note: "$100 of usage per month across LLM, context engine and compute"
+      models:
+      - { model: "Claude Opus 5.5", input: 4, cachedWrite: 5, cachedRead: 0.2, output: 20 }
+      - { model: "Claude Sonnet 5", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 10 }
+      - { model: "Claude Haiku 4.5", input: 1, cachedWrite: 1.25, cachedRead: 0.1, output: 5 }
+    quotas:
+      - { label: "Monthly", unit: "USD usage", amount: 100, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-09-23
+    note: "Official: $100 of usage per month across LLM, Context Engine and compute. Same caveat as Standard: the token rate is an upper bound. Source: augmentcode.com/pricing (read 2026-09-23)."
+    noteDe: "Offiziell: 100 $ Nutzung pro Monat ueber LLM, Context Engine und Compute. Gleicher Vorbehalt wie Standard: die Token-Rate ist eine Obergrenze. Quelle: augmentcode.com/pricing (gelesen 2026-09-23)."
+
+  # Cursor: Modellpreise offiziell, enthaltene Menge nur drittseitig berichtet.
+  - id: cursor-pro
+    provider: cursor
+    name: Cursor Pro (Individual)
+    price: { monthlyUsd: 20, paidPrice: 20, advertisedPrice: 20, currency: USD }
+    meter: dollar_usage
+    disclosure: reported
+    tag: "reported usage"
+    tagDe: "berichtete Nutzung"
+    dollarPlan:
+      usd: 20
+      source: "cursor.com/docs/models-and-pricing (Modellpreise) + Drittberichte zur enthaltenen Menge (breaktheordinary.com, morphllm.com, word-spinner.com, gelesen 2026-09-23); Plantabelle am 2026-10-02 erneut geprueft (Pro 20 $, Pro Plus 60 $, Ultra 200 $ unveraendert)"
+      note: "about $20 of included model usage per month (third-party reported)"
+      models:
+      - { model: "Claude Fable 5.1", input: 10, cachedWrite: 12.5, cachedRead: 0.25, output: 50 }
+      - { model: "Claude Opus 5.5", input: 4, cachedWrite: 5, cachedRead: 0.2, output: 20 }
+      - { model: "Claude Sonnet 5", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 10 }
+      - { model: "GPT-5.6 Sol", input: 4, cachedWrite: 5, cachedRead: 0.4, output: 20 }
+      - { model: "GPT-5.6 Terra", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 12 }
+      - { model: "GPT-5.6 Luna", input: 0.2, cachedWrite: 0.25, cachedRead: 0.02, output: 1.2 }
+      - { model: "Gemini 3.1 Pro", input: 2, cachedWrite: 2, cachedRead: 0.2, output: 12 }
+      - { model: "Gemini 3.8 Flash", input: 0.75, cachedWrite: 0.75, cachedRead: 0.075, output: 3.5 }
+      - { model: "Grok 4.7", input: 2, cachedWrite: 2, cachedRead: 0.5, output: 6 }
+      - { model: "Composer 2.5", input: 0.5, cachedWrite: 0.5, cachedRead: 0.2, output: 2.5 }
+      - { model: "Muse Spark 1.3", input: 1.25, cachedWrite: 1.25, cachedRead: 0.15, output: 4.25 }
+    quotas:
+      - { label: "Monthly", unit: "USD usage", amount: 20, window: month, refresh: monthly, disclosure: reported }
+    lastVerified: 2026-10-02
+    note: "Cursor publishes the per-model token prices and the two pools but not the included amount. Several independent write-ups report about $20 of included model usage for Pro, so the row carries that figure and is labelled reported, not published. On-demand usage beyond it is billed at the same API rates plus the $0.25 per million Cursor Token Rate on third-party models. Sources: cursor.com/docs/models-and-pricing, cursor.com/help/models-and-usage/usage-limits (read 2026-09-23)."
+    noteDe: "Cursor veroeffentlicht die Token-Preise je Modell und die zwei Pools, aber nicht die enthaltene Menge. Mehrere unabhaengige Berichte nennen rund 20 $ enthaltene Modellnutzung fuer Pro, deshalb steht diese Zahl mit Kennzeichnung 'berichtet' in der Zeile. Nutzung darueber hinaus kostet zu denselben API-Preisen plus 0,25 $ pro Million Token Cursor Token Rate bei Fremdmodellen. Quellen: cursor.com/docs/models-and-pricing, cursor.com/help/models-and-usage/usage-limits (gelesen 2026-09-23)."
+
+  - id: cursor-ultra
+    provider: cursor
+    name: Cursor Ultra
+    price: { monthlyUsd: 200, paidPrice: 200, advertisedPrice: 200, currency: USD }
+    meter: dollar_usage
+    disclosure: reported
+    tag: "reported usage"
+    tagDe: "berichtete Nutzung"
+    dollarPlan:
+      usd: 400
+      source: "cursor.com/docs/models-and-pricing (Modellpreise) + Drittbericht zur enthaltenen Menge (breaktheordinary.com: rund 400 $, 20-facher Pro-Pool)"
+      note: "roughly $400 of included model usage per month (third-party reported, single source)"
+      models:
+      - { model: "Claude Fable 5.1", input: 10, cachedWrite: 12.5, cachedRead: 0.25, output: 50 }
+      - { model: "Claude Opus 5.5", input: 4, cachedWrite: 5, cachedRead: 0.2, output: 20 }
+      - { model: "Claude Sonnet 5", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 10 }
+      - { model: "GPT-5.6 Sol", input: 4, cachedWrite: 5, cachedRead: 0.4, output: 20 }
+      - { model: "GPT-5.6 Terra", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 12 }
+      - { model: "GPT-5.6 Luna", input: 0.2, cachedWrite: 0.25, cachedRead: 0.02, output: 1.2 }
+      - { model: "Gemini 3.1 Pro", input: 2, cachedWrite: 2, cachedRead: 0.2, output: 12 }
+      - { model: "Gemini 3.8 Flash", input: 0.75, cachedWrite: 0.75, cachedRead: 0.075, output: 3.5 }
+      - { model: "Grok 4.7", input: 2, cachedWrite: 2, cachedRead: 0.5, output: 6 }
+      - { model: "Composer 2.5", input: 0.5, cachedWrite: 0.5, cachedRead: 0.2, output: 2.5 }
+      - { model: "Muse Spark 1.3", input: 1.25, cachedWrite: 1.25, cachedRead: 0.15, output: 4.25 }
+    quotas:
+      - { label: "Monthly", unit: "USD usage", amount: 400, window: month, refresh: monthly, disclosure: reported }
+    lastVerified: 2026-10-02
+    note: "Cursor does not publish the included amount. One write-up reports roughly $400 of API usage for Ultra, described as 20 times the Pro pool; that is a single source, so the row is labelled reported. Sources: cursor.com/docs/models-and-pricing, breaktheordinary.com/cursor-usage-based-billing (read 2026-09-23)."
+    noteDe: "Cursor veroeffentlicht die enthaltene Menge nicht. Ein Bericht nennt rund 400 $ API-Nutzung fuer Ultra, beschrieben als 20-facher Pro-Pool; das ist eine Einzelquelle, deshalb ist die Zeile als 'berichtet' gekennzeichnet. Quellen: cursor.com/docs/models-and-pricing, breaktheordinary.com/cursor-usage-based-billing (gelesen 2026-09-23)."
+
+  # ---------------------------------------------------------------------------
+  # Referenzkarten 2026-09-23: populäre Plaene, deren Menge der Anbieter nicht
+  # veröffentlicht. Preis offiziell, Quote ohne Zahl, Grund in der Notiz.
+  # ---------------------------------------------------------------------------
+
+  - id: devin-pro
+    provider: cognition
+    name: Devin Desktop Pro
+    price: { monthlyUsd: 20, paidPrice: 20, advertisedPrice: 20, currency: USD }
+    meter: tokens
+    disclosure: reference
+    lastVerified: 2026-09-23
+    note: "The quota is token-based with a daily and weekly allowance, but Cognition publishes no amount. Paid plans include extra usage at API prices. Source: devin.ai/pricing and docs.windsurf.com/windsurf/accounts/quota (read 2026-09-23)."
+    noteDe: "Die Quote ist tokenbasiert mit Tages- und Wochenkontingent, Cognition nennt aber keine Menge. Bezahlte Tarife erlauben Zusatznutzung zu API-Preisen. Quelle: devin.ai/pricing und docs.windsurf.com/windsurf/accounts/quota (gelesen 2026-09-23)."
+
+  - id: devin-max
+    provider: cognition
+    name: Devin Desktop Max
+    price: { monthlyUsd: 200, paidPrice: 200, advertisedPrice: 200, currency: USD }
+    meter: tokens
+    disclosure: reference
+    lastVerified: 2026-09-23
+    note: "Significantly higher quotas than Pro, no number published. Source: devin.ai/pricing (read 2026-09-23)."
+    noteDe: "Deutlich hoehere Quoten als Pro, keine Zahl veroeffentlicht. Quelle: devin.ai/pricing (gelesen 2026-09-23)."
+
+  - id: devin-teams
+    provider: cognition
+    name: Devin Desktop Teams
+    price: { monthlyUsd: 80, paidPrice: 80, advertisedPrice: 80, currency: USD, billingNote: "$80 per month for the team plan plus $40 per full seat" }
+    meter: tokens
+    disclosure: reference
+    lastVerified: 2026-09-23
+    note: "Team plan at $80 per month plus $40 per full user, each full user carries its own quota without a published number. Source: devin.ai/pricing (read 2026-09-23)."
+    noteDe: "Team-Tarif 80 $ pro Monat plus 40 $ pro Vollnutzer, jeder Vollnutzer hat ein eigenes Kontingent ohne veroeffentlichte Zahl. Quelle: devin.ai/pricing (gelesen 2026-09-23)."
+
+  - id: factory-droid-pro
+    provider: factory
+    name: Factory Droid Pro
+    price: { monthlyUsd: 20, paidPrice: 20, advertisedPrice: 20, currency: USD }
+    meter: tokens
+    disclosure: reference
+    lastVerified: 2026-09-23
+    note: "Three rolling rate limits (5-hour, 7-day, 30-day) run independently, plus a free Droid Core pool for open-weight models, but Factory publishes no amounts. Extra usage is prepaid credit from $10. Source: docs.factory.ai/pricing (read 2026-09-23)."
+    noteDe: "Drei rollierende Limits (5 Stunden, 7 Tage, 30 Tage) laufen unabhaengig, dazu ein kostenloser Droid-Core-Pool fuer Open-Weight-Modelle, Mengen nennt Factory aber nicht. Zusatznutzung laeuft ueber Prepaid-Guthaben ab 10 $. Quelle: docs.factory.ai/pricing (gelesen 2026-09-23)."
+
+  - id: factory-droid-plus
+    provider: factory
+    name: Factory Droid Plus
+    price: { monthlyUsd: 100, paidPrice: 100, advertisedPrice: 100, currency: USD }
+    meter: tokens
+    disclosure: reference
+    lastVerified: 2026-09-23
+    note: "Same rate-limit structure as Pro with higher amounts, no numbers published. Source: docs.factory.ai/pricing (read 2026-09-23)."
+    noteDe: "Gleiche Limitstruktur wie Pro mit hoeheren Mengen, keine Zahlen veroeffentlicht. Quelle: docs.factory.ai/pricing (gelesen 2026-09-23)."
+
+  - id: factory-droid-max
+    provider: factory
+    name: Factory Droid Max
+    price: { monthlyUsd: 200, paidPrice: 200, advertisedPrice: 200, currency: USD }
+    meter: tokens
+    disclosure: reference
+    lastVerified: 2026-09-23
+    note: "Same rate-limit structure as Pro with higher amounts, no numbers published. Source: docs.factory.ai/pricing (read 2026-09-23)."
+    noteDe: "Gleiche Limitstruktur wie Pro mit hoeheren Mengen, keine Zahlen veroeffentlicht. Quelle: docs.factory.ai/pricing (gelesen 2026-09-23)."
+
+  # Trae: offizielles Monatsguthaben in Dollar (trae.ai/pricing), ersetzt die
+  # fruehere Referenzzeile. Modelle kommen ueber "auto mode + all models", daher
+  # Frontier-Set statt einer eigenen Preisliste.
+  - id: trae-pro
+    provider: bytedance
+    name: Trae Pro
+    price: { monthlyUsd: 20, paidPrice: 20, advertisedPrice: 20, currency: USD, billingNote: "monthly usage balance $20; auto-renews monthly" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "usage in USD"
+    tagDe: "Nutzung in USD"
+    dollarPlan:
+      usd: 20
+      source: "trae.ai/pricing and docs.trae.ai/ide/on-demand-usage (read 2026-10-13)"
+      note: "monthly usage balance of $20, consumed at the model provider's standard API prices"
+      models:
+      - { model: "Claude Opus 5.5", input: 4, cachedWrite: 5, cachedRead: 0.2, output: 20 }
+      - { model: "Claude Sonnet 5", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 10 }
+      - { model: "GPT-5.6 Sol", input: 4, cachedWrite: 5, cachedRead: 0.4, output: 20 }
+      - { model: "GPT-5.6 Terra", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 12 }
+      - { model: "GPT-5.6 Luna", input: 0.2, cachedWrite: 0.25, cachedRead: 0.02, output: 1.2 }
+      - { model: "Gemini 3.1 Pro", input: 2, cachedWrite: 2, cachedRead: 0.2, output: 12 }
+      - { model: "Gemini 3.8 Flash", input: 0.75, cachedWrite: 0.75, cachedRead: 0.075, output: 3.5 }
+      - { model: "Grok 4.7", input: 2, cachedWrite: 2, cachedRead: 0.5, output: 6 }
+    quotas:
+      - { label: "Monthly", unit: "USD usage", amount: 20, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official: Trae publishes a monthly usage balance in dollars, $20 for Pro, consumed at the model provider's standard API prices. Trae names no hard request or token count; the models are reached in auto mode or by picking any model. Modelled against the standard API prices of the frontier models Trae routes to (Claude Opus 5.5, Claude Sonnet 5, GPT-5.6 Sol/Terra/Luna, Gemini 3.1 Pro, Gemini 3.8 Flash, Grok 4.7). Source: trae.ai/pricing and docs.trae.ai/ide/on-demand-usage (read 2026-10-13)."
+    noteDe: "Offiziell: Trae nennt ein Monatsguthaben in Dollar, fuer Pro 20 $, das zu den Standard-API-Preisen der Modellanbieter verbraucht wird. Trae nennt keine harte Request- oder Token-Zahl; die Modelle erreicht man im Auto-Modus oder per Auswahl. Gerechnet gegen die Standard-API-Preise der Frontier-Modelle, an die Trae routet (Claude Opus 5.5, Claude Sonnet 5, GPT-5.6 Sol/Terra/Luna, Gemini 3.1 Pro, Gemini 3.8 Flash, Grok 4.7). Quelle: trae.ai/pricing und docs.trae.ai/ide/on-demand-usage (gelesen 2026-10-13)."
+
+  - id: trae-pro-plus
+    provider: bytedance
+    name: Trae Pro+
+    price: { monthlyUsd: 60, paidPrice: 60, advertisedPrice: 60, currency: USD, billingNote: "monthly usage balance $60 (3x Pro)" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "usage in USD"
+    tagDe: "Nutzung in USD"
+    dollarPlan:
+      usd: 60
+      source: "trae.ai/pricing and docs.trae.ai/ide/on-demand-usage (read 2026-10-13)"
+      note: "monthly usage balance of $60, consumed at the model provider's standard API prices"
+      models:
+      - { model: "Claude Opus 5.5", input: 4, cachedWrite: 5, cachedRead: 0.2, output: 20 }
+      - { model: "Claude Sonnet 5", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 10 }
+      - { model: "GPT-5.6 Sol", input: 4, cachedWrite: 5, cachedRead: 0.4, output: 20 }
+      - { model: "GPT-5.6 Terra", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 12 }
+      - { model: "GPT-5.6 Luna", input: 0.2, cachedWrite: 0.25, cachedRead: 0.02, output: 1.2 }
+      - { model: "Gemini 3.1 Pro", input: 2, cachedWrite: 2, cachedRead: 0.2, output: 12 }
+      - { model: "Gemini 3.8 Flash", input: 0.75, cachedWrite: 0.75, cachedRead: 0.075, output: 3.5 }
+      - { model: "Grok 4.7", input: 2, cachedWrite: 2, cachedRead: 0.5, output: 6 }
+    quotas:
+      - { label: "Monthly", unit: "USD usage", amount: 60, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official: Trae publishes a monthly usage balance in dollars, $60 for Pro+ (stated as 3x Pro), consumed at the model provider's standard API prices. No hard request or token count is published. Modelled against the standard API prices of the frontier models Trae routes to (Claude Opus 5.5, Claude Sonnet 5, GPT-5.6 Sol/Terra/Luna, Gemini 3.1 Pro, Gemini 3.8 Flash, Grok 4.7). Source: trae.ai/pricing and docs.trae.ai/ide/on-demand-usage (read 2026-10-13)."
+    noteDe: "Offiziell: Trae nennt ein Monatsguthaben in Dollar, fuer Pro+ 60 $ (laut Seite 3x Pro), das zu den Standard-API-Preisen der Modellanbieter verbraucht wird. Eine harte Request- oder Token-Zahl wird nicht veroeffentlicht. Gerechnet gegen die Standard-API-Preise der Frontier-Modelle, an die Trae routet (Claude Opus 5.5, Claude Sonnet 5, GPT-5.6 Sol/Terra/Luna, Gemini 3.1 Pro, Gemini 3.8 Flash, Grok 4.7). Quelle: trae.ai/pricing und docs.trae.ai/ide/on-demand-usage (gelesen 2026-10-13)."
+
+  - id: trae-ultra
+    provider: bytedance
+    name: Trae Ultra
+    price: { monthlyUsd: 200, paidPrice: 200, advertisedPrice: 200, currency: USD, billingNote: "monthly usage balance $200 (10x Pro); includes model early access" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "usage in USD"
+    tagDe: "Nutzung in USD"
+    dollarPlan:
+      usd: 200
+      source: "trae.ai/pricing and docs.trae.ai/ide/on-demand-usage (read 2026-10-13)"
+      note: "monthly usage balance of $200, consumed at the model provider's standard API prices"
+      models:
+      - { model: "Claude Opus 5.5", input: 4, cachedWrite: 5, cachedRead: 0.2, output: 20 }
+      - { model: "Claude Sonnet 5", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 10 }
+      - { model: "GPT-5.6 Sol", input: 4, cachedWrite: 5, cachedRead: 0.4, output: 20 }
+      - { model: "GPT-5.6 Terra", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 12 }
+      - { model: "GPT-5.6 Luna", input: 0.2, cachedWrite: 0.25, cachedRead: 0.02, output: 1.2 }
+      - { model: "Gemini 3.1 Pro", input: 2, cachedWrite: 2, cachedRead: 0.2, output: 12 }
+      - { model: "Gemini 3.8 Flash", input: 0.75, cachedWrite: 0.75, cachedRead: 0.075, output: 3.5 }
+      - { model: "Grok 4.7", input: 2, cachedWrite: 2, cachedRead: 0.5, output: 6 }
+    quotas:
+      - { label: "Monthly", unit: "USD usage", amount: 200, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official: Trae publishes a monthly usage balance in dollars, $200 for Ultra (stated as 10x Pro) and model early access. No hard request or token count is published. Modelled against the standard API prices of the frontier models Trae routes to (Claude Opus 5.5, Claude Sonnet 5, GPT-5.6 Sol/Terra/Luna, Gemini 3.1 Pro, Gemini 3.8 Flash, Grok 4.7). Source: trae.ai/pricing and docs.trae.ai/ide/on-demand-usage (read 2026-10-13)."
+    noteDe: "Offiziell: Trae nennt ein Monatsguthaben in Dollar, fuer Ultra 200 $ (laut Seite 10x Pro) inklusive fruehem Modellzugang. Eine harte Request- oder Token-Zahl wird nicht veroeffentlicht. Gerechnet gegen die Standard-API-Preise der Frontier-Modelle, an die Trae routet (Claude Opus 5.5, Claude Sonnet 5, GPT-5.6 Sol/Terra/Luna, Gemini 3.1 Pro, Gemini 3.8 Flash, Grok 4.7). Quelle: trae.ai/pricing und docs.trae.ai/ide/on-demand-usage (gelesen 2026-10-13)."
+
+  # Zed: offizielle harte Dollar-Zahl ($5 Token-Credits/Monat), ersetzt die
+  # fruehere Referenzzeile. Zeilen sind Standard-API-Listenpreise der in der Zed-Doku
+  # genannten gehosteten Modelle; Zed verlangt danach +10%.
+  - id: zed-pro
+    provider: zed
+    name: Zed Pro
+    price: { monthlyUsd: 10, paidPrice: 10, advertisedPrice: 10, currency: USD, billingNote: "includes $5 token credits per month; usage beyond that is billed at provider price +10%" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "usage in USD"
+    tagDe: "Nutzung in USD"
+    dollarPlan:
+      usd: 5
+      source: "zed.dev/pricing and zed.dev/docs/ai/models (read 2026-10-13)"
+      note: "$5 of included token credits per month, consumed at the model's standard API list price"
+      models:
+      - { model: "GPT-6 Luna", input: 0.1, cachedWrite: 0.125, cachedRead: 0.01, output: 0.5 }
+      - { model: "Claude Sonnet 5.5", input: 2, cachedWrite: 2.5, cachedRead: 0.1, output: 10 }
+      - { model: "GPT-6 Astra", input: 10, cachedWrite: 12.5, cachedRead: 1, output: 50 }
+    quotas:
+      - { label: "Monthly", unit: "USD usage", amount: 5, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official: Zed Pro includes $5 of token credits per month, the only hard dollar figure among the tools in this wave. Usage above it is billed at the provider list price plus 10% (Zed price = provider price +10%). The rows are the standard API list prices of the hosted models named in the Zed pricing docs (GPT-6 Luna, Claude Sonnet 5.5, GPT-6 Astra); Zed lists more models than these three, but only for these are the standard prices available in the lists used here. Source: zed.dev/pricing and zed.dev/docs/ai/models (read 2026-10-13)."
+    noteDe: "Offiziell: Zed Pro enthaelt 5 $ Token-Credits pro Monat, die einzige harte Dollar-Zahl unter den Tarifen dieser Welle. Nutzung darueber wird zum Listenpreis des Anbieters plus 10 % abgerechnet (Zed-Preis = Anbieterpreis +10 %). Die Zeilen sind die Standard-API-Listenpreise der in der Zed-Doku genannten gehosteten Modelle (GPT-6 Luna, Claude Sonnet 5.5, GPT-6 Astra); Zed listet mehr Modelle als diese drei, aber nur fuer diese liegen die Standardpreise in den hier genutzten Listen vor. Quelle: zed.dev/pricing und zed.dev/docs/ai/models (gelesen 2026-10-13)."
+
+  - id: cursor-pro-plus
+    provider: cursor
+    name: Cursor Pro Plus
+    price: { monthlyUsd: 60, paidPrice: 60, advertisedPrice: 60, currency: USD }
+    meter: dollar_usage
+    disclosure: reference
+    lastVerified: 2026-10-02
+    note: "Cursor publishes the price and the two usage pools but no included amount for Pro Plus either, so it stays a reference row. Source: cursor.com/docs/account/pricing (read 2026-10-02)."
+    noteDe: "Cursor nennt Preis und die zwei Pools, aber auch fuer Pro Plus keine enthaltene Menge, deshalb bleibt der Tarif eine Referenzzeile. Quelle: cursor.com/docs/account/pricing (gelesen 2026-10-02)."
+
+  # Google AI: Preise offiziell in EUR (gemini.google/subscriptions, gelesen
+  # 2026-09-23, deutsche Ansicht). Die Kontingente sind nicht veroeffentlicht,
+  # Antigravity nennt nur "high, generous quota" je Tarif.
+  - id: google-ai-pro
+    provider: google
+    name: Google AI Pro (Antigravity, Gemini CLI)
+    price: { monthlyUsd: 25.19, paidPrice: 25.19, advertisedPrice: 25.19, currency: EUR, monthlyCny: null, billingNote: "21,99 EUR pro Monat in Deutschland (umgerechnet mit dem Kurs der Seite)" }
+    meter: requests
+    disclosure: reference
+    lastVerified: 2026-09-23
+    note: "Antigravity and Gemini CLI quotas depend on the Google AI plan: AI Pro gets a high quota refreshed every five hours until the weekly limit is reached. Google publishes no amount. AI credits can be bought for overage and are consumed at Gemini consumption pricing. Source: antigravity.google/docs/plans and gemini.google/subscriptions (read 2026-09-23)."
+    noteDe: "Die Kontingente von Antigravity und Gemini CLI haengen am Google-AI-Tarif: AI Pro bekommt ein hohes Kontingent, das alle fuenf Stunden erneuert wird, bis das Wochenlimit erreicht ist. Google nennt keine Menge. Fuer Mehrverbrauch lassen sich AI-Credits kaufen, die zu Gemini-Verbrauchspreisen abgerechnet werden. Quelle: antigravity.google/docs/plans und gemini.google/subscriptions (gelesen 2026-09-23)."
+
+  - id: google-ai-ultra-5x
+    provider: google
+    name: Google AI Ultra (5x)
+    price: { monthlyUsd: 114.51, paidPrice: 114.51, advertisedPrice: 114.51, currency: EUR, monthlyCny: null, billingNote: "99,99 EUR pro Monat, 5-fache Limits von AI Pro" }
+    meter: requests
+    disclosure: reference
+    lastVerified: 2026-09-23
+    note: "Five times the AI Pro usage limits, the highest quota in Antigravity, refreshed every five hours, highest weekly limits, plus third-party models. No amount published. Source: antigravity.google/docs/plans and gemini.google/subscriptions (read 2026-09-23)."
+    noteDe: "Fuenffache Nutzungslimits von AI Pro, das hoechste Kontingent in Antigravity, alle fuenf Stunden erneuert, hoechste Wochenlimits, dazu Fremdmodelle. Keine Menge veroeffentlicht. Quelle: antigravity.google/docs/plans und gemini.google/subscriptions (gelesen 2026-09-23)."
+
+  - id: google-ai-ultra-20x
+    provider: google
+    name: Google AI Ultra (20x)
+    price: { monthlyUsd: 251.94, paidPrice: 251.94, advertisedPrice: 251.94, currency: EUR, monthlyCny: null, billingNote: "219,99 EUR pro Monat, 20-fache Limits von AI Pro" }
+    meter: requests
+    disclosure: reference
+    lastVerified: 2026-09-23
+    note: "Twenty times the AI Pro usage limits, no amount published. Source: gemini.google/subscriptions (read 2026-09-23)."
+    noteDe: "Zwanzigfache Nutzungslimits von AI Pro, keine Menge veroeffentlicht. Quelle: gemini.google/subscriptions (gelesen 2026-09-23)."
+
+  - id: cline-pass
+    provider: cline
+    name: ClinePass
+    price: { monthlyUsd: 9.99, paidPrice: 9.99, advertisedPrice: 9.99, currency: USD }
+    meter: credits
+    disclosure: reference
+    lastVerified: 2026-10-02
+    note: "ClinePass costs $9.99 per month and offers 2 to 5 times the usage on popular open coding models compared to the standard API rate; the amount is relative, not an absolute quota, so no rate is computed. Included models: GLM-5.3, GLM-5.3 Flash, Kimi K3, DeepSeek V4 Pro, DeepSeek V4.1 Flash, MiMo-V2.5, MiMo-V2.5-Pro, MiniMax M3, Muse Spark 1.3 Contributor, Qwen3.8 Max, Qwen3.7 Max, Qwen3.7 Plus (GLM-5.2, Kimi K2.6, Kimi K2.7 Code and DeepSeek V4 Flash were discontinued). The models are also reachable from your own scripts through an OpenAI-compatible Cline API. Source: docs.cline.bot/getting-started/clinepass (read 2026-10-02)."
+    noteDe: "ClinePass kostet 9,99 $ pro Monat und bietet das Zwei- bis Fuenffache an Nutzung bei populaeren offenen Coding-Modellen gegenueber dem Standard-API-Preis; die Angabe ist relativ, keine absolute Quote, deshalb wird keine Rate berechnet. Enthaltene Modelle: GLM-5.3, GLM-5.3 Flash, Kimi K3, DeepSeek V4 Pro, DeepSeek V4.1 Flash, MiMo-V2.5, MiMo-V2.5-Pro, MiniMax M3, Muse Spark 1.3 Contributor, Qwen3.8 Max, Qwen3.7 Max, Qwen3.7 Plus (GLM-5.2, Kimi K2.6, Kimi K2.7 Code und DeepSeek V4 Flash wurden abgekuendigt). Die Modelle sind auch aus eigenen Scripten ueber eine OpenAI-kompatible Cline-API erreichbar. Quelle: docs.cline.bot/getting-started/clinepass (gelesen 2026-10-02)."
+
+  # ---------------------------------------------------------------------------
+  # Dritte Welle 2026-10-13: offizielle Dollar-Volumina und ein Token-Kontingent
+  # (Warp, Replit, Kilo Code, v0, Bolt.new). Alle Mengen sind vom Anbieter selbst
+  # veroeffentlicht (disclosure: disclosed). Die Modellpreise stammen aus den
+  # vorhandenen Listen (cursor-ultra) bzw. aus den Feeds, damit die Zeilen mit dem
+  # Rest des Katalogs vergleichbar bleiben; Modelle ohne vorliegenden Preis fehlen.
+  # ---------------------------------------------------------------------------
+
+  # Warp: enthaltene Agent-Nutzung in Dollar zu API-Preisen (warp.dev/pricing).
+  # Modellzeilen sind die Standardpreise der von Warp gelisteten Modelle.
+  - id: warp-build
+    provider: warp
+    name: Warp Build
+    price: { monthlyUsd: 20, paidPrice: 20, advertisedPrice: 20, currency: USD, billingNote: "$20 of agent usage included each month; yearly plan shows $18/mo; resets monthly, no rollover" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "usage in USD"
+    tagDe: "Nutzung in USD"
+    dollarPlan:
+      usd: 20
+      source: "warp.dev/pricing (read 2026-10-13)"
+      note: "$20 of agent usage per month at API rates"
+      models:
+      - { model: "Claude Opus 5", input: 5, cachedWrite: 6.25, cachedRead: 0.5, output: 25 }
+      - { model: "GPT-5.6 Sol", input: 4, cachedWrite: 5, cachedRead: 0.4, output: 20 }
+      - { model: "Gemini 3.1 Pro", input: 2, cachedWrite: 2, cachedRead: 0.2, output: 12 }
+      - { model: "GLM-5.2", input: 1.4, cachedWrite: 1.4, cachedRead: 0.26, output: 4.4 }
+      - { model: "Kimi K3", input: 3, cachedWrite: 3, cachedRead: 0.3, output: 15 }
+      - { model: "Claude Fable 5.1", input: 10, cachedWrite: 12.5, cachedRead: 0.25, output: 50 }
+    quotas:
+      - { label: "Monthly", unit: "USD usage", amount: 20, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official: $20 of agent usage included each month at API rates (Warp writes '$20 of agent usage included each month'). The allowance resets monthly and does not roll over; add-on usage is available. Modelled against the standard API prices of the models Warp lists (Claude Opus 5, GPT-5.6, Gemini 3.1 Pro, GLM 5.2, Kimi K3, Fable 5). Source: warp.dev/pricing (read 2026-10-13)."
+    noteDe: "Offiziell: 20 $ Agent-Nutzung pro Monat zu API-Preisen (Warp schreibt '$20 of agent usage included each month'). Das Kontingent verfaellt monatlich und rollt nicht ueber; Zusatznutzung ist moeglich. Gerechnet gegen die Standard-API-Preise der von Warp gelisteten Modelle (Claude Opus 5, GPT-5.6, Gemini 3.1 Pro, GLM 5.2, Kimi K3, Fable 5). Quelle: warp.dev/pricing (gelesen 2026-10-13)."
+
+  - id: warp-max
+    provider: warp
+    name: Warp Max
+    price: { monthlyUsd: 200, paidPrice: 200, advertisedPrice: 200, currency: USD, billingNote: "$200 of agent usage included each month (10x Build); yearly plan shows $180/mo; resets monthly, no rollover" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "usage in USD"
+    tagDe: "Nutzung in USD"
+    dollarPlan:
+      usd: 200
+      source: "warp.dev/pricing (read 2026-10-13)"
+      note: "$200 of agent usage per month at API rates (10x Build)"
+      models:
+      - { model: "Claude Opus 5", input: 5, cachedWrite: 6.25, cachedRead: 0.5, output: 25 }
+      - { model: "GPT-5.6 Sol", input: 4, cachedWrite: 5, cachedRead: 0.4, output: 20 }
+      - { model: "Gemini 3.1 Pro", input: 2, cachedWrite: 2, cachedRead: 0.2, output: 12 }
+      - { model: "GLM-5.2", input: 1.4, cachedWrite: 1.4, cachedRead: 0.26, output: 4.4 }
+      - { model: "Kimi K3", input: 3, cachedWrite: 3, cachedRead: 0.3, output: 15 }
+      - { model: "Claude Fable 5.1", input: 10, cachedWrite: 12.5, cachedRead: 0.25, output: 50 }
+    quotas:
+      - { label: "Monthly", unit: "USD usage", amount: 200, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official: $200 of agent usage included each month at API rates, described as 10x Build. The allowance resets monthly and does not roll over. Modelled against the standard API prices of the models Warp lists (Claude Opus 5, GPT-5.6, Gemini 3.1 Pro, GLM 5.2, Kimi K3, Fable 5). Source: warp.dev/pricing (read 2026-10-13)."
+    noteDe: "Offiziell: 200 $ Agent-Nutzung pro Monat zu API-Preisen, laut Seite das Zehnfache von Build. Das Kontingent verfaellt monatlich und rollt nicht ueber. Gerechnet gegen die Standard-API-Preise der von Warp gelisteten Modelle (Claude Opus 5, GPT-5.6, Gemini 3.1 Pro, GLM 5.2, Kimi K3, Fable 5). Quelle: warp.dev/pricing (gelesen 2026-10-13)."
+
+  # Replit: Monats-Credits in Dollar (replit.com/pricing). Die Credits decken auch
+  # Agent, Publishing, Storage, DB und AI-Integrationen, die Token-Rate ist daher
+  # eine Obergrenze.
+  - id: replit-core
+    provider: replit
+    name: Replit Core
+    price: { monthlyUsd: 20, paidPrice: 20, advertisedPrice: 20, currency: USD, billingNote: "$20 towards more powerful models per month; $18/mo billed yearly; credits reset, no rollover on Core" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "usage in USD"
+    tagDe: "Nutzung in USD"
+    dollarPlan:
+      usd: 20
+      source: "replit.com/pricing (read 2026-10-13)"
+      note: "$20 of model credits per month"
+      models:
+      - { model: "Claude Opus 5.5", input: 4, cachedWrite: 5, cachedRead: 0.2, output: 20 }
+      - { model: "Claude Sonnet 5", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 10 }
+      - { model: "GPT-5.6 Sol", input: 4, cachedWrite: 5, cachedRead: 0.4, output: 20 }
+      - { model: "GPT-5.6 Terra", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 12 }
+      - { model: "GPT-5.6 Luna", input: 0.2, cachedWrite: 0.25, cachedRead: 0.02, output: 1.2 }
+      - { model: "Gemini 3.1 Pro", input: 2, cachedWrite: 2, cachedRead: 0.2, output: 12 }
+      - { model: "Gemini 3.8 Flash", input: 0.75, cachedWrite: 0.75, cachedRead: 0.075, output: 3.5 }
+      - { model: "Grok 4.7", input: 2, cachedWrite: 2, cachedRead: 0.5, output: 6 }
+    quotas:
+      - { label: "Monthly", unit: "USD usage", amount: 20, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official: Replit Core includes $20 towards more powerful models per month ($18/mo billed yearly). Caveat: the same credits also cover Agent, publishing, storage, database and AI integrations, so the token-based rate is an upper bound. The models are reached through intelligent model routing and are not enumerated. Modelled against the standard API prices of the frontier models Replit routes to (Claude Opus 5.5, Claude Sonnet 5, GPT-5.6 Sol/Terra/Luna, Gemini 3.1 Pro, Gemini 3.8 Flash, Grok 4.7). Source: replit.com/pricing (read 2026-10-13)."
+    noteDe: "Offiziell: Replit Core enthaelt 20 $ fuer leistungsfaehigere Modelle pro Monat (bei Jahreszahlung 18 $/Monat). Vorbehalt: Dieselben Credits decken auch Agent, Publishing, Storage, Datenbank und AI-Integrationen, die tokenbasierte Rate ist daher eine Obergrenze. Die Modelle werden ueber intelligentes Model-Routing erreicht und nicht einzeln aufgefuehrt. Gerechnet gegen die Standard-API-Preise der Frontier-Modelle, an die Replit routet (Claude Opus 5.5, Claude Sonnet 5, GPT-5.6 Sol/Terra/Luna, Gemini 3.1 Pro, Gemini 3.8 Flash, Grok 4.7). Quelle: replit.com/pricing (gelesen 2026-10-13)."
+
+  # Kilo Code Pass: 1:1 in Paid-Credits (kilo.ai/pricing/kilo-pass). Bonus-Credits
+  # bis +40% (Streaks) verfallen monatlich und sind hier nicht eingerechnet.
+  - id: kilo-pass
+    provider: kilo
+    name: Kilo Code Pass
+    price: { monthlyUsd: 19, paidPrice: 19, advertisedPrice: 19, currency: USD, billingNote: "$19 per month converts 1:1 into $19 of paid credits; bonus credits up to +40% (streaks), higher tiers $49 and $199; no rollover" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "usage in USD"
+    tagDe: "Nutzung in USD"
+    dollarPlan:
+      usd: 19
+      source: "kilo.ai/pricing/kilo-pass (read 2026-10-13)"
+      note: "$19 of paid credits per month, converted 1:1 from the plan price"
+      models:
+      - { model: "Claude Opus 5.5", input: 4, cachedWrite: 5, cachedRead: 0.2, output: 20 }
+      - { model: "Claude Sonnet 5", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 10 }
+      - { model: "GPT-5.6 Sol", input: 4, cachedWrite: 5, cachedRead: 0.4, output: 20 }
+      - { model: "GPT-5.6 Terra", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 12 }
+      - { model: "GPT-5.6 Luna", input: 0.2, cachedWrite: 0.25, cachedRead: 0.02, output: 1.2 }
+      - { model: "Gemini 3.1 Pro", input: 2, cachedWrite: 2, cachedRead: 0.2, output: 12 }
+      - { model: "Gemini 3.8 Flash", input: 0.75, cachedWrite: 0.75, cachedRead: 0.075, output: 3.5 }
+      - { model: "Grok 4.7", input: 2, cachedWrite: 2, cachedRead: 0.5, output: 6 }
+    quotas:
+      - { label: "Monthly", unit: "USD usage", amount: 19, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official: Kilo Code Pass at $19 per month converts 1:1 into $19 of paid credits, plus bonus credits up to +40% (the bonus expires monthly). Higher tiers: $49 (up to $68.60 in credits) and $199 (up to $278.60). Kilo routes to 500+ models through its gateway and does not enumerate them per tier; the rows use the standard API prices of the frontier models the gateway lists (Claude, GPT, Gemini, Grok). Source: kilo.ai/pricing/kilo-pass (read 2026-10-13)."
+    noteDe: "Offiziell: Der Kilo Code Pass fuer 19 $ pro Monat wird 1:1 in 19 $ Paid-Credits umgewandelt, dazu Bonus-Credits bis +40 % (der Bonus verfaellt monatlich). Hoehere Tarife: 49 $ (bis 68,60 $ Credits) und 199 $ (bis 278,60 $). Kilo routet ueber sein Gateway auf 500+ Modelle und listet sie nicht je Tarif; die Zeilen nutzen die Standard-API-Preise der Frontier-Modelle, die das Gateway fuehrt (Claude, GPT, Gemini, Grok). Quelle: kilo.ai/pricing/kilo-pass (gelesen 2026-10-13)."
+
+  # v0 (Vercel): 30 $ inkludierte Monats-Credits (v0.app/pricing). v0 faehrt eigene
+  # Modellstufen (v0 Mini/Pro/Max/Max Fast), deren Tokenpreise hier nicht vorliegen;
+  # die Zeilen sind die Standardpreise der dahinterliegenden Frontier-Modelle.
+  - id: v0-plus
+    provider: vercel
+    name: v0 Plus
+    price: { monthlyUsd: 30, paidPrice: 30, advertisedPrice: 30, currency: USD, billingNote: "$30 per user with $30 of included monthly credits plus $2 free daily credits on login" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "usage in USD"
+    tagDe: "Nutzung in USD"
+    dollarPlan:
+      usd: 30
+      source: "v0.app/pricing (read 2026-10-13)"
+      note: "$30 of included monthly credits per user"
+      models:
+      - { model: "Claude Opus 5.5", input: 4, cachedWrite: 5, cachedRead: 0.2, output: 20 }
+      - { model: "Claude Sonnet 5", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 10 }
+      - { model: "GPT-5.6 Sol", input: 4, cachedWrite: 5, cachedRead: 0.4, output: 20 }
+      - { model: "GPT-5.6 Terra", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 12 }
+      - { model: "GPT-5.6 Luna", input: 0.2, cachedWrite: 0.25, cachedRead: 0.02, output: 1.2 }
+      - { model: "Gemini 3.1 Pro", input: 2, cachedWrite: 2, cachedRead: 0.2, output: 12 }
+      - { model: "Gemini 3.8 Flash", input: 0.75, cachedWrite: 0.75, cachedRead: 0.075, output: 3.5 }
+      - { model: "Grok 4.7", input: 2, cachedWrite: 2, cachedRead: 0.5, output: 6 }
+    quotas:
+      - { label: "Monthly", unit: "USD usage", amount: 30, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official: v0 Plus includes $30 of included monthly credits per user plus $2 free daily credits on login. v0 runs its own model tiers (v0 Mini, v0 Pro, v0 Max, v0 Max Fast) whose token prices are published on the v0 page but are not in the lists used here, so the rate is modelled against the standard API prices of the frontier models behind them (Claude, GPT, Gemini, Grok). Additional credits can be bought and are shared team-wide. Source: v0.app/pricing (read 2026-10-13)."
+    noteDe: "Offiziell: v0 Plus enthaelt 30 $ inkludierte Monats-Credits pro Nutzer plus 2 $ kostenlose Tages-Credits beim Login. v0 faehrt eigene Modellstufen (v0 Mini, v0 Pro, v0 Max, v0 Max Fast), deren Tokenpreise zwar auf der v0-Seite stehen, aber nicht in den hier genutzten Listen; die Rate ist deshalb gegen die Standard-API-Preise der dahinterliegenden Frontier-Modelle gerechnet (Claude, GPT, Gemini, Grok). Zusaetzliche Credits sind kaufbar und werden teamweit geteilt. Quelle: v0.app/pricing (gelesen 2026-10-13)."
+
+  # Bolt.new (StackBlitz): offizielles Token-Kontingent (bolt.new/pricing), analog
+  # zum Cerebras-Eintrag als 1 Credit pro Token modelliert. Kein Tageslimit auf Pro.
+  - id: bolt-pro
+    provider: stackblitz
+    name: Bolt.new Pro
+    price: { monthlyUsd: 25, paidPrice: 25, advertisedPrice: 25, currency: USD, billingNote: "10,000,000 tokens per month; unused tokens roll over; no daily limit on Pro (Free: 300k tokens/day, 1M/month)" }
+    meter: tokens
+    disclosure: disclosed
+    tag: "official tokens"
+    tagDe: "offizielle Tokens"
+    providerCost:
+      formula: "Credits = tokens (1 credit per token), monthly allowance"
+      divisor: 1
+      perModel:
+        - { model: "Bolt tokens", input: 1, cachedRead: 1, output: 1 }
+      note: "The allowance is published in tokens per month; modelled as 1 credit per token"
+    quotas:
+      - { label: "Monthly", unit: tokens, amount: 10000000, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official: Bolt.new Pro starts at 10,000,000 tokens per month ('Start at 10M tokens per month'), unused tokens roll over, and Pro has no daily limit (Free: 300k tokens/day and 1M tokens/month). The pricing page does not list the individual models, so the rate is expressed as tokens per dollar from the published token allowance, modelled as 1 credit per token like the Cerebras plan. Source: bolt.new/pricing (read 2026-10-13)."
+    noteDe: "Offiziell: Bolt.new Pro startet bei 10.000.000 Tokens pro Monat ('Start at 10M tokens per month'), ungenutzte Tokens rollen ueber, und Pro hat kein Tageslimit (Free: 300k Tokens/Tag und 1 Mio/Monat). Die Preisseite listet keine einzelnen Modelle, deshalb wird die Rate als Tokens pro Dollar aus dem veroeffentlichten Token-Kontingent ausgedrueckt, modelliert als 1 Credit pro Token wie beim Cerebras-Tarif. Quelle: bolt.new/pricing (gelesen 2026-10-13)."
+
+  # ---------------------------------------------------------------------------
+  # Vierte Welle 2026-10-13: grosse Anbieter mit offiziell veroeffentlichten
+  # Monatsmengen (Copilot Free, Bolt.new Free/Teams, v0 Business, Qoder,
+  # Lovable Pro, Replit Pro, Warp Business, JetBrains Business-Sitze, Baidu
+  # Comate) plus Referenzzeilen (disclosure: reference) fuer Anbieter mit
+  # offiziellem Preis, aber ohne in Dollar umrechenbare Menge. Alle Mengen
+  # stammen von der offiziellen Seite des Anbieters (Lesedatum je Eintrag);
+  # Modellzeilen nutzen die bereits im Katalog vorhandenen Listen, damit die
+  # Zeilen mit dem Rest vergleichbar bleiben. Anbieter ohne veroeffentlichte
+  # Zusage (Tabnine, Qodo, Ona, Blackbox, CodeGeeX, Refact.ai) bleiben bewusst
+  # draussen, siehe Begruendung in docs/limits-research.md.
+  # ---------------------------------------------------------------------------
+
+  # GitHub Copilot Free: offizielle Free-Tier-Menge 2.000 Completions/Monat.
+  # Das AI-Credit-Kontingent nennt GitHub ohne Zahl, die alten 50 Premium-/
+  # Chat-Requests stehen nur noch in Drittberichten und werden nicht verwendet.
+  - id: copilot-free
+    provider: github
+    name: GitHub Copilot Free
+    price: { monthlyUsd: 0, paidPrice: 0, advertisedPrice: 0, currency: USD }
+    meter: requests
+    disclosure: disclosed
+    tag: "official requests"
+    tagDe: "offizielle Requests"
+    requestPlan:
+      requests: 2000
+      label: "Completions"
+      note: "completions (official free-tier limit: 2,000 code completions per month)"
+    quotas:
+      - { label: "Monthly", unit: completions, amount: 2000, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official free tier: 2,000 code completions per month in IDEs plus next edit suggestions, limited agents with auto model selection only, and an allowance of GitHub AI Credits that GitHub publishes without a number. CLI and agent mode are included. Third-party write-ups still quote a retired figure of 50 chat or premium requests per month; the current GitHub table no longer states it, so it is not used here. Source: docs.github.com/copilot/about-github-copilot/plans-for-github-copilot and github.com/features/copilot/plans (read 2026-10-13)."
+    noteDe: "Offizieller Gratis-Tarif: 2.000 Code-Completions pro Monat in IDEs plus Next-Edit-Vorschlaege, eingeschraenkte Agenten mit ausschliesslicher Auto-Modellwahl und ein AI-Credit-Kontingent, das GitHub ohne Zahl nennt. CLI und Agent-Modus sind enthalten. Drittberichte zitieren weiter die alte Zahl von 50 Chat- bzw. Premium-Requests pro Monat; die aktuelle GitHub-Tabelle nennt sie nicht mehr, deshalb wird sie hier nicht verwendet. Quelle: docs.github.com/copilot/about-github-copilot/plans-for-github-copilot und github.com/features/copilot/plans (gelesen 2026-10-13)."
+
+  # Bolt.new Free: offizielles Token-Kontingent (300K/Tag, 1M/Monat), wie Bolt
+  # Pro als 1 Credit pro Token modelliert.
+  - id: bolt-free
+    provider: stackblitz
+    name: Bolt.new Free
+    price: { monthlyUsd: 0, paidPrice: 0, advertisedPrice: 0, currency: USD, billingNote: "300K tokens daily limit and 1M tokens per month; no rollover on Free" }
+    meter: tokens
+    disclosure: disclosed
+    tag: "official tokens"
+    tagDe: "offizielle Tokens"
+    providerCost:
+      formula: "Credits = tokens (1 credit per token), monthly allowance"
+      divisor: 1
+      perModel:
+        - { model: "Bolt tokens", input: 1, cachedRead: 1, output: 1 }
+      note: "The free-tier allowance is published in tokens per month; modelled as 1 credit per token"
+    quotas:
+      - { label: "Monthly", unit: tokens, amount: 1000000, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official: the Bolt.new Free plan has a 300K tokens daily limit and 1M tokens per month. The monthly amount is the basis here, the daily limit stands in the billing note. The pricing page does not list individual models, so the rate is expressed as tokens per dollar from the published token allowance, modelled as 1 credit per token like the Cerebras plan. At $0 the row carries no rate per dollar. Source: bolt.new/pricing (read 2026-10-13)."
+    noteDe: "Offiziell: Der Bolt.new-Free-Tarif hat ein Tageslimit von 300K Tokens und 1 Mio Tokens pro Monat. Als Basis dient hier die Monatsmenge, das Tageslimit steht in der Abrechnungsnotiz. Die Preisseite listet keine einzelnen Modelle, deshalb wird die Rate als Tokens pro Dollar aus dem veroeffentlichten Token-Kontingent ausgedrueckt, modelliert als 1 Credit pro Token wie beim Cerebras-Tarif. Bei 0 $ traegt die Zeile keine Rate pro Dollar. Quelle: bolt.new/pricing (gelesen 2026-10-13)."
+
+  # Bolt.new Teams: Preis pro Mitglied, erbt die Pro-Token-Menge (10M/Monat).
+  - id: bolt-teams
+    provider: stackblitz
+    name: Bolt.new Teams
+    price: { monthlyUsd: 30, paidPrice: 30, advertisedPrice: 30, currency: USD, billingNote: "$30 per member per month; every seat includes everything in Pro, so the Pro token allowance of 10,000,000 tokens per month applies; unused tokens roll over" }
+    meter: tokens
+    disclosure: disclosed
+    tag: "official tokens"
+    tagDe: "offizielle Tokens"
+    providerCost:
+      formula: "Credits = tokens (1 credit per token), monthly allowance"
+      divisor: 1
+      perModel:
+        - { model: "Bolt tokens", input: 1, cachedRead: 1, output: 1 }
+      note: "The Teams seat inherits the Pro token allowance; modelled as 1 credit per token"
+    quotas:
+      - { label: "Monthly", unit: tokens, amount: 10000000, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official: Bolt.new Teams costs $30 per member per month and includes everything in Pro, so each seat carries the Pro token allowance of 10,000,000 tokens per month (unused tokens roll over). The pricing page does not list individual models, so the rate is tokens per dollar from the published token allowance, modelled as 1 credit per token. Source: bolt.new/pricing (read 2026-10-13)."
+    noteDe: "Offiziell: Bolt.new Teams kostet 30 $ pro Mitglied und Monat und enthaelt alles aus Pro, jede Sitz traegt damit das Pro-Token-Kontingent von 10.000.000 Tokens pro Monat (ungenutzte Tokens rollen ueber). Die Preisseite listet keine einzelnen Modelle, deshalb ist die Rate Tokens pro Dollar aus dem veroeffentlichten Token-Kontingent, modelliert als 1 Credit pro Token. Quelle: bolt.new/pricing (gelesen 2026-10-13)."
+
+  # v0 (Vercel) Business: 100 $ pro Nutzer, darin dieselben 30 $ Monats-Credits
+  # wie Plus; der Rest ist Governance (Training-Opt-out, zentrale Abrechnung).
+  - id: v0-business
+    provider: vercel
+    name: v0 Business
+    price: { monthlyUsd: 100, paidPrice: 100, advertisedPrice: 100, currency: USD, billingNote: "$100 per user per month with $30 of included monthly credits per user plus $2 free daily credits on login; training opt-out by default" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "usage in USD"
+    tagDe: "Nutzung in USD"
+    dollarPlan:
+      usd: 30
+      source: "v0.app/pricing (read 2026-10-13)"
+      note: "$30 of included monthly credits per user, the same credit amount as v0 Plus"
+      models:
+      - { model: "Claude Opus 5.5", input: 4, cachedWrite: 5, cachedRead: 0.2, output: 20 }
+      - { model: "Claude Sonnet 5", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 10 }
+      - { model: "GPT-5.6 Sol", input: 4, cachedWrite: 5, cachedRead: 0.4, output: 20 }
+      - { model: "GPT-5.6 Terra", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 12 }
+      - { model: "GPT-5.6 Luna", input: 0.2, cachedWrite: 0.25, cachedRead: 0.02, output: 1.2 }
+      - { model: "Gemini 3.1 Pro", input: 2, cachedWrite: 2, cachedRead: 0.2, output: 12 }
+      - { model: "Gemini 3.8 Flash", input: 0.75, cachedWrite: 0.75, cachedRead: 0.075, output: 3.5 }
+      - { model: "Grok 4.7", input: 2, cachedWrite: 2, cachedRead: 0.5, output: 6 }
+    quotas:
+      - { label: "Monthly", unit: "USD usage", amount: 30, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official: v0 Business costs $100 per user per month and includes $30 of included monthly credits per user plus $2 of free daily credits on login, the same credit amount as Plus; the higher price adds governance (training opt-out by default, centralized billing). v0 runs its own model tiers (v0 Mini, v0 Pro, v0 Max, v0 Max Fast), whose token prices are published on the page but are not in the lists used here, so the rate is modelled against the standard API prices of the frontier models behind them (Claude, GPT, Gemini, Grok). Source: v0.app/pricing (read 2026-10-13)."
+    noteDe: "Offiziell: v0 Business kostet 100 $ pro Nutzer und Monat und enthaelt 30 $ inkludierte Monats-Credits pro Nutzer plus 2 $ kostenlose Tages-Credits beim Login, derselbe Credit-Betrag wie Plus; der hoehere Preis bringt Governance (Training-Opt-out per Default, zentrale Abrechnung). v0 faehrt eigene Modellstufen (v0 Mini, v0 Pro, v0 Max, v0 Max Fast), deren Tokenpreise auf der Seite stehen, aber nicht in den hier genutzten Listen; die Rate ist deshalb gegen die Standard-API-Preise der dahinterliegenden Frontier-Modelle gerechnet (Claude, GPT, Gemini, Grok). Quelle: v0.app/pricing (gelesen 2026-10-13)."
+
+  # Qoder (Alibaba): Premium-Modell-Kontingent in Credits. Qoder schreibt, das
+  # Kontingent entspreche wertmaessig der Abo-Gebuehr plus Bonus, deshalb ist
+  # die Monatsgebuehr das Dollar-Volumen.
+  - id: qoder-pro
+    provider: qoder
+    name: Qoder Pro
+    price: { monthlyUsd: 20, paidPrice: 20, advertisedPrice: 20, currency: USD, billingNote: "2,000 premium-model Credits per month; after they run out Qoder falls back to basic models; credits reset at the end of the period, no rollover" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "usage in USD"
+    tagDe: "Nutzung in USD"
+    dollarPlan:
+      usd: 20
+      source: "docs.qoder.com/account/pricing (read 2026-10-13)"
+      note: "Qoder states the premium-model quota is equivalent in value to the subscription fee plus resource bonuses; the fee is used as the dollar volume"
+      models:
+      - { model: "Claude Opus 5.5", input: 4, cachedWrite: 5, cachedRead: 0.2, output: 20 }
+      - { model: "Claude Sonnet 5", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 10 }
+      - { model: "GPT-5.6 Sol", input: 4, cachedWrite: 5, cachedRead: 0.4, output: 20 }
+      - { model: "GPT-5.6 Terra", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 12 }
+      - { model: "GPT-5.6 Luna", input: 0.2, cachedWrite: 0.25, cachedRead: 0.02, output: 1.2 }
+      - { model: "Gemini 3.1 Pro", input: 2, cachedWrite: 2, cachedRead: 0.2, output: 12 }
+      - { model: "Gemini 3.8 Flash", input: 0.75, cachedWrite: 0.75, cachedRead: 0.075, output: 3.5 }
+      - { model: "Grok 4.7", input: 2, cachedWrite: 2, cachedRead: 0.5, output: 6 }
+    quotas:
+      - { label: "Monthly", unit: "USD usage", amount: 20, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official: Qoder Pro is $20 per month and includes 2,000 premium-model Credits per month; once they run out you switch to basic models. Qoder states the quota covers premium model resources equivalent in value to the subscription fee plus extra resource bonuses; the plan price is used as the dollar volume here. Credit Packs cost $20 per 1,500 Credits. Qoder does not enumerate the underlying models, so the rate is modelled against the standard API prices of the frontier models it routes to. Source: docs.qoder.com/account/pricing (read 2026-10-13)."
+    noteDe: "Offiziell: Qoder Pro kostet 20 $ pro Monat und enthaelt 2.000 Premium-Modell-Credits pro Monat; danach wechselt Qoder auf Basismodelle. Qoder schreibt, das Kontingent decke Premium-Modell-Ressourcen im Wert der Abo-Gebuehr plus zusaetzlicher Ressourcen-Boni; als Dollar-Volumen dient hier der Planpreis. Credit-Packs kosten 20 $ fuer 1.500 Credits. Qoder listet die dahinterliegenden Modelle nicht, die Rate ist deshalb gegen die Standard-API-Preise der Frontier-Modelle gerechnet, an die Qoder routet. Quelle: docs.qoder.com/account/pricing (gelesen 2026-10-13)."
+
+  - id: qoder-pro-plus
+    provider: qoder
+    name: Qoder Pro+
+    price: { monthlyUsd: 60, paidPrice: 60, advertisedPrice: 60, currency: USD, billingNote: "6,000 premium-model Credits per month; credits reset at the end of the period, no rollover" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "usage in USD"
+    tagDe: "Nutzung in USD"
+    dollarPlan:
+      usd: 60
+      source: "docs.qoder.com/account/pricing (read 2026-10-13)"
+      note: "premium-model quota equivalent in value to the subscription fee plus resource bonuses; the fee is used as the dollar volume"
+      models:
+      - { model: "Claude Opus 5.5", input: 4, cachedWrite: 5, cachedRead: 0.2, output: 20 }
+      - { model: "Claude Sonnet 5", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 10 }
+      - { model: "GPT-5.6 Sol", input: 4, cachedWrite: 5, cachedRead: 0.4, output: 20 }
+      - { model: "GPT-5.6 Terra", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 12 }
+      - { model: "GPT-5.6 Luna", input: 0.2, cachedWrite: 0.25, cachedRead: 0.02, output: 1.2 }
+      - { model: "Gemini 3.1 Pro", input: 2, cachedWrite: 2, cachedRead: 0.2, output: 12 }
+      - { model: "Gemini 3.8 Flash", input: 0.75, cachedWrite: 0.75, cachedRead: 0.075, output: 3.5 }
+      - { model: "Grok 4.7", input: 2, cachedWrite: 2, cachedRead: 0.5, output: 6 }
+    quotas:
+      - { label: "Monthly", unit: "USD usage", amount: 60, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official: Qoder Pro+ is $60 per month and includes 6,000 premium-model Credits per month. As with Pro, Qoder states the quota covers premium model resources equivalent in value to the subscription fee plus bonuses, so the fee is the dollar volume. Source: docs.qoder.com/account/pricing (read 2026-10-13)."
+    noteDe: "Offiziell: Qoder Pro+ kostet 60 $ pro Monat und enthaelt 6.000 Premium-Modell-Credits pro Monat. Wie bei Pro schreibt Qoder, das Kontingent decke Premium-Modell-Ressourcen im Wert der Abo-Gebuehr plus Boni, deshalb ist die Gebuehr das Dollar-Volumen. Quelle: docs.qoder.com/account/pricing (gelesen 2026-10-13)."
+
+  - id: qoder-ultra
+    provider: qoder
+    name: Qoder Ultra
+    price: { monthlyUsd: 200, paidPrice: 200, advertisedPrice: 200, currency: USD, billingNote: "20,000 premium-model Credits per month; credits reset at the end of the period, no rollover" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "usage in USD"
+    tagDe: "Nutzung in USD"
+    dollarPlan:
+      usd: 200
+      source: "docs.qoder.com/account/pricing (read 2026-10-13)"
+      note: "premium-model quota equivalent in value to the subscription fee plus resource bonuses; the fee is used as the dollar volume"
+      models:
+      - { model: "Claude Opus 5.5", input: 4, cachedWrite: 5, cachedRead: 0.2, output: 20 }
+      - { model: "Claude Sonnet 5", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 10 }
+      - { model: "GPT-5.6 Sol", input: 4, cachedWrite: 5, cachedRead: 0.4, output: 20 }
+      - { model: "GPT-5.6 Terra", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 12 }
+      - { model: "GPT-5.6 Luna", input: 0.2, cachedWrite: 0.25, cachedRead: 0.02, output: 1.2 }
+      - { model: "Gemini 3.1 Pro", input: 2, cachedWrite: 2, cachedRead: 0.2, output: 12 }
+      - { model: "Gemini 3.8 Flash", input: 0.75, cachedWrite: 0.75, cachedRead: 0.075, output: 3.5 }
+      - { model: "Grok 4.7", input: 2, cachedWrite: 2, cachedRead: 0.5, output: 6 }
+    quotas:
+      - { label: "Monthly", unit: "USD usage", amount: 200, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official: Qoder Ultra is $200 per month and includes 20,000 premium-model Credits per month. As with Pro, Qoder states the quota covers premium model resources equivalent in value to the subscription fee plus bonuses, so the fee is the dollar volume. Recommended for long-running tasks such as Quest. Source: docs.qoder.com/account/pricing (read 2026-10-13)."
+    noteDe: "Offiziell: Qoder Ultra kostet 200 $ pro Monat und enthaelt 20.000 Premium-Modell-Credits pro Monat. Wie bei Pro schreibt Qoder, das Kontingent decke Premium-Modell-Ressourcen im Wert der Abo-Gebuehr plus Boni, deshalb ist die Gebuehr das Dollar-Volumen. Empfohlen fuer lang laufende Aufgaben wie Quest. Quelle: docs.qoder.com/account/pricing (gelesen 2026-10-13)."
+
+  - id: qoder-teams
+    provider: qoder
+    name: Qoder Teams (per seat)
+    price: { monthlyUsd: 40, paidPrice: 40, advertisedPrice: 40, currency: USD, billingNote: "$40 per seat per month; each seat includes 3,000 Credits per month for premium models, monthly reset and non-transferable" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "usage in USD"
+    tagDe: "Nutzung in USD"
+    dollarPlan:
+      usd: 40
+      source: "docs.qoder.com/account/enterprise/pricing (read 2026-10-13)"
+      note: "each seat includes a fixed monthly quota of 3,000 premium-model Credits"
+      models:
+      - { model: "Claude Opus 5.5", input: 4, cachedWrite: 5, cachedRead: 0.2, output: 20 }
+      - { model: "Claude Sonnet 5", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 10 }
+      - { model: "GPT-5.6 Sol", input: 4, cachedWrite: 5, cachedRead: 0.4, output: 20 }
+      - { model: "GPT-5.6 Terra", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 12 }
+      - { model: "GPT-5.6 Luna", input: 0.2, cachedWrite: 0.25, cachedRead: 0.02, output: 1.2 }
+      - { model: "Gemini 3.1 Pro", input: 2, cachedWrite: 2, cachedRead: 0.2, output: 12 }
+      - { model: "Gemini 3.8 Flash", input: 0.75, cachedWrite: 0.75, cachedRead: 0.075, output: 3.5 }
+      - { model: "Grok 4.7", input: 2, cachedWrite: 2, cachedRead: 0.5, output: 6 }
+    quotas:
+      - { label: "Monthly", unit: "USD usage", amount: 40, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official: the Qoder Teams plan is $40 per seat per month and each seat includes a fixed monthly quota of 3,000 Credits for premium models; seat credits reset monthly and are non-transferable. The Qoder Enterprise seat ($20 per month) includes no AI compute quota, so it is not ranked. Source: docs.qoder.com/account/enterprise/pricing (read 2026-10-13)."
+    noteDe: "Offiziell: Der Qoder-Teams-Tarif kostet 40 $ pro Sitz und Monat, jeder Sitz enthaelt ein festes Monatskontingent von 3.000 Credits fuer Premium-Modelle; Sitz-Credits verfallen monatlich und sind nicht uebertragbar. Der Qoder-Enterprise-Sitz (20 $ pro Monat) enthaelt kein AI-Compute-Kontingent und steht deshalb nicht in der Rangliste. Quelle: docs.qoder.com/account/enterprise/pricing (gelesen 2026-10-13)."
+
+  # Lovable Pro: 100 Credits zum Einstieg, Credit-Kurs 0,25 $ (100 Credits = 25 $),
+  # deckt Build, Chat, Cloud und AI-Features, daher Obergrenze.
+  - id: lovable-pro
+    provider: lovable
+    name: Lovable Pro
+    price: { monthlyUsd: 25, paidPrice: 25, advertisedPrice: 25, currency: USD, billingNote: "from 100 credits per month ($25 monthly, $250 yearly); credit tiers scale to 10,000 credits; top-up credit rate $0.25/credit; plus 5 daily build credits and monthly Cloud/AI grants" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "usage in USD"
+    tagDe: "Nutzung in USD"
+    dollarPlan:
+      usd: 25
+      source: "docs.lovable.dev/introduction/subscription-plans and lovable.dev/pricing (read 2026-10-13)"
+      note: "100 monthly plan credits, valued at $25 at the published top-up rate of $0.25 per credit"
+      models:
+      - { model: "Claude Opus 5.5", input: 4, cachedWrite: 5, cachedRead: 0.2, output: 20 }
+      - { model: "Claude Sonnet 5", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 10 }
+      - { model: "GPT-5.6 Sol", input: 4, cachedWrite: 5, cachedRead: 0.4, output: 20 }
+      - { model: "GPT-5.6 Terra", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 12 }
+      - { model: "GPT-5.6 Luna", input: 0.2, cachedWrite: 0.25, cachedRead: 0.02, output: 1.2 }
+      - { model: "Gemini 3.1 Pro", input: 2, cachedWrite: 2, cachedRead: 0.2, output: 12 }
+      - { model: "Gemini 3.8 Flash", input: 0.75, cachedWrite: 0.75, cachedRead: 0.075, output: 3.5 }
+      - { model: "Grok 4.7", input: 2, cachedWrite: 2, cachedRead: 0.5, output: 6 }
+    quotas:
+      - { label: "Monthly", unit: "USD usage", amount: 25, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official: Lovable Pro starts at 100 credits per month for $25 ($250 yearly) and scales to 10,000 credits. Lovable values a credit at $0.25, so the entry tier is $25 of credits. Caveat: the same credits cover build, chat, Cloud hosting and AI-gateway usage, not only model tokens, so the token-based rate is an upper bound. Lovable does not enumerate the underlying models, so the rank is modelled against the standard API prices of the frontier models it routes to. Source: docs.lovable.dev/introduction/subscription-plans and lovable.dev/pricing (read 2026-10-13)."
+    noteDe: "Offiziell: Lovable Pro startet bei 100 Credits pro Monat fuer 25 $ (250 $ jaehrlich) und skaliert bis 10.000 Credits. Lovable bewertet einen Credit mit 0,25 $, der Einstiegstarif entspricht damit 25 $ Credits. Vorbehalt: Dieselben Credits decken Build, Chat, Cloud-Hosting und AI-Gateway-Nutzung, nicht nur Modell-Tokens, die tokenbasierte Rate ist daher eine Obergrenze. Lovable listet die dahinterliegenden Modelle nicht, die Rangfolge ist deshalb gegen die Standard-API-Preise der Frontier-Modelle gerechnet, an die Lovable routet. Quelle: docs.lovable.dev/introduction/subscription-plans und lovable.dev/pricing (gelesen 2026-10-13)."
+
+  # Replit Pro: 100 $ Monatsguthaben fuer die staerksten Modelle.
+  - id: replit-pro
+    provider: replit
+    name: Replit Pro
+    price: { monthlyUsd: 100, paidPrice: 100, advertisedPrice: 100, currency: USD, billingNote: "$100 towards the most powerful models per month; $90/mo billed yearly; credits reset, no rollover" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "usage in USD"
+    tagDe: "Nutzung in USD"
+    dollarPlan:
+      usd: 100
+      source: "replit.com/pricing (read 2026-10-13)"
+      note: "$100 of model credits per month"
+      models:
+      - { model: "Claude Opus 5.5", input: 4, cachedWrite: 5, cachedRead: 0.2, output: 20 }
+      - { model: "Claude Sonnet 5", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 10 }
+      - { model: "GPT-5.6 Sol", input: 4, cachedWrite: 5, cachedRead: 0.4, output: 20 }
+      - { model: "GPT-5.6 Terra", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 12 }
+      - { model: "GPT-5.6 Luna", input: 0.2, cachedWrite: 0.25, cachedRead: 0.02, output: 1.2 }
+      - { model: "Gemini 3.1 Pro", input: 2, cachedWrite: 2, cachedRead: 0.2, output: 12 }
+      - { model: "Gemini 3.8 Flash", input: 0.75, cachedWrite: 0.75, cachedRead: 0.075, output: 3.5 }
+      - { model: "Grok 4.7", input: 2, cachedWrite: 2, cachedRead: 0.5, output: 6 }
+    quotas:
+      - { label: "Monthly", unit: "USD usage", amount: 100, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official: Replit Pro includes $100 towards the most powerful models per month ($90/mo billed yearly). Caveat: the same credits also cover Agent, publishing, storage, database and AI integrations, so the token-based rate is an upper bound. Models are reached through intelligent model routing and are not enumerated. Source: replit.com/pricing (read 2026-10-13)."
+    noteDe: "Offiziell: Replit Pro enthaelt 100 $ fuer die staerksten Modelle pro Monat (bei Jahreszahlung 90 $/Monat). Vorbehalt: Dieselben Credits decken auch Agent, Publishing, Storage, Datenbank und AI-Integrationen, die tokenbasierte Rate ist daher eine Obergrenze. Die Modelle werden ueber intelligentes Model-Routing erreicht und nicht einzeln aufgefuehrt. Quelle: replit.com/pricing (gelesen 2026-10-13)."
+
+  # Warp Business: Preis pro Sitz, darin 20 $ Agent-Nutzung pro Sitz (wie Build).
+  - id: warp-business
+    provider: warp
+    name: Warp Business (per seat)
+    price: { monthlyUsd: 50, paidPrice: 50, advertisedPrice: 50, currency: USD, billingNote: "$50 per user per month (annual equivalent $45/user/mo); each seat includes $20 of agent usage per month at API rates; self-serve up to 25 seats" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "usage in USD"
+    tagDe: "Nutzung in USD"
+    dollarPlan:
+      usd: 20
+      source: "warp.dev/pricing (read 2026-10-13)"
+      note: "$20 of agent usage included per seat each month at API rates"
+      models:
+      - { model: "Claude Opus 5", input: 5, cachedWrite: 6.25, cachedRead: 0.5, output: 25 }
+      - { model: "GPT-5.6 Sol", input: 4, cachedWrite: 5, cachedRead: 0.4, output: 20 }
+      - { model: "Gemini 3.1 Pro", input: 2, cachedWrite: 2, cachedRead: 0.2, output: 12 }
+      - { model: "GLM-5.2", input: 1.4, cachedWrite: 1.4, cachedRead: 0.26, output: 4.4 }
+      - { model: "Kimi K3", input: 3, cachedWrite: 3, cachedRead: 0.3, output: 15 }
+      - { model: "Claude Fable 5.1", input: 10, cachedWrite: 12.5, cachedRead: 0.25, output: 50 }
+    quotas:
+      - { label: "Monthly", unit: "USD usage", amount: 20, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official: Warp Business is $50 per user per month ($45/user/mo billed yearly) and each seat includes $20 of agent usage per month at API rates, the same agent allowance as Build. Adds SAML SSO, admin data controls and team usage metrics. Source: warp.dev/pricing (read 2026-10-13)."
+    noteDe: "Offiziell: Warp Business kostet 50 $ pro Nutzer und Monat (bei Jahreszahlung 45 $/Nutzer/Monat), jeder Sitz enthaelt 20 $ Agent-Nutzung pro Monat zu API-Preisen, dasselbe Agent-Kontingent wie Build. Dazu SAML-SSO, Admin-Datenkontrolle und Team-Nutzungsmetriken. Quelle: warp.dev/pricing (gelesen 2026-10-13)."
+
+  # JetBrains AI, Organisations-Sitze: 1 AI Credit = 1 USD Modellnutzung.
+  - id: jetbrains-ai-business-pro
+    provider: jetbrains
+    name: JetBrains AI Pro (business seat)
+    price: { monthlyUsd: 20, paidPrice: 20, advertisedPrice: 20, currency: USD, billingNote: "20 AI Credits per user per 30 days; organization license, 1 AI Credit = $1 of cloud-model usage" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "credits = USD"
+    tagDe: "Credits = USD"
+    dollarPlan:
+      usd: 20
+      source: "jetbrains.com/help/ai-assistant/licensing-and-subscriptions.html (organization table, 1 AI Credit = 1 USD)"
+      note: "20 AI Credits per user per 30 days; the credit count matches the seat price, each credit is $1 of usage"
+      models:
+      - { model: "Claude Opus 5.5", input: 4, cachedWrite: 5, cachedRead: 0.2, output: 20 }
+      - { model: "Claude Sonnet 5", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 10 }
+      - { model: "Claude Haiku 4.5", input: 1, cachedWrite: 1.25, cachedRead: 0.1, output: 5 }
+    quotas:
+      - { label: "30 days", unit: "AI credits (USD)", amount: 20, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official organization table: AI Pro Business is $20 per user per month and includes 20 AI Credits per 30 days, with 1 AI Credit worth $1 of cloud-model usage (corroborated by the JetBrains Console conversion doc: AI Pro converts to 20 credits per month). Modelled against Anthropic list prices because JetBrains routes to several providers and publishes no per-model token price. Source: jetbrains.com/help/ai-assistant/licensing-and-subscriptions.html and jetbrains.com/help/jetbrains-console/converting-from-licenses-to-ai-seats.html (read 2026-10-13)."
+    noteDe: "Offiziell aus der Organisations-Tabelle: AI Pro Business kostet 20 $ pro Nutzer und Monat und enthaelt 20 AI Credits pro 30 Tage, ein AI Credit ist 1 $ Modellnutzung (bestaetigt durch das JetBrains-Console-Umrechnungsdokument: AI Pro entspricht 20 Credits pro Monat). Gerechnet gegen Anthropics Listenpreise, weil JetBrains an mehrere Anbieter routet und keine eigenen Token-Preise veroeffentlicht. Quelle: jetbrains.com/help/ai-assistant/licensing-and-subscriptions.html und jetbrains.com/help/jetbrains-console/converting-from-licenses-to-ai-seats.html (gelesen 2026-10-13)."
+
+  - id: jetbrains-ai-business-ultimate
+    provider: jetbrains
+    name: JetBrains AI Ultimate (business seat)
+    price: { monthlyUsd: 60, paidPrice: 60, advertisedPrice: 60, currency: USD, billingNote: "70 AI Credits per user per 30 days; organization license, 1 AI Credit = $1 of cloud-model usage" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "credits = USD"
+    tagDe: "Credits = USD"
+    dollarPlan:
+      usd: 70
+      source: "jetbrains.com/help/ai-assistant/licensing-and-subscriptions.html (organization table, 1 AI Credit = 1 USD)"
+      note: "70 AI Credits per user per 30 days for the business seat (price plus a bonus)"
+      models:
+      - { model: "Claude Opus 5.5", input: 4, cachedWrite: 5, cachedRead: 0.2, output: 20 }
+      - { model: "Claude Sonnet 5", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 10 }
+      - { model: "Claude Haiku 4.5", input: 1, cachedWrite: 1.25, cachedRead: 0.1, output: 5 }
+    quotas:
+      - { label: "30 days", unit: "AI credits (USD)", amount: 70, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official organization table: AI Ultimate is $60 per user per month and includes 70 AI Credits per 30 days (corroborated by the Console conversion doc: AI Ultimate converts to 70 credits per month). Each credit is $1 of cloud-model usage. Note the business seat differs from the individual tier ($30 for 35 credits). Modelled against Anthropic list prices. Source: jetbrains.com/help/ai-assistant/licensing-and-subscriptions.html and jetbrains.com/help/jetbrains-console/converting-from-licenses-to-ai-seats.html (read 2026-10-13)."
+    noteDe: "Offiziell aus der Organisations-Tabelle: AI Ultimate kostet 60 $ pro Nutzer und Monat und enthaelt 70 AI Credits pro 30 Tage (bestaetigt durch das Console-Umrechnungsdokument: AI Ultimate entspricht 70 Credits pro Monat). Ein Credit ist 1 $ Modellnutzung. Der Business-Sitz unterscheidet sich vom Einzeltarif (30 $ fuer 35 Credits). Gerechnet gegen Anthropics Listenpreise. Quelle: jetbrains.com/help/ai-assistant/licensing-and-subscriptions.html und jetbrains.com/help/jetbrains-console/converting-from-licenses-to-ai-seats.html (gelesen 2026-10-13)."
+
+  # Baidu Comate (文心快码): offizielle CNY-Preise mit Monats-Credits. Die
+  # Credits sind ein eigenes System ohne veroeffentlichten Token-Preis in den
+  # hier genutzten Listen, deshalb keine Modellzeilen und keine Rate pro Dollar.
+  - id: baidu-comate-pro
+    provider: baidu
+    name: Baidu Comate Individual Pro
+    price: { monthlyUsd: 10.44, paidPrice: 10.44, advertisedPrice: 10.44, currency: CNY, monthlyCny: 70, billingNote: "¥70/月 (季 ¥210, 年 ¥840); Credits nach Abrechnungszyklus erneuert" }
+    meter: credits
+    disclosure: disclosed
+    tag: "credits, no token price"
+    tagDe: "Credits, kein Token-Preis"
+    quotas:
+      - { label: "Monthly", unit: credits, amount: 25000, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official: the Baidu Comate Individual Pro plan is CNY 70 per month (CNY 210 quarterly, CNY 840 yearly) and includes 25,000 credits per month for model calls; once the credits are used up the free Auto-Free mode continues at 150k tokens per hour. Credit packs are published at CNY 50 per 25,000 credits. The official price is in CNY; the USD figure uses the FX rate in the dataset (6.70582, read 2026-10-12). Comate publishes no per-model token price in the lists used here, so the plan has a credit quota but no rate per dollar. Source: cloud.baidu.com/doc/COMATE/s/rlnvnio4a (read 2026-10-13)."
+    noteDe: "Offiziell: Der Baidu-Comate-Tarif Individual Pro kostet CNY 70 pro Monat (CNY 210 quartalsweise, CNY 840 jaehrlich) und enthaelt 25.000 Credits pro Monat fuer Modellaufrufe; danach laeuft der kostenlose Auto-Free-Modus mit 150k Tokens pro Stunde weiter. Credit-Pakete sind mit CNY 50 fuer 25.000 Credits veroeffentlicht. Der offizielle Preis ist in CNY; der USD-Wert nutzt den Kurs des Datensatzes (6,70582, gelesen 2026-10-12). Comate veroeffentlicht in den hier genutzten Listen keinen Token-Preis je Modell, der Tarif hat daher ein Credit-Kontingent, aber keine Rate pro Dollar. Quelle: cloud.baidu.com/doc/COMATE/s/rlnvnio4a (gelesen 2026-10-13)."
+
+  - id: baidu-comate-flagship
+    provider: baidu
+    name: Baidu Comate Individual Flagship
+    price: { monthlyUsd: 41.76, paidPrice: 41.76, advertisedPrice: 41.76, currency: CNY, monthlyCny: 280, billingNote: "¥280/月 (季 ¥840, 年 ¥3360); Credits nach Abrechnungszyklus erneuert" }
+    meter: credits
+    disclosure: disclosed
+    tag: "credits, no token price"
+    tagDe: "Credits, kein Token-Preis"
+    quotas:
+      - { label: "Monthly", unit: credits, amount: 100000, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official: the Baidu Comate Individual Flagship plan is CNY 280 per month (CNY 840 quarterly, CNY 3360 yearly) and includes 100,000 credits per month; the free Auto-Free fallback runs at 500k tokens per hour. Credit packs are published at CNY 190 per 100,000 credits. The official price is in CNY; the USD figure uses the FX rate in the dataset (6.70582, read 2026-10-12). Comate publishes no per-model token price in the lists used here, so the plan has a credit quota but no rate per dollar. Source: cloud.baidu.com/doc/COMATE/s/rlnvnio4a (read 2026-10-13)."
+    noteDe: "Offiziell: Der Baidu-Comate-Tarif Individual Flagship kostet CNY 280 pro Monat (CNY 840 quartalsweise, CNY 3360 jaehrlich) und enthaelt 100.000 Credits pro Monat; der kostenlose Auto-Free-Fallback laeuft mit 500k Tokens pro Stunde. Credit-Pakete sind mit CNY 190 fuer 100.000 Credits veroeffentlicht. Der offizielle Preis ist in CNY; der USD-Wert nutzt den Kurs des Datensatzes (6,70582, gelesen 2026-10-12). Comate veroeffentlicht in den hier genutzten Listen keinen Token-Preis je Modell, der Tarif hat daher ein Credit-Kontingent, aber keine Rate pro Dollar. Quelle: cloud.baidu.com/doc/COMATE/s/rlnvnio4a (gelesen 2026-10-13)."
+
+  # ---------------------------------------------------------------------------
+  # Referenzzeilen: offizieller Preis, aber keine in Dollar umrechenbare Menge.
+  # Begruendung steht jeweils in der Notiz. Sie zaehlen als Plaene, aber ohne Rate
+  # pro Dollar (kein Modellzeilen-Platz in der Rangliste).
+  # ---------------------------------------------------------------------------
+
+  # Qoder Free: nur Basismodelle mit begrenzten Nutzernachrichten, keine Zahl.
+  - id: qoder-free
+    provider: qoder
+    name: Qoder Free
+    price: { monthlyUsd: 0, paidPrice: 0, advertisedPrice: 0, currency: USD, billingNote: "free; 2-week Pro trial with 300 credits on first sign-in" }
+    meter: requests
+    disclosure: reference
+    lastVerified: 2026-10-13
+    note: "Qoder Free is free and includes limited completions and next edits plus BYOK, but only basic models with limited user messages; no credit, token or request amount is published for the free tier. The 2-week Pro trial grants 300 credits. No rate per dollar is derivable from an official number. Source: docs.qoder.com/account/pricing (read 2026-10-13)."
+    noteDe: "Qoder Free ist kostenlos und enthaelt begrenzte Completions und Next Edits plus BYOK, aber nur Basismodelle mit begrenzten Nutzernachrichten; fuer den Gratis-Tarif wird keine Credit-, Token- oder Request-Menge veroeffentlicht. Der 2-Wochen-Pro-Trial gewaehrt 300 Credits. Aus einer offiziellen Zahl laesst sich keine Rate pro Dollar ableiten. Quelle: docs.qoder.com/account/pricing (gelesen 2026-10-13)."
+
+  # v0 Free: kostenlos, keine veroeffentlichte Menge.
+  - id: v0-free
+    provider: vercel
+    name: v0 Free
+    price: { monthlyUsd: 0, paidPrice: 0, advertisedPrice: 0, currency: USD }
+    meter: requests
+    disclosure: reference
+    lastVerified: 2026-10-13
+    note: "v0 Free is $0 and lists no included credit, token or request amount on the official pricing page; only the paid tiers publish the $30 monthly credits. No rate per dollar is derivable. Source: v0.app/pricing (read 2026-10-13)."
+    noteDe: "v0 Free kostet 0 $ und nennt auf der offiziellen Preisseite keine enthaltene Credit-, Token- oder Request-Menge; nur die bezahlten Tarife veroeffentlichen die 30 $ Monats-Credits. Es laesst sich keine Rate pro Dollar ableiten. Quelle: v0.app/pricing (gelesen 2026-10-13)."
+
+  # Lovable Free: Tages- und Monats-Zuschuesse in Credits, aber kein
+  # Modellnutzungs-Volumen in Dollar.
+  - id: lovable-free
+    provider: lovable
+    name: Lovable Free
+    price: { monthlyUsd: 0, paidPrice: 0, advertisedPrice: 0, currency: USD, billingNote: "5 daily build credits capped at 30 per month, 20 monthly Cloud credits, 4 monthly AI credits, 1 monthly connector credit; larger-than-Free daily chat allowance on paid plans" }
+    meter: credits
+    disclosure: reference
+    quota: { label: "Monthly", unit: credits, amount: null, window: month, refresh: monthly, disclosure: undisclosed }
+    lastVerified: 2026-10-13
+    note: "Lovable Free publishes usage-specific grants (5 daily build credits capped at 30 per calendar month, 20 monthly Cloud credits, 4 monthly AI credits, 1 monthly connector credit) and a daily chat allowance, but no dollar value and no model-usage volume, so no rate per dollar is derivable. The grants also cover hosting and app features, not only model tokens. Source: docs.lovable.dev/introduction/subscription-plans and docs.lovable.dev/introduction/credits-and-usage (read 2026-10-13)."
+    noteDe: "Lovable Free veroeffentlicht nutzungsspezifische Zuschuesse (5 taegliche Build-Credits, gedeckelt auf 30 pro Kalendermonat, 20 monatliche Cloud-Credits, 4 monatliche AI-Credits, 1 monatlicher Connector-Credit) und ein taegliches Chat-Kontingent, aber keinen Dollarwert und kein Modellnutzungs-Volumen, es laesst sich daher keine Rate pro Dollar ableiten. Die Zuschuesse decken zudem Hosting und App-Funktionen, nicht nur Modell-Tokens. Quelle: docs.lovable.dev/introduction/subscription-plans und docs.lovable.dev/introduction/credits-and-usage (gelesen 2026-10-13)."
+
+  # Devin Free (Ex-Windsurf): kostenlos, nur eine leichte, unbezifferte Quote.
+  - id: devin-free
+    provider: cognition
+    name: Devin Free
+    price: { monthlyUsd: 0, paidPrice: 0, advertisedPrice: 0, currency: USD, billingNote: "free; includes unlimited inline edits and unlimited Tab completions" }
+    meter: requests
+    disclosure: reference
+    lastVerified: 2026-10-13
+    note: "Devin Free (the renamed Windsurf product) is $0 and includes only a light quota to code with agents plus limited model availability; the included usage is not quantified, only described as a light daily and weekly quota. Unlimited inline edits and Tab completions are not metered. No rate per dollar is derivable. Source: devin.ai/pricing and windsurf.com/pricing (read 2026-10-13)."
+    noteDe: "Devin Free (das umbenannte Windsurf-Produkt) kostet 0 $ und enthaelt nur eine leichte Quote zum Agenten-Coding sowie eingeschraenkte Modellverfuegbarkeit; die enthaltene Nutzung ist nicht beziffert, sondern nur als leichte Tages- und Wochenquote beschrieben. Unbegrenzte Inline-Edits und Tab-Completions werden nicht gemessen. Es laesst sich keine Rate pro Dollar ableiten. Quelle: devin.ai/pricing und windsurf.com/pricing (gelesen 2026-10-13)."
+
+  # Amp (Sourcegraph) Megawatt: harte Zahl, aber in Orb-Compute-Minuten, nicht in
+  # Modell-Tokens oder Dollar, deshalb nicht umrechenbar.
+  - id: amp-megawatt
+    provider: sourcegraph
+    name: Amp Megawatt
+    price: { monthlyUsd: 20, paidPrice: 20, advertisedPrice: 20, currency: USD, billingNote: "45,000 orb compute minutes per month at the default a1.small size (90,000 tiny, 22,500 medium, 11,250 large); no Amp token fees for individuals" }
+    meter: credits
+    disclosure: reference
+    quota: { label: "Monthly", unit: "orb compute minutes", amount: 45000, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Amp Megawatt is $20 per month and includes 45,000 orb compute minutes at the default a1.small size. The unit measures compute, not model tokens: Amp no longer publishes a dollar amount of included model usage for this tier (the docs FAQ only says paid tiers include Amp credits), and for individuals Amp charges at provider API prices with no markup. Because orb minutes cannot be converted to tokens or requests per dollar, the plan stays a reference row. Source: ampcode.com/pricing (read 2026-10-13)."
+    noteDe: "Amp Megawatt kostet 20 $ pro Monat und enthaelt 45.000 Orb-Compute-Minuten in der Standardgroesse a1.small. Die Einheit misst Compute, nicht Modell-Tokens: Amp veroeffentlicht fuer diesen Tarif keinen Dollar-Betrag enthaltener Modellnutzung (die Docs-FAQ nennt nur Amp-Credits fuer bezahlte Tarife), und fuer Einzelnutzer rechnet Amp zu Anbieter-API-Preisen ohne Aufschlag ab. Da sich Orb-Minuten nicht in Tokens oder Requests pro Dollar umrechnen lassen, bleibt der Tarif eine Referenzzeile. Quelle: ampcode.com/pricing (gelesen 2026-10-13)."
+
+  # OpenHands Cloud (All Hands): Individual kostenlos, Inferenz at-cost, nur ein
+  # Tages-Cap in Gespraechen.
+  - id: openhands-cloud
+    provider: openhands
+    name: OpenHands Cloud (Individual)
+    price: { monthlyUsd: 0, paidPrice: 0, advertisedPrice: 0, currency: USD, billingNote: "free; bring your own key or use OpenHands models at cost, pay-as-you-go, no markup" }
+    meter: requests
+    disclosure: reference
+    quota: { label: "Daily", unit: conversations, amount: 10, window: day, refresh: daily, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "OpenHands Cloud Individual is free with a cap of 10 conversations per day; inference is BYOK or through the OpenHands provider at cost with no markup on pay-as-you-go. There is no bundled monthly model allowance, so the plan carries only the daily conversation cap and no rate per dollar. Enterprise is custom priced. Source: openhands.dev/pricing (read 2026-10-13)."
+    noteDe: "OpenHands Cloud Individual ist kostenlos mit einem Cap von 10 Gespraechen pro Tag; die Inferenz laeuft ueber einen eigenen Key (BYOK) oder den OpenHands-Anbieter zu Selbstkosten ohne Aufschlag im Pay-as-you-go. Es gibt kein gebuendeltes Monats-Kontingent, der Tarif traegt daher nur den Tages-Cap und keine Rate pro Dollar. Enterprise ist individuell bepreist. Quelle: openhands.dev/pricing (gelesen 2026-10-13)."
+
+  # ---------------------------------------------------------------------------
+  # Fuenfte Welle 2026-10-13: Free-Tiers der schon gefuehrten Anbieter und
+  # weitere populäre Tarife. Alle Mengen stammen von der offiziellen Seite des
+  # Anbieters (Lesedatum je Eintrag). Nur Anbieter mit veroeffentlichter Menge
+  # werden vergleichbar (Modellzeilen + Rate); Anbieter mit offiziellem Preis,
+  # aber ohne veröffentlichte Menge, kommen als Referenzzeile mit dem Tag
+  # "no published quota" und der Begruendung in der Notiz (sie zaehlen als Plan,
+  # aber ohne Rate pro Dollar). Frei erfundene Zahlen gibt es nicht.
+  # ---------------------------------------------------------------------------
+
+  # Kiro Free: offizielles Free-Tier mit 50 Credits pro Monat (kiro.dev/pricing);
+  # Multiplikatoren wie bei den bezahlten Kiro-Tarifen (kiro.dev/docs/models).
+  - id: kiro-free
+    provider: kiro
+    name: Kiro Free
+    price: { monthlyUsd: 0, paidPrice: 0, advertisedPrice: 0, currency: USD }
+    meter: credits
+    disclosure: disclosed
+    dataTierNote: "Official monthly credit amount from kiro.dev/pricing; the credit-to-token rate is not published."
+    quotas:
+      - { label: "Monthly", unit: credits, amount: 50, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    creditPlan:
+      credits: 50
+      source: "kiro.dev/pricing (free tier 50 credits, read 2026-10-13) and kiro.dev/docs/models (multipliers, read 2026-09-22)"
+      method: "One task costs 1 credit on Auto, so a model's multiplier is its credit cost per request: requests per month = plan credits / multiplier."
+      multipliers:
+        - { model: "Claude Opus 5", credits: 2.2 }
+        - { model: "Claude Sonnet 5", credits: 1.3 }
+        - { model: "Claude Haiku 4.5", credits: 0.4 }
+        - { model: "GPT-5.6 Sol", credits: 4.4 }
+        - { model: "GPT-5.6 Terra", credits: 2.2 }
+        - { model: "GPT-5.6 Luna", credits: 1.1 }
+        - { model: "Auto (Kiro router)", credits: 1.0 }
+        - { model: "GLM-5", credits: 0.5 }
+        - { model: "DeepSeek 3.2", credits: 0.25 }
+        - { model: "Qwen3 Coder Next", credits: 0.05 }
+    note: "Official free tier: 50 credits per month plus access to open-weight models and Claude Sonnet 4.5 (social login or AWS Builder ID). The credit allowance and the per-model multipliers are Kiro's own; one task costs 1 credit on Auto, so requests per month = 50 credits / multiplier. No token prices are published, so the rows show requests, not tokens. Source: kiro.dev/pricing and kiro.dev/docs/models (read 2026-10-13)."
+    noteDe: "Offizielles Free-Tier: 50 Credits pro Monat plus Zugang zu Open-Weight-Modellen und Claude Sonnet 4.5 (Social Login oder AWS Builder ID). Credit-Kontingent und Multiplikatoren sind von Kiro selbst; ein Task kostet auf Auto 1 Credit, daher Requests pro Monat = 50 Credits / Multiplikator. Token-Preise werden nicht veroeffentlicht, die Zeilen zeigen deshalb Requests statt Token. Quelle: kiro.dev/pricing und kiro.dev/docs/models (gelesen 2026-10-13)."
+
+  # Trae Free: offizielles Free-Tier mit 5.000 Autocompletions pro Monat
+  # (trae.ai/pricing Compare-Tabelle); die Modellnutzung ist nur als "Limited
+  # usage" ohne Zahl ausgewiesen.
+  - id: trae-free
+    provider: bytedance
+    name: Trae Free
+    price: { monthlyUsd: 0, paidPrice: 0, advertisedPrice: 0, currency: USD, billingNote: "free; 5,000 autocompletions per month; model usage limited, no amount published" }
+    meter: requests
+    disclosure: disclosed
+    tag: "official requests"
+    tagDe: "offizielle Requests"
+    requestPlan:
+      requests: 5000
+      label: "Completions"
+      note: "completions (official free-tier limit: 5,000 autocompletions per month)"
+    quotas:
+      - { label: "Monthly", unit: completions, amount: 5000, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official free tier: the Compare Plans table lists 5,000 autocompletions per month on Free (unlimited on Pro and above). The agentic model usage is only described as limited usage without a number, so the row is ranked on the published completion figure. Source: trae.ai/pricing (read 2026-10-13)."
+    noteDe: "Offizielles Free-Tier: Die Compare-Plans-Tabelle nennt 5.000 Autocompletions pro Monat im Free-Tarif (unbegrenzt ab Pro). Die agentische Modellnutzung ist nur als limited usage ohne Zahl beschrieben, die Zeile wird daher auf der veroeffentlichten Completion-Zahl gefuehrt. Quelle: trae.ai/pricing (gelesen 2026-10-13)."
+
+  # Lovable Business: 50 $ fuer 100 Credits, dieselbe Credit-Menge wie Pro
+  # (docs.lovable.dev Subscription Plans, Tier-Tabellen); Credit = 0,25 $.
+  - id: lovable-business
+    provider: lovable
+    name: Lovable Business
+    price: { monthlyUsd: 50, paidPrice: 50, advertisedPrice: 50, currency: USD, billingNote: "from 100 credits per month ($50 monthly, $500 yearly); credit rate $0.25/credit; adds role-based access, SSO and a security centre over Pro" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "usage in USD"
+    tagDe: "Nutzung in USD"
+    dollarPlan:
+      usd: 25
+      source: "docs.lovable.dev/introduction/subscription-plans and lovable.dev/pricing (read 2026-10-13)"
+      note: "100 monthly plan credits, valued at $25 at the published top-up rate of $0.25 per credit; the higher price adds governance"
+      models:
+      - { model: "Claude Opus 5.5", input: 4, cachedWrite: 5, cachedRead: 0.2, output: 20 }
+      - { model: "Claude Sonnet 5", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 10 }
+      - { model: "GPT-5.6 Sol", input: 4, cachedWrite: 5, cachedRead: 0.4, output: 20 }
+      - { model: "GPT-5.6 Terra", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 12 }
+      - { model: "GPT-5.6 Luna", input: 0.2, cachedWrite: 0.25, cachedRead: 0.02, output: 1.2 }
+      - { model: "Gemini 3.1 Pro", input: 2, cachedWrite: 2, cachedRead: 0.2, output: 12 }
+      - { model: "Gemini 3.8 Flash", input: 0.75, cachedWrite: 0.75, cachedRead: 0.075, output: 3.5 }
+      - { model: "Grok 4.7", input: 2, cachedWrite: 2, cachedRead: 0.5, output: 6 }
+    quotas:
+      - { label: "Monthly", unit: "USD usage", amount: 25, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official: Lovable Business starts at 100 credits per month for $50 ($500 yearly) and scales to 10,000 credits, the same credit volume as Pro at the entry tier. Lovable values a credit at $0.25, so the entry tier is $25 of credits; the higher price adds governance (role-based access, SSO, security centre, per-member credit limits). Caveat: the same credits cover build, chat, Cloud hosting and AI-gateway usage, so the token-based rate is an upper bound. Source: docs.lovable.dev/introduction/subscription-plans and lovable.dev/pricing (read 2026-10-13)."
+    noteDe: "Offiziell: Lovable Business startet bei 100 Credits pro Monat fuer 50 $ (500 $ jaehrlich) und skaliert bis 10.000 Credits, dieselbe Credit-Menge wie Pro im Einstiegstarif. Lovable bewertet einen Credit mit 0,25 $, der Einstiegstarif entspricht damit 25 $ Credits; der hoehere Preis bringt Governance (rollenbasierter Zugriff, SSO, Security Center, Credit-Limits je Mitglied). Vorbehalt: Dieselben Credits decken Build, Chat, Cloud-Hosting und AI-Gateway-Nutzung, die tokenbasierte Rate ist daher eine Obergrenze. Quelle: docs.lovable.dev/introduction/subscription-plans und lovable.dev/pricing (gelesen 2026-10-13)."
+
+  # Tencent CodeBuddy Free: offizielles Free-Tier mit 5.000 Completions/Monat
+  # und 100 Credits/Monat (codebuddy.ai/docs).
+  - id: codebuddy-free
+    provider: tencent
+    name: CodeBuddy Free
+    price: { monthlyUsd: 0, paidPrice: 0, advertisedPrice: 0, currency: USD, billingNote: "free; 100 base credits/month, 5,000 completions/month, 3 automated tasks (99 during the promotional period), 30 bonus credits/day when active" }
+    meter: requests
+    disclosure: disclosed
+    tag: "official requests"
+    tagDe: "offizielle Requests"
+    requestPlan:
+      requests: 5000
+      label: "Completions"
+      note: "completions (official free-tier limit: 5,000 real-time code completions per month)"
+    quotas:
+      - { label: "Monthly", unit: completions, amount: 5000, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official free tier: 5,000 real-time code completions per month (unlimited during the current promotional period), 100 base credits per month for model calls, 3 automated tasks, plus a 30 credits/day daily-active bonus. The row is ranked on the published completion figure, like GitHub Copilot Free; the 100 model credits have no published token price. Source: codebuddy.ai/docs/ide/Account/pricing (read 2026-10-13)."
+    noteDe: "Offizielles Free-Tier: 5.000 Echtzeit-Code-Completions pro Monat (waehrend der aktuellen Aktionsphase unbegrenzt), 100 Basis-Credits pro Monat fuer Modellaufrufe, 3 automatisierte Tasks, dazu 30 Bonus-Credits pro Tag bei taeglicher Aktivitaet. Die Zeile wird auf der veroeffentlichten Completion-Zahl gefuehrt, wie GitHub Copilot Free; fuer die 100 Modell-Credits gibt es keinen veroeffentlichten Token-Preis. Quelle: codebuddy.ai/docs/ide/Account/pricing (gelesen 2026-10-13)."
+
+  # Tencent CodeBuddy Pro und Team: offizielle Monats-Credits ohne Token-Preis,
+  # deshalb Credit-Kontingent ohne Rate pro Dollar (wie Baidu Comate).
+  - id: codebuddy-pro
+    provider: tencent
+    name: CodeBuddy Pro
+    price: { monthlyUsd: 10, paidPrice: 10, advertisedPrice: 10, currency: USD, billingNote: "$10/month ($96/year = $8/month billed annually); 2,000 credits/month (1,000 base + 1,000 bonus), unlimited completions, 15 automated tasks" }
+    meter: credits
+    disclosure: disclosed
+    tag: "credits, no token price"
+    tagDe: "Credits, kein Token-Preis"
+    quotas:
+      - { label: "Monthly", unit: credits, amount: 2000, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official: CodeBuddy Pro is $10 per month ($96 yearly, $8/month billed annually) and includes 2,000 credits per month (1,000 base plus 1,000 bonus), unlimited code completions and 15 automated tasks. Bonus and base credits are valid for the month and do not roll over. CodeBuddy publishes no per-model token price in the lists used here, so the plan has a credit quota but no rate per dollar. Source: codebuddy.ai/docs/ide/Account/pricing (read 2026-10-13)."
+    noteDe: "Offiziell: CodeBuddy Pro kostet 10 $ pro Monat (96 $ jaehrlich, 8 $/Monat bei Jahreszahlung) und enthaelt 2.000 Credits pro Monat (1.000 Basis plus 1.000 Bonus), unbegrenzte Code-Completions und 15 automatisierte Tasks. Bonus- und Basis-Credits gelten fuer den Monat und rollen nicht ueber. CodeBuddy veroeffentlicht in den hier genutzten Listen keinen Token-Preis je Modell, der Tarif hat daher ein Credit-Kontingent, aber keine Rate pro Dollar. Quelle: codebuddy.ai/docs/ide/Account/pricing (gelesen 2026-10-13)."
+
+  - id: codebuddy-team
+    provider: tencent
+    name: CodeBuddy Team (per seat)
+    price: { monthlyUsd: 40, paidPrice: 40, advertisedPrice: 40, currency: USD, billingNote: "$40/seat/month ($480/seat/year); 1,000 credits per seat per month shared through a team credit pool" }
+    meter: credits
+    disclosure: disclosed
+    tag: "credits, no token price"
+    tagDe: "Credits, kein Token-Preis"
+    quotas:
+      - { label: "Monthly", unit: credits, amount: 1000, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official: the CodeBuddy Team plan is $40 per seat per month ($480 per seat yearly) and includes 1,000 credits per seat per month, shared through a team credit pool, plus an admin console and unified billing. No per-model token price is published in the lists used here, so there is a credit quota but no rate per dollar. Source: codebuddy.ai/docs/ide/Account/pricing (read 2026-10-13)."
+    noteDe: "Offiziell: Der CodeBuddy-Team-Tarif kostet 40 $ pro Sitz und Monat (480 $ pro Sitz jaehrlich) und enthaelt 1.000 Credits pro Sitz und Monat, geteilt ueber einen Team-Credit-Pool, dazu Admin-Konsole und zentrale Abrechnung. In den hier genutzten Listen wird kein Token-Preis je Modell veroeffentlicht, daher gibt es ein Credit-Kontingent, aber keine Rate pro Dollar. Quelle: codebuddy.ai/docs/ide/Account/pricing (gelesen 2026-10-13)."
+
+  # Refact.ai: offizielle Coin-Kontingente ohne Token-Preis, daher ohne Rate
+  # pro Dollar. Free 2.000 Coins, Pro 10.000 Coins/Monat fuer 10 $.
+  - id: refact-free
+    provider: refact
+    name: Refact.ai Free
+    price: { monthlyUsd: 0, paidPrice: 0, advertisedPrice: 0, currency: USD, billingNote: "free; 2,000 coins for the AI agent and chat; unlimited fast autocompletion; self-hosting option" }
+    meter: credits
+    disclosure: disclosed
+    tag: "credits, no token price"
+    tagDe: "Credits, kein Token-Preis"
+    quotas:
+      - { label: "Monthly", unit: "coins", amount: 2000, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official: Refact.ai Free includes 2,000 coins for the AI agent and chat, unlimited fast autocompletion and a self-hosting option. Refact.ai publishes no per-model token price in the lists used here, so the plan has a coin quota but no rate per dollar. Source: refact.ai/pricing (read 2026-10-13)."
+    noteDe: "Offiziell: Refact.ai Free enthaelt 2.000 Coins fuer den AI-Agenten und Chat, unbegrenzte schnelle Autovervollstaendigung und eine Self-Hosting-Option. Refact.ai veroeffentlicht in den hier genutzten Listen keinen Token-Preis je Modell, der Tarif hat daher ein Coin-Kontingent, aber keine Rate pro Dollar. Quelle: refact.ai/pricing (gelesen 2026-10-13)."
+
+  - id: refact-pro
+    provider: refact
+    name: Refact.ai Pro
+    price: { monthlyUsd: 10, paidPrice: 10, advertisedPrice: 10, currency: USD, billingNote: "$10/month; 10,000 coins renewed every month; extra coins from $5 at $1 = 1,000 coins" }
+    meter: credits
+    disclosure: disclosed
+    tag: "credits, no token price"
+    tagDe: "Credits, kein Token-Preis"
+    quotas:
+      - { label: "Monthly", unit: "coins", amount: 10000, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official: Refact.ai Pro is $10 per month and includes 10,000 coins renewed every month, plus thinking abilities. Extra coins can be bought from $5 at a published rate of $1 per 1,000 coins. Refact.ai publishes no per-model token price in the lists used here, so the plan has a coin quota but no rate per dollar. Source: refact.ai/pricing (read 2026-10-13)."
+    noteDe: "Offiziell: Refact.ai Pro kostet 10 $ pro Monat und enthaelt 10.000 Coins, monatlich erneuert, dazu Thinking-Faehigkeiten. Zusatz-Coins sind ab 5 $ zum veroeffentlichten Kurs von 1 $ pro 1.000 Coins erhaeltlich. Refact.ai veroeffentlicht in den hier genutzten Listen keinen Token-Preis je Modell, der Tarif hat daher ein Coin-Kontingent, aber keine Rate pro Dollar. Quelle: refact.ai/pricing (gelesen 2026-10-13)."
+
+  # Kilo Pass, hoehere Tarife: 1:1 in Paid-Credits (kilo.ai/pricing/kilo-pass).
+  - id: kilo-pass-49
+    provider: kilo
+    name: Kilo Code Pass 49
+    price: { monthlyUsd: 49, paidPrice: 49, advertisedPrice: 49, currency: USD, billingNote: "$49 per month converts 1:1 into $49 of paid credits; bonus credits up to +40% (streaks); no rollover" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "usage in USD"
+    tagDe: "Nutzung in USD"
+    dollarPlan:
+      usd: 49
+      source: "kilo.ai/pricing/kilo-pass (read 2026-10-13)"
+      note: "$49 of paid credits per month, converted 1:1 from the plan price"
+      models:
+      - { model: "Claude Opus 5.5", input: 4, cachedWrite: 5, cachedRead: 0.2, output: 20 }
+      - { model: "Claude Sonnet 5", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 10 }
+      - { model: "GPT-5.6 Sol", input: 4, cachedWrite: 5, cachedRead: 0.4, output: 20 }
+      - { model: "GPT-5.6 Terra", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 12 }
+      - { model: "GPT-5.6 Luna", input: 0.2, cachedWrite: 0.25, cachedRead: 0.02, output: 1.2 }
+      - { model: "Gemini 3.1 Pro", input: 2, cachedWrite: 2, cachedRead: 0.2, output: 12 }
+      - { model: "Gemini 3.8 Flash", input: 0.75, cachedWrite: 0.75, cachedRead: 0.075, output: 3.5 }
+      - { model: "Grok 4.7", input: 2, cachedWrite: 2, cachedRead: 0.5, output: 6 }
+    quotas:
+      - { label: "Monthly", unit: "USD usage", amount: 49, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official: the Kilo Code Pass at $49 per month converts 1:1 into $49 of paid credits, plus bonus credits up to +40% (the bonus expires monthly). Kilo routes to 500+ models through its gateway and does not enumerate them per tier; the rows use the standard API prices of the frontier models the gateway lists (Claude, GPT, Gemini, Grok). Source: kilo.ai/pricing/kilo-pass (read 2026-10-13)."
+    noteDe: "Offiziell: Der Kilo Code Pass fuer 49 $ pro Monat wird 1:1 in 49 $ Paid-Credits umgewandelt, dazu Bonus-Credits bis +40 % (der Bonus verfaellt monatlich). Kilo routet ueber sein Gateway auf 500+ Modelle und listet sie nicht je Tarif; die Zeilen nutzen die Standard-API-Preise der Frontier-Modelle, die das Gateway fuehrt (Claude, GPT, Gemini, Grok). Quelle: kilo.ai/pricing/kilo-pass (gelesen 2026-10-13)."
+
+  - id: kilo-pass-199
+    provider: kilo
+    name: Kilo Code Pass 199
+    price: { monthlyUsd: 199, paidPrice: 199, advertisedPrice: 199, currency: USD, billingNote: "$199 per month converts 1:1 into $199 of paid credits; bonus credits up to +40% (streaks); no rollover" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "usage in USD"
+    tagDe: "Nutzung in USD"
+    dollarPlan:
+      usd: 199
+      source: "kilo.ai/pricing/kilo-pass (read 2026-10-13)"
+      note: "$199 of paid credits per month, converted 1:1 from the plan price"
+      models:
+      - { model: "Claude Opus 5.5", input: 4, cachedWrite: 5, cachedRead: 0.2, output: 20 }
+      - { model: "Claude Sonnet 5", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 10 }
+      - { model: "GPT-5.6 Sol", input: 4, cachedWrite: 5, cachedRead: 0.4, output: 20 }
+      - { model: "GPT-5.6 Terra", input: 2, cachedWrite: 2.5, cachedRead: 0.2, output: 12 }
+      - { model: "GPT-5.6 Luna", input: 0.2, cachedWrite: 0.25, cachedRead: 0.02, output: 1.2 }
+      - { model: "Gemini 3.1 Pro", input: 2, cachedWrite: 2, cachedRead: 0.2, output: 12 }
+      - { model: "Gemini 3.8 Flash", input: 0.75, cachedWrite: 0.75, cachedRead: 0.075, output: 3.5 }
+      - { model: "Grok 4.7", input: 2, cachedWrite: 2, cachedRead: 0.5, output: 6 }
+    quotas:
+      - { label: "Monthly", unit: "USD usage", amount: 199, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-13
+    note: "Official: the top Kilo Code Pass at $199 per month converts 1:1 into $199 of paid credits, plus bonus credits up to +40% (the bonus expires monthly). Kilo routes to 500+ models through its gateway and does not enumerate them per tier; the rows use the standard API prices of the frontier models the gateway lists (Claude, GPT, Gemini, Grok). Source: kilo.ai/pricing/kilo-pass (read 2026-10-13)."
+    noteDe: "Offiziell: Der oberste Kilo Code Pass fuer 199 $ pro Monat wird 1:1 in 199 $ Paid-Credits umgewandelt, dazu Bonus-Credits bis +40 % (der Bonus verfaellt monatlich). Kilo routet ueber sein Gateway auf 500+ Modelle und listet sie nicht je Tarif; die Zeilen nutzen die Standard-API-Preise der Frontier-Modelle, die das Gateway fuehrt (Claude, GPT, Gemini, Grok). Quelle: kilo.ai/pricing/kilo-pass (gelesen 2026-10-13)."
+
+  # ---------------------------------------------------------------------------
+  # Referenzzeilen der fuenften Welle: offizieller Preis, aber keine
+  # veroeffentlichte Menge in Dollar oder Tokens. Tag "no published quota",
+  # Begruendung in der Notiz. Sie zaehlen als Plan, aber ohne Rate pro Dollar.
+  # ---------------------------------------------------------------------------
+
+  # Warp Free: kostenlos, nutzt aber eigenen Key oder Pay-as-you-go, keine
+  # enthaltene Agent-Nutzung mit Zahl.
+  - id: warp-free
+    provider: warp
+    name: Warp Free
+    price: { monthlyUsd: 0, paidPrice: 0, advertisedPrice: 0, currency: USD, billingNote: "free; Warp Agent CLI access, additional agent usage at pay-as-you-go rates, bring your own inference" }
+    meter: dollar_usage
+    disclosure: reference
+    tag: "no published quota"
+    tagDe: "keine veroeffentlichte Quote"
+    lastVerified: 2026-10-13
+    note: "Warp Free is $0 and includes the terminal, Warp Agent CLI access and limited cloud agents, but no included agent usage amount: additional usage is billed pay-as-you-go at API rates and you can bring your own inference. No dollar or token quantity is published, so no rate per dollar is derivable. Source: warp.dev/pricing (read 2026-10-13)."
+    noteDe: "Warp Free kostet 0 $ und enthaelt das Terminal, den Warp Agent CLI-Zugang und eingeschraenkte Cloud-Agenten, aber keine enthaltene Agent-Nutzungsmenge: Zusatznutzung wird pay-as-you-go zu API-Preisen abgerechnet, eigener Inferenzzugang ist moeglich. Es wird keine Dollar- oder Token-Menge veroeffentlicht, es laesst sich daher keine Rate pro Dollar ableiten. Quelle: warp.dev/pricing (gelesen 2026-10-13)."
+
+  # Zed Personal (Free): kostenlos, aber ohne gehostetes AI-Kontingent
+  # (eigene Keys oder externe Agenten).
+  - id: zed-personal
+    provider: zed
+    name: Zed Personal
+    price: { monthlyUsd: 0, paidPrice: 0, advertisedPrice: 0, currency: USD, billingNote: "free forever; unlimited use with your own API keys or external agents; no hosted AI credits" }
+    meter: dollar_usage
+    disclosure: reference
+    tag: "no published quota"
+    tagDe: "keine veroeffentlichte Quote"
+    lastVerified: 2026-10-13
+    note: "Zed Personal is $0 forever and includes unlimited use with your own API keys or external agents, but no hosted AI credits: the editor itself publishes no included model quota. Only Pro bundles $5 of token credits, so no rate per dollar is derivable for Personal. Source: zed.dev/pricing (read 2026-10-13)."
+    noteDe: "Zed Personal kostet dauerhaft 0 $ und enthaelt unbegrenzte Nutzung mit eigenen API-Keys oder externen Agenten, aber keine gehosteten AI-Credits: der Editor selbst veroeffentlicht kein enthaltenes Modell-Kontingent. Nur Pro enthaelt 5 $ Token-Credits, fuer Personal laesst sich daher keine Rate pro Dollar ableiten. Quelle: zed.dev/pricing (gelesen 2026-10-13)."
+
+  # Zed Business: 30 $ pro Sitz, aber ohne gebuendeltes Credit-Kontingent.
+  - id: zed-business
+    provider: zed
+    name: Zed Business (per seat)
+    price: { monthlyUsd: 30, paidPrice: 30, advertisedPrice: 30, currency: USD, billingNote: "no minimum seats, org-wide AI model policies, data governance and unified spend visibility" }
+    meter: dollar_usage
+    disclosure: reference
+    tag: "no published quota"
+    tagDe: "keine veroeffentlichte Quote"
+    lastVerified: 2026-10-13
+    note: "Zed Business is $30 per seat per month for the admin layer (org-wide AI model policies, data governance, unified spend visibility, role-based access). Zed states the seats do not bundle a fixed LLM credit allotment: hosted AI is used at standard usage rates or with your own keys, so no rate per dollar is derivable. Source: zed.dev/pricing (read 2026-10-13)."
+    noteDe: "Zed Business kostet 30 $ pro Sitz und Monat fuer die Admin-Ebene (unternehmensweite AI-Modellrichtlinien, Data Governance, zentrale Ausgabenuebersicht, rollenbasierter Zugriff). Zed schreibt, dass die Sitze kein festes LLM-Credit-Kontingent buendeln: gehostete AI wird zu Standard-Nutzungspreisen oder mit eigenen Keys genutzt, es laesst sich daher keine Rate pro Dollar ableiten. Quelle: zed.dev/pricing (gelesen 2026-10-13)."
+
+  # Replit Starter (Free): taegliche Agent-Credits mit Monatsdeckel, aber ohne
+  # veroeffentlichte Zahl.
+  - id: replit-free
+    provider: replit
+    name: Replit Starter (free)
+    price: { monthlyUsd: 0, paidPrice: 0, advertisedPrice: 0, currency: USD, billingNote: "free; daily Agent credits up to a monthly cap, monthly cloud credits, Lite build, one free published app that expires after 30 days" }
+    meter: credits
+    disclosure: reference
+    tag: "no published quota"
+    tagDe: "keine veroeffentlichte Quote"
+    lastVerified: 2026-10-13
+    note: "Replit Starter is free and includes daily Agent credits up to a monthly cap plus monthly cloud credits, but Replit publishes no amount for either. Paid plans (Core $20, Pro $100) do publish the monthly credits; the free tier names none, so no rate per dollar is derivable. Source: docs.replit.com/billing/plans/starter-plan (read 2026-10-13)."
+    noteDe: "Replit Starter ist kostenlos und enthaelt taegliche Agent-Credits bis zu einem Monatsdeckel plus monatliche Cloud-Credits, Replit nennt aber fuer beide keine Menge. Die bezahlten Tarife (Core 20 $, Pro 100 $) veroeffentlichen die Monats-Credits; der Gratis-Tarif nennt keine, es laesst sich daher keine Rate pro Dollar ableiten. Quelle: docs.replit.com/billing/plans/starter-plan (gelesen 2026-10-13)."
+
+  # Kilo Code Individual: Plattform kostenlos, Inferenz ueber freie Modelle,
+  # BYOK oder Kilo Pass, aber ohne buendelte Menge im Plattformpreis.
+  - id: kilo-individual
+    provider: kilo
+    name: Kilo Code Individual
+    price: { monthlyUsd: 0, paidPrice: 0, advertisedPrice: 0, currency: USD, billingNote: "platform is free for individuals; AI inference at provider rates, free or local models, BYOK, or Kilo Pass; 5% credit purchase fee" }
+    meter: dollar_usage
+    disclosure: reference
+    tag: "no published quota"
+    tagDe: "keine veroeffentlichte Quote"
+    lastVerified: 2026-10-13
+    note: "The Kilo Code platform is free for individuals and includes code search, local indexing and BYOK; AI inference is paid separately (free or local models, provider rates, or Kilo Pass). The platform price bundles no model quota, so no rate per dollar is derivable for the free platform itself. Kilo Pass tiers ($19/$49/$199) carry the included credit amounts. Source: kilo.ai/pricing (read 2026-10-13)."
+    noteDe: "Die Kilo-Code-Plattform ist fuer Einzelnutzer kostenlos und enthaelt Code-Suche, lokales Indexing und BYOK; die AI-Inferenz wird separat bezahlt (freie oder lokale Modelle, Anbieter-Preise oder Kilo Pass). Der Plattformpreis buendelt kein Modell-Kontingent, es laesst sich daher fuer die kostenlose Plattform keine Rate pro Dollar ableiten. Die Kilo-Pass-Tarife (19/49/199 $) tragen die enthaltenen Credit-Mengen. Quelle: kilo.ai/pricing (gelesen 2026-10-13)."
+
+  # Kilo Code Teams: 15 $ pro Nutzer, Plattform-Schicht ohne Modell-Kontingent.
+  - id: kilo-teams
+    provider: kilo
+    name: Kilo Code Teams (per user)
+    price: { monthlyUsd: 15, paidPrice: 15, advertisedPrice: 15, currency: USD, billingNote: "$15/user/month; shared balance, usage analytics, centralized billing; AI inference billed at provider rates" }
+    meter: dollar_usage
+    disclosure: reference
+    tag: "no published quota"
+    tagDe: "keine veroeffentlichte Quote"
+    lastVerified: 2026-10-13
+    note: "Kilo Code Teams is $15 per user per month for the collaboration layer (shared balance with the Kilo gateway, usage analytics, centralized billing, team management); AI inference is billed separately at provider rates. The seat price bundles no model quota of its own, so no rate per dollar is derivable. Source: kilo.ai/pricing/compare (read 2026-10-13)."
+    noteDe: "Kilo Code Teams kostet 15 $ pro Nutzer und Monat fuer die Kollaborationsschicht (geteiltes Guthaben ueber das Kilo-Gateway, Nutzungsanalysen, zentrale Abrechnung, Team-Verwaltung); die AI-Inferenz wird separat zu Anbieter-Preisen abgerechnet. Der Sitzpreis buendelt kein eigenes Modell-Kontingent, es laesst sich daher keine Rate pro Dollar ableiten. Quelle: kilo.ai/pricing/compare (gelesen 2026-10-13)."
+
+  # Ollama Cloud Free: kostenlos mit Starter-Credits, aber ohne veroeffentlichte
+  # Zahl (nur Pro/Max/Team nennen Dollar-Volumina).
+  - id: ollama-free
+    provider: ollama
+    name: Ollama Cloud Free
+    price: { monthlyUsd: 0, paidPrice: 0, advertisedPrice: 0, currency: USD, billingNote: "free; starter usage credits included, access to starter models, add credits to unlock all models; 1 concurrent request" }
+    meter: dollar_usage
+    disclosure: reference
+    tag: "no published quota"
+    tagDe: "keine veroeffentlichte Quote"
+    lastVerified: 2026-10-13
+    note: "Ollama Cloud Free is $0 and includes a starter amount of usage for a smaller set of starter models plus 1 concurrent request, but Ollama publishes no dollar amount for the free tier (only Pro $60, Max $300 and Team $1,000 of monthly credits are quantified). No rate per dollar is derivable. Source: ollama.com/pricing (read 2026-10-13)."
+    noteDe: "Ollama Cloud Free kostet 0 $ und enthaelt eine Starter-Nutzungsmenge fuer einen kleineren Satz Starter-Modelle plus 1 gleichzeitige Anfrage, Ollama nennt fuer den Gratis-Tarif aber keinen Dollar-Betrag (nur Pro 60 $, Max 300 $ und Team 1.000 $ Monats-Credits sind beziffert). Es laesst sich keine Rate pro Dollar ableiten. Quelle: ollama.com/pricing (gelesen 2026-10-13)."
+
+  # Cursor Teams: zwei Sitzarten, offizieller Preis ohne veroeffentlichte Menge.
+  - id: cursor-teams
+    provider: cursor
+    name: Cursor Teams
+    price: { monthlyUsd: 40, paidPrice: 40, advertisedPrice: 40, currency: USD, billingNote: "$40/user/month Standard seat; Cursor Models pool and Other Models pool included; third-party requests add a $0.25 per million Cursor Token Rate" }
+    meter: dollar_usage
+    disclosure: reference
+    tag: "no published quota"
+    tagDe: "keine veroeffentlichte Quote"
+    lastVerified: 2026-10-13
+    note: "Cursor Teams Standard is $40 per user per month and includes the Cursor Models pool and the Other Models pool on top of team admin features, but Cursor publishes no included amount for either pool (as on the individual plans). No rate per dollar is derivable. Source: cursor.com/docs/account/pricing (read 2026-10-13)."
+    noteDe: "Cursor Teams Standard kostet 40 $ pro Nutzer und Monat und enthaelt den Cursor-Models-Pool und den Other-Models-Pool zusaetzlich zu den Team-Admin-Funktionen, Cursor veroeffentlicht aber fuer keinen der beiden Pools eine enthaltene Menge (wie bei den Einzeltarifen). Es laesst sich keine Rate pro Dollar ableiten. Quelle: cursor.com/docs/account/pricing (gelesen 2026-10-13)."
+
+  - id: cursor-teams-premium
+    provider: cursor
+    name: Cursor Teams Premium
+    price: { monthlyUsd: 120, paidPrice: 120, advertisedPrice: 120, currency: USD, billingNote: "$120/user/month Premium seat; adds 5x the Standard Agent limits; third-party requests add a $0.25 per million Cursor Token Rate" }
+    meter: dollar_usage
+    disclosure: reference
+    tag: "no published quota"
+    tagDe: "keine veroeffentlichte Quote"
+    lastVerified: 2026-10-13
+    note: "Cursor Teams Premium is $120 per user per month and adds 5x the Standard seat limits on Agent, but the tier is published as a multiplier only; Cursor states no absolute included amount for the pools. No rate per dollar is derivable. Source: cursor.com/docs/account/pricing (read 2026-10-13)."
+    noteDe: "Cursor Teams Premium kostet 120 $ pro Nutzer und Monat und bringt das Fuenffache der Standard-Sitz-Limits beim Agent, der Tarif ist aber nur als Multiplikator veroeffentlicht; eine absolute enthaltene Menge fuer die Pools nennt Cursor nicht. Es laesst sich keine Rate pro Dollar ableiten. Quelle: cursor.com/docs/account/pricing (gelesen 2026-10-13)."
+
+  # Amp Teams: kein Aufpreis, einzelne Mitglieder zahlen ihren eigenen Tarif.
+  - id: amp-teams
+    provider: sourcegraph
+    name: Amp Teams
+    price: { monthlyUsd: 0, paidPrice: 0, advertisedPrice: 0, currency: USD, billingNote: "no extra charge; members stay on their own tiers (Hobby, Megawatt, Gigawatt); shared billing and pooled credits" }
+    meter: dollar_usage
+    disclosure: reference
+    tag: "no published quota"
+    tagDe: "keine veroeffentlichte Quote"
+    lastVerified: 2026-10-13
+    note: "Amp Teams costs no extra charge: members stay on their own tiers (Hobby, Megawatt, Gigawatt) and the team layer only adds sharing, permissions and pooled credits. Amp charges no token fees for individuals, so there is no included quota and no rate per dollar for the team layer itself. Source: ampcode.com/pricing (read 2026-10-13)."
+    noteDe: "Amp Teams kostet keinen Aufpreis: Mitglieder bleiben in ihren eigenen Tarifen (Hobby, Megawatt, Gigawatt), die Team-Ebene bringt nur Sharing, Berechtigungen und gepoolte Credits. Amp erhebt fuer Einzelnutzer keine Token-Gebuehren, es gibt daher kein enthaltenes Kontingent und keine Rate pro Dollar fuer die Team-Ebene selbst. Quelle: ampcode.com/pricing (gelesen 2026-10-13)."
+
+  # Roomote (Roo Code) Cloud: kostenlos bis 10 Nutzer, Lizenzpreise je Groesse,
+  # aber keine buendelte Modell-Menge (BYOK-Inferenz).
+  - id: roocode-cloud-free
+    provider: roocode
+    name: Roomote Cloud (free, up to 10 users)
+    price: { monthlyUsd: 0, paidPrice: 0, advertisedPrice: 0, currency: USD, billingNote: "no licence needed up to 10 users; you provide the inference key; a hosted Roomote Cloud also offers a free 7-day trial then from $49/mo" }
+    meter: dollar_usage
+    disclosure: reference
+    tag: "no published quota"
+    tagDe: "keine veroeffentlichte Quote"
+    lastVerified: 2026-10-13
+    note: "Roomote (the Roo Code cloud coding agent) needs no licence for teams up to 10 users; you supply the inference key, so the plan bundles no model quota. Pricing is per organisation, not per seat, and no dollar or token quantity of included model usage is published, so no rate per dollar is derivable. Source: roocode.com/pricing (read 2026-10-13)."
+    noteDe: "Roomote (der Cloud-Coding-Agent von Roo Code) braucht fuer Teams bis 10 Nutzer keine Lizenz; den Inferenz-Key stellt man selbst, der Tarif buendelt daher kein Modell-Kontingent. Die Preisgestaltung ist pro Organisation, nicht pro Sitz, und es wird keine Dollar- oder Token-Menge enthaltener Modellnutzung veroeffentlicht, es laesst sich daher keine Rate pro Dollar ableiten. Quelle: roocode.com/pricing (gelesen 2026-10-13)."
+
+  - id: roocode-cloud-team
+    provider: roocode
+    name: Roomote Cloud (11-50 users)
+    price: { monthlyUsd: 249, paidPrice: 249, advertisedPrice: 249, currency: USD, billingNote: "$249/month for 11-50 users, all features; $499/month for 51-100 users; inference key provided by the customer (BYOK)" }
+    meter: dollar_usage
+    disclosure: reference
+    tag: "no published quota"
+    tagDe: "keine veroeffentlichte Quote"
+    lastVerified: 2026-10-13
+    note: "Roomote Cloud for 11-50 users is $249 per month ($499 for 51-100 users), all features included, self-hosted or managed; the same price applies to the self-hosted licence. The customer provides the inference key (BYOK), so no model quota is bundled and no rate per dollar is derivable. Source: roocode.com/pricing (read 2026-10-13)."
+    noteDe: "Roomote Cloud fuer 11-50 Nutzer kostet 249 $ pro Monat (499 $ fuer 51-100 Nutzer), alle Funktionen inklusive, selbst gehostet oder verwaltet; derselbe Preis gilt fuer die Self-Hosted-Lizenz. Den Inferenz-Key stellt der Kunde (BYOK), es ist daher kein Modell-Kontingent gebuendelt und keine Rate pro Dollar ableitbar. Quelle: roocode.com/pricing (gelesen 2026-10-13)."
+
+  # Standard Compute: fester Monatspreis, der volle Preis wird zum Dollar-Budget,
+  # keine 5h- oder Wochen-Fenster. Das Budget wird zu den Preisen belastet, die der
+  # Anbieter pro Modell veroeffentlicht (Input, Cached Input, Output pro 1M).
+  # Quellen: standardcompute.com/llm-api-pricing + standardcompute.com/standard-compute-facts
+  - id: standardcompute-starter
+    provider: standardcompute
+    name: Standard Compute Starter
+    price: { monthlyUsd: 19, paidPrice: 19, advertisedPrice: 19, currency: USD, billingNote: "flat; the full price becomes the monthly compute budget; individual plans start with 1.5x the compute in the first month" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "usage in USD"
+    tagDe: "Nutzung in USD"
+    dollarPlan:
+      usd: 20
+      source: "standardcompute.com/llm-api-pricing"
+      note: "Per-model input, cached input and output rates in USD per million tokens, published by Standard Compute."
+      models:
+      - { model: "GPT-6 Astra", input: 10.0, cachedRead: 1.0, output: 50.0 }
+      - { model: "GPT-5.6 Sol", input: 4.0, cachedRead: 0.4, output: 20.0 }
+      - { model: "GPT-5.6 Terra", input: 2.0, cachedRead: 0.2, output: 12.0 }
+      - { model: "GPT-5.6 Luna", input: 0.2, cachedRead: 0.02, output: 1.2 }
+      - { model: "GPT-6 Luna", input: 0.1, cachedRead: 0.01, output: 0.5 }
+      - { model: "Claude Fable 5.1", input: 10.0, cachedRead: 0.25, output: 50.0 }
+      - { model: "Claude Fable 5", input: 10.0, cachedRead: 1.0, output: 50.0 }
+      - { model: "Claude Opus 5", input: 5.0, cachedRead: 0.5, output: 25.0 }
+      - { model: "Claude Opus 5.5", input: 4.0, cachedRead: 0.2, output: 20.0 }
+      - { model: "Claude Sonnet 5.5", input: 2.0, cachedRead: 0.1, output: 10.0 }
+      - { model: "Claude Sonnet 5", input: 2.0, cachedRead: 0.2, output: 10.0 }
+      - { model: "Claude Haiku 5.5", input: 0.1, cachedRead: 0.01, output: 0.5 }
+      - { model: "Gemini 3.1 Pro Preview", input: 2.0, cachedRead: 0.2, output: 12.0 }
+      - { model: "Gemini 3.8 Flash", input: 1.5, cachedRead: 0.15, output: 7.5 }
+      - { model: "Gemini 2.5 Pro", input: 1.25, cachedRead: 0.125, output: 10.0 }
+      - { model: "Gemini 3.5 Flash-Lite", input: 0.3, cachedRead: 0.03, output: 2.5 }
+      - { model: "Gemini 2.5 Flash", input: 0.3, cachedRead: 0.03, output: 2.5 }
+      - { model: "Kimi K3", input: 3.0, cachedRead: 0.3, output: 15.0 }
+      - { model: "GLM 5.3", input: 1.4, cachedRead: 0.26, output: 4.4 }
+      - { model: "GLM 5.2", input: 1.4, cachedRead: 0.26, output: 4.4 }
+      - { model: "GLM 5.3 Flash", input: 0.15, cachedRead: 0.03, output: 0.5 }
+      - { model: "DeepSeek V4 Pro 0813", input: 1.32, cachedRead: 0.044, output: 3.96 }
+      - { model: "DeepSeek V4.1 Flash", input: 0.3, cachedRead: 0.006, output: 1.2 }
+      - { model: "Mistral Large 4", input: 1.36, cachedRead: 0.14, output: 4.18 }
+      - { model: "Grok 4.3", input: 1.25, cachedRead: 0.2, output: 2.5 }
+      - { model: "MiniMax M3", input: 0.3, cachedRead: 0.06, output: 1.2 }
+      - { model: "MiMo V2.6 Pro", input: 0.435, cachedRead: 0.0036, output: 0.87 }
+      - { model: "MiMo V2.6 Flash", input: 0.14, cachedRead: 0.0028, output: 0.28 }
+    quotas:
+      - { label: "Monthly", unit: "USD usage", amount: 20, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-18
+    note: "Official: $19/month buys a $20 monthly compute budget, drawn down at the cost the provider reports for each request, so the rates are the per-model ones Standard Compute publishes. There are no 5-hour or weekly windows inside the month; requests run at full speed until the budget is spent, then return 402 until renewal, with no overage unless Pay as you go is enabled. Cached input is billed at the published cached-input rate. No cache write rate is published, so the build falls back to the input rate for writes; if a write actually costs more than fresh input, the requests per dollar shown here are an upper bound rather than a floor. Four of the 32 published models have no cached input rate (Qwen, marked Not listed), so they carry no row and the median is computed over 28 models; Standard Compute documents gateway cache breakpoints for Claude models. Starter runs one agent at a time and includes one API key. Every plan reaches every model, so tiers differ in budget, parallelism and scheduling, not model access. Sources: standardcompute.com/llm-api-pricing and standardcompute.com/standard-compute-facts (read 2026-10-18)."
+    noteDe: "Offiziell: 19 $ pro Monat ergeben ein monatliches Compute-Budget von 20 $, abgebucht zu den Kosten, die der Anbieter pro Request meldet, also zu den veroeffentlichten Preisen pro Modell. Innerhalb des Monats gibt es keine 5-Stunden- oder Wochen-Fenster; Requests laufen mit voller Geschwindigkeit bis das Budget aufgebraucht ist und antworten dann mit 402 bis zur Erneuerung, ohne Aufpreis, ausser man schaltet Pay as you go selbst ein. Cache-Lesen wird zum veroeffentlichten Cache-Read-Preis abgerechnet. Einen Preis fuers Schreiben in den Cache veroeffentlicht der Anbieter nicht, der Build setzt dafuer den Input-Preis an; kostet ein Write real mehr als frischer Input, sind die hier gezeigten Requests pro Dollar eine Obergrenze und keine Untergrenze. Vier der 32 veroeffentlichten Modelle haben keinen Cache-Read-Preis (Qwen, als Not listed markiert), sie bekommen daher keine Zeile, der Median wird ueber 28 Modelle gebildet; Gateway-Cache-Breakpoints dokumentiert Standard Compute fuer Claude-Modelle. Starter laeuft mit einem Agenten gleichzeitig und enthaelt einen API-Key. Jeder Tarif erreicht jedes Modell, die Tarife unterscheiden sich also in Budget, Parallelitaet und Scheduling, nicht im Modellzugang. Quellen: standardcompute.com/llm-api-pricing und standardcompute.com/standard-compute-facts (gelesen 2026-10-18)."
+
+  - id: standardcompute-economy
+    provider: standardcompute
+    name: Standard Compute Economy
+    price: { monthlyUsd: 39, paidPrice: 39, advertisedPrice: 39, currency: USD, billingNote: "flat; the full price becomes the monthly compute budget; individual plans start with 1.5x the compute in the first month" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "usage in USD"
+    tagDe: "Nutzung in USD"
+    dollarPlan:
+      usd: 41
+      source: "standardcompute.com/llm-api-pricing"
+      note: "Per-model input, cached input and output rates in USD per million tokens, published by Standard Compute."
+      models:
+      - { model: "GPT-6 Astra", input: 10.0, cachedRead: 1.0, output: 50.0 }
+      - { model: "GPT-5.6 Sol", input: 4.0, cachedRead: 0.4, output: 20.0 }
+      - { model: "GPT-5.6 Terra", input: 2.0, cachedRead: 0.2, output: 12.0 }
+      - { model: "GPT-5.6 Luna", input: 0.2, cachedRead: 0.02, output: 1.2 }
+      - { model: "GPT-6 Luna", input: 0.1, cachedRead: 0.01, output: 0.5 }
+      - { model: "Claude Fable 5.1", input: 10.0, cachedRead: 0.25, output: 50.0 }
+      - { model: "Claude Fable 5", input: 10.0, cachedRead: 1.0, output: 50.0 }
+      - { model: "Claude Opus 5", input: 5.0, cachedRead: 0.5, output: 25.0 }
+      - { model: "Claude Opus 5.5", input: 4.0, cachedRead: 0.2, output: 20.0 }
+      - { model: "Claude Sonnet 5.5", input: 2.0, cachedRead: 0.1, output: 10.0 }
+      - { model: "Claude Sonnet 5", input: 2.0, cachedRead: 0.2, output: 10.0 }
+      - { model: "Claude Haiku 5.5", input: 0.1, cachedRead: 0.01, output: 0.5 }
+      - { model: "Gemini 3.1 Pro Preview", input: 2.0, cachedRead: 0.2, output: 12.0 }
+      - { model: "Gemini 3.8 Flash", input: 1.5, cachedRead: 0.15, output: 7.5 }
+      - { model: "Gemini 2.5 Pro", input: 1.25, cachedRead: 0.125, output: 10.0 }
+      - { model: "Gemini 3.5 Flash-Lite", input: 0.3, cachedRead: 0.03, output: 2.5 }
+      - { model: "Gemini 2.5 Flash", input: 0.3, cachedRead: 0.03, output: 2.5 }
+      - { model: "Kimi K3", input: 3.0, cachedRead: 0.3, output: 15.0 }
+      - { model: "GLM 5.3", input: 1.4, cachedRead: 0.26, output: 4.4 }
+      - { model: "GLM 5.2", input: 1.4, cachedRead: 0.26, output: 4.4 }
+      - { model: "GLM 5.3 Flash", input: 0.15, cachedRead: 0.03, output: 0.5 }
+      - { model: "DeepSeek V4 Pro 0813", input: 1.32, cachedRead: 0.044, output: 3.96 }
+      - { model: "DeepSeek V4.1 Flash", input: 0.3, cachedRead: 0.006, output: 1.2 }
+      - { model: "Mistral Large 4", input: 1.36, cachedRead: 0.14, output: 4.18 }
+      - { model: "Grok 4.3", input: 1.25, cachedRead: 0.2, output: 2.5 }
+      - { model: "MiniMax M3", input: 0.3, cachedRead: 0.06, output: 1.2 }
+      - { model: "MiMo V2.6 Pro", input: 0.435, cachedRead: 0.0036, output: 0.87 }
+      - { model: "MiMo V2.6 Flash", input: 0.14, cachedRead: 0.0028, output: 0.28 }
+    quotas:
+      - { label: "Monthly", unit: "USD usage", amount: 41, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-18
+    note: "Official: $39/month buys a $41 monthly compute budget, drawn down at the cost the provider reports for each request, so the rates are the per-model ones Standard Compute publishes. There are no 5-hour or weekly windows inside the month; requests run at full speed until the budget is spent, then return 402 until renewal, with no overage unless Pay as you go is enabled. Cached input is billed at the published cached-input rate. No cache write rate is published, so the build falls back to the input rate for writes; if a write actually costs more than fresh input, the requests per dollar shown here are an upper bound rather than a floor. Four of the 32 published models have no cached input rate (Qwen, marked Not listed), so they carry no row and the median is computed over 28 models; Standard Compute documents gateway cache breakpoints for Claude models. Economy adds parallel agents and a shared execution pool, and is the first tier that can turn on Pay as you go. Every plan reaches every model, so tiers differ in budget, parallelism and scheduling, not model access. Sources: standardcompute.com/llm-api-pricing and standardcompute.com/standard-compute-facts (read 2026-10-18)."
+    noteDe: "Offiziell: 39 $ pro Monat ergeben ein monatliches Compute-Budget von 41 $, abgebucht zu den Kosten, die der Anbieter pro Request meldet, also zu den veroeffentlichten Preisen pro Modell. Innerhalb des Monats gibt es keine 5-Stunden- oder Wochen-Fenster; Requests laufen mit voller Geschwindigkeit bis das Budget aufgebraucht ist und antworten dann mit 402 bis zur Erneuerung, ohne Aufpreis, ausser man schaltet Pay as you go selbst ein. Cache-Lesen wird zum veroeffentlichten Cache-Read-Preis abgerechnet. Einen Preis fuers Schreiben in den Cache veroeffentlicht der Anbieter nicht, der Build setzt dafuer den Input-Preis an; kostet ein Write real mehr als frischer Input, sind die hier gezeigten Requests pro Dollar eine Obergrenze und keine Untergrenze. Vier der 32 veroeffentlichten Modelle haben keinen Cache-Read-Preis (Qwen, als Not listed markiert), sie bekommen daher keine Zeile, der Median wird ueber 28 Modelle gebildet; Gateway-Cache-Breakpoints dokumentiert Standard Compute fuer Claude-Modelle. Economy ergaenzt parallele Agenten und einen gemeinsamen Ausfuehrungspool und ist der erste Tarif, der Pay as you go zuschalten kann. Jeder Tarif erreicht jedes Modell, die Tarife unterscheiden sich also in Budget, Parallelitaet und Scheduling, nicht im Modellzugang. Quellen: standardcompute.com/llm-api-pricing und standardcompute.com/standard-compute-facts (gelesen 2026-10-18)."
+
+  - id: standardcompute-standard
+    provider: standardcompute
+    name: Standard Compute Standard
+    price: { monthlyUsd: 89, paidPrice: 89, advertisedPrice: 89, currency: USD, billingNote: "flat; the full price becomes the monthly compute budget; individual plans start with 1.5x the compute in the first month" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "usage in USD"
+    tagDe: "Nutzung in USD"
+    dollarPlan:
+      usd: 95
+      source: "standardcompute.com/llm-api-pricing"
+      note: "Per-model input, cached input and output rates in USD per million tokens, published by Standard Compute."
+      models:
+      - { model: "GPT-6 Astra", input: 10.0, cachedRead: 1.0, output: 50.0 }
+      - { model: "GPT-5.6 Sol", input: 4.0, cachedRead: 0.4, output: 20.0 }
+      - { model: "GPT-5.6 Terra", input: 2.0, cachedRead: 0.2, output: 12.0 }
+      - { model: "GPT-5.6 Luna", input: 0.2, cachedRead: 0.02, output: 1.2 }
+      - { model: "GPT-6 Luna", input: 0.1, cachedRead: 0.01, output: 0.5 }
+      - { model: "Claude Fable 5.1", input: 10.0, cachedRead: 0.25, output: 50.0 }
+      - { model: "Claude Fable 5", input: 10.0, cachedRead: 1.0, output: 50.0 }
+      - { model: "Claude Opus 5", input: 5.0, cachedRead: 0.5, output: 25.0 }
+      - { model: "Claude Opus 5.5", input: 4.0, cachedRead: 0.2, output: 20.0 }
+      - { model: "Claude Sonnet 5.5", input: 2.0, cachedRead: 0.1, output: 10.0 }
+      - { model: "Claude Sonnet 5", input: 2.0, cachedRead: 0.2, output: 10.0 }
+      - { model: "Claude Haiku 5.5", input: 0.1, cachedRead: 0.01, output: 0.5 }
+      - { model: "Gemini 3.1 Pro Preview", input: 2.0, cachedRead: 0.2, output: 12.0 }
+      - { model: "Gemini 3.8 Flash", input: 1.5, cachedRead: 0.15, output: 7.5 }
+      - { model: "Gemini 2.5 Pro", input: 1.25, cachedRead: 0.125, output: 10.0 }
+      - { model: "Gemini 3.5 Flash-Lite", input: 0.3, cachedRead: 0.03, output: 2.5 }
+      - { model: "Gemini 2.5 Flash", input: 0.3, cachedRead: 0.03, output: 2.5 }
+      - { model: "Kimi K3", input: 3.0, cachedRead: 0.3, output: 15.0 }
+      - { model: "GLM 5.3", input: 1.4, cachedRead: 0.26, output: 4.4 }
+      - { model: "GLM 5.2", input: 1.4, cachedRead: 0.26, output: 4.4 }
+      - { model: "GLM 5.3 Flash", input: 0.15, cachedRead: 0.03, output: 0.5 }
+      - { model: "DeepSeek V4 Pro 0813", input: 1.32, cachedRead: 0.044, output: 3.96 }
+      - { model: "DeepSeek V4.1 Flash", input: 0.3, cachedRead: 0.006, output: 1.2 }
+      - { model: "Mistral Large 4", input: 1.36, cachedRead: 0.14, output: 4.18 }
+      - { model: "Grok 4.3", input: 1.25, cachedRead: 0.2, output: 2.5 }
+      - { model: "MiniMax M3", input: 0.3, cachedRead: 0.06, output: 1.2 }
+      - { model: "MiMo V2.6 Pro", input: 0.435, cachedRead: 0.0036, output: 0.87 }
+      - { model: "MiMo V2.6 Flash", input: 0.14, cachedRead: 0.0028, output: 0.28 }
+    quotas:
+      - { label: "Monthly", unit: "USD usage", amount: 95, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-18
+    note: "Official: $89/month buys a $95 monthly compute budget, drawn down at the cost the provider reports for each request, so the rates are the per-model ones Standard Compute publishes. There are no 5-hour or weekly windows inside the month; requests run at full speed until the budget is spent, then return 402 until renewal, with no overage unless Pay as you go is enabled. Cached input is billed at the published cached-input rate. No cache write rate is published, so the build falls back to the input rate for writes; if a write actually costs more than fresh input, the requests per dollar shown here are an upper bound rather than a floor. Four of the 32 published models have no cached input rate (Qwen, marked Not listed), so they carry no row and the median is computed over 28 models; Standard Compute documents gateway cache breakpoints for Claude models. Standard adds priority scheduling and a higher-capacity pool. Every plan reaches every model, so tiers differ in budget, parallelism and scheduling, not model access. Sources: standardcompute.com/llm-api-pricing and standardcompute.com/standard-compute-facts (read 2026-10-18)."
+    noteDe: "Offiziell: 89 $ pro Monat ergeben ein monatliches Compute-Budget von 95 $, abgebucht zu den Kosten, die der Anbieter pro Request meldet, also zu den veroeffentlichten Preisen pro Modell. Innerhalb des Monats gibt es keine 5-Stunden- oder Wochen-Fenster; Requests laufen mit voller Geschwindigkeit bis das Budget aufgebraucht ist und antworten dann mit 402 bis zur Erneuerung, ohne Aufpreis, ausser man schaltet Pay as you go selbst ein. Cache-Lesen wird zum veroeffentlichten Cache-Read-Preis abgerechnet. Einen Preis fuers Schreiben in den Cache veroeffentlicht der Anbieter nicht, der Build setzt dafuer den Input-Preis an; kostet ein Write real mehr als frischer Input, sind die hier gezeigten Requests pro Dollar eine Obergrenze und keine Untergrenze. Vier der 32 veroeffentlichten Modelle haben keinen Cache-Read-Preis (Qwen, als Not listed markiert), sie bekommen daher keine Zeile, der Median wird ueber 28 Modelle gebildet; Gateway-Cache-Breakpoints dokumentiert Standard Compute fuer Claude-Modelle. Standard ergaenzt Priority-Scheduling und einen groesseren Pool. Jeder Tarif erreicht jedes Modell, die Tarife unterscheiden sich also in Budget, Parallelitaet und Scheduling, nicht im Modellzugang. Quellen: standardcompute.com/llm-api-pricing und standardcompute.com/standard-compute-facts (gelesen 2026-10-18)."
+
+  - id: standardcompute-pro
+    provider: standardcompute
+    name: Standard Compute Pro
+    price: { monthlyUsd: 249, paidPrice: 249, advertisedPrice: 249, currency: USD, billingNote: "flat; the full price becomes the monthly compute budget; individual plans start with 1.5x the compute in the first month" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "usage in USD"
+    tagDe: "Nutzung in USD"
+    dollarPlan:
+      usd: 269
+      source: "standardcompute.com/llm-api-pricing"
+      note: "Per-model input, cached input and output rates in USD per million tokens, published by Standard Compute."
+      models:
+      - { model: "GPT-6 Astra", input: 10.0, cachedRead: 1.0, output: 50.0 }
+      - { model: "GPT-5.6 Sol", input: 4.0, cachedRead: 0.4, output: 20.0 }
+      - { model: "GPT-5.6 Terra", input: 2.0, cachedRead: 0.2, output: 12.0 }
+      - { model: "GPT-5.6 Luna", input: 0.2, cachedRead: 0.02, output: 1.2 }
+      - { model: "GPT-6 Luna", input: 0.1, cachedRead: 0.01, output: 0.5 }
+      - { model: "Claude Fable 5.1", input: 10.0, cachedRead: 0.25, output: 50.0 }
+      - { model: "Claude Fable 5", input: 10.0, cachedRead: 1.0, output: 50.0 }
+      - { model: "Claude Opus 5", input: 5.0, cachedRead: 0.5, output: 25.0 }
+      - { model: "Claude Opus 5.5", input: 4.0, cachedRead: 0.2, output: 20.0 }
+      - { model: "Claude Sonnet 5.5", input: 2.0, cachedRead: 0.1, output: 10.0 }
+      - { model: "Claude Sonnet 5", input: 2.0, cachedRead: 0.2, output: 10.0 }
+      - { model: "Claude Haiku 5.5", input: 0.1, cachedRead: 0.01, output: 0.5 }
+      - { model: "Gemini 3.1 Pro Preview", input: 2.0, cachedRead: 0.2, output: 12.0 }
+      - { model: "Gemini 3.8 Flash", input: 1.5, cachedRead: 0.15, output: 7.5 }
+      - { model: "Gemini 2.5 Pro", input: 1.25, cachedRead: 0.125, output: 10.0 }
+      - { model: "Gemini 3.5 Flash-Lite", input: 0.3, cachedRead: 0.03, output: 2.5 }
+      - { model: "Gemini 2.5 Flash", input: 0.3, cachedRead: 0.03, output: 2.5 }
+      - { model: "Kimi K3", input: 3.0, cachedRead: 0.3, output: 15.0 }
+      - { model: "GLM 5.3", input: 1.4, cachedRead: 0.26, output: 4.4 }
+      - { model: "GLM 5.2", input: 1.4, cachedRead: 0.26, output: 4.4 }
+      - { model: "GLM 5.3 Flash", input: 0.15, cachedRead: 0.03, output: 0.5 }
+      - { model: "DeepSeek V4 Pro 0813", input: 1.32, cachedRead: 0.044, output: 3.96 }
+      - { model: "DeepSeek V4.1 Flash", input: 0.3, cachedRead: 0.006, output: 1.2 }
+      - { model: "Mistral Large 4", input: 1.36, cachedRead: 0.14, output: 4.18 }
+      - { model: "Grok 4.3", input: 1.25, cachedRead: 0.2, output: 2.5 }
+      - { model: "MiniMax M3", input: 0.3, cachedRead: 0.06, output: 1.2 }
+      - { model: "MiMo V2.6 Pro", input: 0.435, cachedRead: 0.0036, output: 0.87 }
+      - { model: "MiMo V2.6 Flash", input: 0.14, cachedRead: 0.0028, output: 0.28 }
+    quotas:
+      - { label: "Monthly", unit: "USD usage", amount: 269, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-18
+    note: "Official: $249/month buys a $269 monthly compute budget, drawn down at the cost the provider reports for each request, so the rates are the per-model ones Standard Compute publishes. There are no 5-hour or weekly windows inside the month; requests run at full speed until the budget is spent, then return 402 until renewal, with no overage unless Pay as you go is enabled. Cached input is billed at the published cached-input rate. No cache write rate is published, so the build falls back to the input rate for writes; if a write actually costs more than fresh input, the requests per dollar shown here are an upper bound rather than a floor. Four of the 32 published models have no cached input rate (Qwen, marked Not listed), so they carry no row and the median is computed over 28 models; Standard Compute documents gateway cache breakpoints for Claude models. Pro adds the highest priority scheduling. Every plan reaches every model, so tiers differ in budget, parallelism and scheduling, not model access. Sources: standardcompute.com/llm-api-pricing and standardcompute.com/standard-compute-facts (read 2026-10-18)."
+    noteDe: "Offiziell: 249 $ pro Monat ergeben ein monatliches Compute-Budget von 269 $, abgebucht zu den Kosten, die der Anbieter pro Request meldet, also zu den veroeffentlichten Preisen pro Modell. Innerhalb des Monats gibt es keine 5-Stunden- oder Wochen-Fenster; Requests laufen mit voller Geschwindigkeit bis das Budget aufgebraucht ist und antworten dann mit 402 bis zur Erneuerung, ohne Aufpreis, ausser man schaltet Pay as you go selbst ein. Cache-Lesen wird zum veroeffentlichten Cache-Read-Preis abgerechnet. Einen Preis fuers Schreiben in den Cache veroeffentlicht der Anbieter nicht, der Build setzt dafuer den Input-Preis an; kostet ein Write real mehr als frischer Input, sind die hier gezeigten Requests pro Dollar eine Obergrenze und keine Untergrenze. Vier der 32 veroeffentlichten Modelle haben keinen Cache-Read-Preis (Qwen, als Not listed markiert), sie bekommen daher keine Zeile, der Median wird ueber 28 Modelle gebildet; Gateway-Cache-Breakpoints dokumentiert Standard Compute fuer Claude-Modelle. Pro ergaenzt das Scheduling mit der hoechsten Prioritaet. Jeder Tarif erreicht jedes Modell, die Tarife unterscheiden sich also in Budget, Parallelitaet und Scheduling, nicht im Modellzugang. Quellen: standardcompute.com/llm-api-pricing und standardcompute.com/standard-compute-facts (gelesen 2026-10-18)."
+
+  - id: standardcompute-proplus
+    provider: standardcompute
+    name: Standard Compute Pro Plus
+    price: { monthlyUsd: 499, paidPrice: 499, advertisedPrice: 499, currency: USD, billingNote: "flat; the full price becomes the monthly compute budget; individual plans start with 1.5x the compute in the first month" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "usage in USD"
+    tagDe: "Nutzung in USD"
+    dollarPlan:
+      usd: 549
+      source: "standardcompute.com/llm-api-pricing"
+      note: "Per-model input, cached input and output rates in USD per million tokens, published by Standard Compute."
+      models:
+      - { model: "GPT-6 Astra", input: 10.0, cachedRead: 1.0, output: 50.0 }
+      - { model: "GPT-5.6 Sol", input: 4.0, cachedRead: 0.4, output: 20.0 }
+      - { model: "GPT-5.6 Terra", input: 2.0, cachedRead: 0.2, output: 12.0 }
+      - { model: "GPT-5.6 Luna", input: 0.2, cachedRead: 0.02, output: 1.2 }
+      - { model: "GPT-6 Luna", input: 0.1, cachedRead: 0.01, output: 0.5 }
+      - { model: "Claude Fable 5.1", input: 10.0, cachedRead: 0.25, output: 50.0 }
+      - { model: "Claude Fable 5", input: 10.0, cachedRead: 1.0, output: 50.0 }
+      - { model: "Claude Opus 5", input: 5.0, cachedRead: 0.5, output: 25.0 }
+      - { model: "Claude Opus 5.5", input: 4.0, cachedRead: 0.2, output: 20.0 }
+      - { model: "Claude Sonnet 5.5", input: 2.0, cachedRead: 0.1, output: 10.0 }
+      - { model: "Claude Sonnet 5", input: 2.0, cachedRead: 0.2, output: 10.0 }
+      - { model: "Claude Haiku 5.5", input: 0.1, cachedRead: 0.01, output: 0.5 }
+      - { model: "Gemini 3.1 Pro Preview", input: 2.0, cachedRead: 0.2, output: 12.0 }
+      - { model: "Gemini 3.8 Flash", input: 1.5, cachedRead: 0.15, output: 7.5 }
+      - { model: "Gemini 2.5 Pro", input: 1.25, cachedRead: 0.125, output: 10.0 }
+      - { model: "Gemini 3.5 Flash-Lite", input: 0.3, cachedRead: 0.03, output: 2.5 }
+      - { model: "Gemini 2.5 Flash", input: 0.3, cachedRead: 0.03, output: 2.5 }
+      - { model: "Kimi K3", input: 3.0, cachedRead: 0.3, output: 15.0 }
+      - { model: "GLM 5.3", input: 1.4, cachedRead: 0.26, output: 4.4 }
+      - { model: "GLM 5.2", input: 1.4, cachedRead: 0.26, output: 4.4 }
+      - { model: "GLM 5.3 Flash", input: 0.15, cachedRead: 0.03, output: 0.5 }
+      - { model: "DeepSeek V4 Pro 0813", input: 1.32, cachedRead: 0.044, output: 3.96 }
+      - { model: "DeepSeek V4.1 Flash", input: 0.3, cachedRead: 0.006, output: 1.2 }
+      - { model: "Mistral Large 4", input: 1.36, cachedRead: 0.14, output: 4.18 }
+      - { model: "Grok 4.3", input: 1.25, cachedRead: 0.2, output: 2.5 }
+      - { model: "MiniMax M3", input: 0.3, cachedRead: 0.06, output: 1.2 }
+      - { model: "MiMo V2.6 Pro", input: 0.435, cachedRead: 0.0036, output: 0.87 }
+      - { model: "MiMo V2.6 Flash", input: 0.14, cachedRead: 0.0028, output: 0.28 }
+    quotas:
+      - { label: "Monthly", unit: "USD usage", amount: 549, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-18
+    note: "Official: $499/month buys a $549 monthly compute budget, drawn down at the cost the provider reports for each request, so the rates are the per-model ones Standard Compute publishes. There are no 5-hour or weekly windows inside the month; requests run at full speed until the budget is spent, then return 402 until renewal, with no overage unless Pay as you go is enabled. Cached input is billed at the published cached-input rate. No cache write rate is published, so the build falls back to the input rate for writes; if a write actually costs more than fresh input, the requests per dollar shown here are an upper bound rather than a floor. Four of the 32 published models have no cached input rate (Qwen, marked Not listed), so they carry no row and the median is computed over 28 models; Standard Compute documents gateway cache breakpoints for Claude models. Pro Plus adds unlimited API keys. Every plan reaches every model, so tiers differ in budget, parallelism and scheduling, not model access. Sources: standardcompute.com/llm-api-pricing and standardcompute.com/standard-compute-facts (read 2026-10-18)."
+    noteDe: "Offiziell: 499 $ pro Monat ergeben ein monatliches Compute-Budget von 549 $, abgebucht zu den Kosten, die der Anbieter pro Request meldet, also zu den veroeffentlichten Preisen pro Modell. Innerhalb des Monats gibt es keine 5-Stunden- oder Wochen-Fenster; Requests laufen mit voller Geschwindigkeit bis das Budget aufgebraucht ist und antworten dann mit 402 bis zur Erneuerung, ohne Aufpreis, ausser man schaltet Pay as you go selbst ein. Cache-Lesen wird zum veroeffentlichten Cache-Read-Preis abgerechnet. Einen Preis fuers Schreiben in den Cache veroeffentlicht der Anbieter nicht, der Build setzt dafuer den Input-Preis an; kostet ein Write real mehr als frischer Input, sind die hier gezeigten Requests pro Dollar eine Obergrenze und keine Untergrenze. Vier der 32 veroeffentlichten Modelle haben keinen Cache-Read-Preis (Qwen, als Not listed markiert), sie bekommen daher keine Zeile, der Median wird ueber 28 Modelle gebildet; Gateway-Cache-Breakpoints dokumentiert Standard Compute fuer Claude-Modelle. Pro Plus ergaenzt unbegrenzte API-Keys. Jeder Tarif erreicht jedes Modell, die Tarife unterscheiden sich also in Budget, Parallelitaet und Scheduling, nicht im Modellzugang. Quellen: standardcompute.com/llm-api-pricing und standardcompute.com/standard-compute-facts (gelesen 2026-10-18)."
+
+  - id: standardcompute-growth
+    provider: standardcompute
+    name: Standard Compute Growth
+    price: { monthlyUsd: 999, paidPrice: 999, advertisedPrice: 999, currency: USD, billingNote: "flat; the full price becomes the monthly compute budget; individual plans start with 1.5x the compute in the first month" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "usage in USD"
+    tagDe: "Nutzung in USD"
+    dollarPlan:
+      usd: 1119
+      source: "standardcompute.com/llm-api-pricing"
+      note: "Per-model input, cached input and output rates in USD per million tokens, published by Standard Compute."
+      models:
+      - { model: "GPT-6 Astra", input: 10.0, cachedRead: 1.0, output: 50.0 }
+      - { model: "GPT-5.6 Sol", input: 4.0, cachedRead: 0.4, output: 20.0 }
+      - { model: "GPT-5.6 Terra", input: 2.0, cachedRead: 0.2, output: 12.0 }
+      - { model: "GPT-5.6 Luna", input: 0.2, cachedRead: 0.02, output: 1.2 }
+      - { model: "GPT-6 Luna", input: 0.1, cachedRead: 0.01, output: 0.5 }
+      - { model: "Claude Fable 5.1", input: 10.0, cachedRead: 0.25, output: 50.0 }
+      - { model: "Claude Fable 5", input: 10.0, cachedRead: 1.0, output: 50.0 }
+      - { model: "Claude Opus 5", input: 5.0, cachedRead: 0.5, output: 25.0 }
+      - { model: "Claude Opus 5.5", input: 4.0, cachedRead: 0.2, output: 20.0 }
+      - { model: "Claude Sonnet 5.5", input: 2.0, cachedRead: 0.1, output: 10.0 }
+      - { model: "Claude Sonnet 5", input: 2.0, cachedRead: 0.2, output: 10.0 }
+      - { model: "Claude Haiku 5.5", input: 0.1, cachedRead: 0.01, output: 0.5 }
+      - { model: "Gemini 3.1 Pro Preview", input: 2.0, cachedRead: 0.2, output: 12.0 }
+      - { model: "Gemini 3.8 Flash", input: 1.5, cachedRead: 0.15, output: 7.5 }
+      - { model: "Gemini 2.5 Pro", input: 1.25, cachedRead: 0.125, output: 10.0 }
+      - { model: "Gemini 3.5 Flash-Lite", input: 0.3, cachedRead: 0.03, output: 2.5 }
+      - { model: "Gemini 2.5 Flash", input: 0.3, cachedRead: 0.03, output: 2.5 }
+      - { model: "Kimi K3", input: 3.0, cachedRead: 0.3, output: 15.0 }
+      - { model: "GLM 5.3", input: 1.4, cachedRead: 0.26, output: 4.4 }
+      - { model: "GLM 5.2", input: 1.4, cachedRead: 0.26, output: 4.4 }
+      - { model: "GLM 5.3 Flash", input: 0.15, cachedRead: 0.03, output: 0.5 }
+      - { model: "DeepSeek V4 Pro 0813", input: 1.32, cachedRead: 0.044, output: 3.96 }
+      - { model: "DeepSeek V4.1 Flash", input: 0.3, cachedRead: 0.006, output: 1.2 }
+      - { model: "Mistral Large 4", input: 1.36, cachedRead: 0.14, output: 4.18 }
+      - { model: "Grok 4.3", input: 1.25, cachedRead: 0.2, output: 2.5 }
+      - { model: "MiniMax M3", input: 0.3, cachedRead: 0.06, output: 1.2 }
+      - { model: "MiMo V2.6 Pro", input: 0.435, cachedRead: 0.0036, output: 0.87 }
+      - { model: "MiMo V2.6 Flash", input: 0.14, cachedRead: 0.0028, output: 0.28 }
+    quotas:
+      - { label: "Monthly", unit: "USD usage", amount: 1119, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-18
+    note: "Official: $999/month buys a $1119 monthly compute budget, drawn down at the cost the provider reports for each request, so the rates are the per-model ones Standard Compute publishes. There are no 5-hour or weekly windows inside the month; requests run at full speed until the budget is spent, then return 402 until renewal, with no overage unless Pay as you go is enabled. Cached input is billed at the published cached-input rate. No cache write rate is published, so the build falls back to the input rate for writes; if a write actually costs more than fresh input, the requests per dollar shown here are an upper bound rather than a floor. Four of the 32 published models have no cached input rate (Qwen, marked Not listed), so they carry no row and the median is computed over 28 models; Standard Compute documents gateway cache breakpoints for Claude models. Growth adds more capacity for parallel agents. Every plan reaches every model, so tiers differ in budget, parallelism and scheduling, not model access. Sources: standardcompute.com/llm-api-pricing and standardcompute.com/standard-compute-facts (read 2026-10-18)."
+    noteDe: "Offiziell: 999 $ pro Monat ergeben ein monatliches Compute-Budget von 1119 $, abgebucht zu den Kosten, die der Anbieter pro Request meldet, also zu den veroeffentlichten Preisen pro Modell. Innerhalb des Monats gibt es keine 5-Stunden- oder Wochen-Fenster; Requests laufen mit voller Geschwindigkeit bis das Budget aufgebraucht ist und antworten dann mit 402 bis zur Erneuerung, ohne Aufpreis, ausser man schaltet Pay as you go selbst ein. Cache-Lesen wird zum veroeffentlichten Cache-Read-Preis abgerechnet. Einen Preis fuers Schreiben in den Cache veroeffentlicht der Anbieter nicht, der Build setzt dafuer den Input-Preis an; kostet ein Write real mehr als frischer Input, sind die hier gezeigten Requests pro Dollar eine Obergrenze und keine Untergrenze. Vier der 32 veroeffentlichten Modelle haben keinen Cache-Read-Preis (Qwen, als Not listed markiert), sie bekommen daher keine Zeile, der Median wird ueber 28 Modelle gebildet; Gateway-Cache-Breakpoints dokumentiert Standard Compute fuer Claude-Modelle. Growth ergaenzt mehr Kapazitaet fuer parallele Agenten. Jeder Tarif erreicht jedes Modell, die Tarife unterscheiden sich also in Budget, Parallelitaet und Scheduling, nicht im Modellzugang. Quellen: standardcompute.com/llm-api-pricing und standardcompute.com/standard-compute-facts (gelesen 2026-10-18)."
+
+  - id: standardcompute-scale
+    provider: standardcompute
+    name: Standard Compute Scale
+    price: { monthlyUsd: 2499, paidPrice: 2499, advertisedPrice: 2499, currency: USD, billingNote: "flat; the full price becomes the monthly compute budget; individual plans start with 1.5x the compute in the first month" }
+    meter: dollar_usage
+    disclosure: disclosed
+    tag: "usage in USD"
+    tagDe: "Nutzung in USD"
+    dollarPlan:
+      usd: 2849
+      source: "standardcompute.com/llm-api-pricing"
+      note: "Per-model input, cached input and output rates in USD per million tokens, published by Standard Compute."
+      models:
+      - { model: "GPT-6 Astra", input: 10.0, cachedRead: 1.0, output: 50.0 }
+      - { model: "GPT-5.6 Sol", input: 4.0, cachedRead: 0.4, output: 20.0 }
+      - { model: "GPT-5.6 Terra", input: 2.0, cachedRead: 0.2, output: 12.0 }
+      - { model: "GPT-5.6 Luna", input: 0.2, cachedRead: 0.02, output: 1.2 }
+      - { model: "GPT-6 Luna", input: 0.1, cachedRead: 0.01, output: 0.5 }
+      - { model: "Claude Fable 5.1", input: 10.0, cachedRead: 0.25, output: 50.0 }
+      - { model: "Claude Fable 5", input: 10.0, cachedRead: 1.0, output: 50.0 }
+      - { model: "Claude Opus 5", input: 5.0, cachedRead: 0.5, output: 25.0 }
+      - { model: "Claude Opus 5.5", input: 4.0, cachedRead: 0.2, output: 20.0 }
+      - { model: "Claude Sonnet 5.5", input: 2.0, cachedRead: 0.1, output: 10.0 }
+      - { model: "Claude Sonnet 5", input: 2.0, cachedRead: 0.2, output: 10.0 }
+      - { model: "Claude Haiku 5.5", input: 0.1, cachedRead: 0.01, output: 0.5 }
+      - { model: "Gemini 3.1 Pro Preview", input: 2.0, cachedRead: 0.2, output: 12.0 }
+      - { model: "Gemini 3.8 Flash", input: 1.5, cachedRead: 0.15, output: 7.5 }
+      - { model: "Gemini 2.5 Pro", input: 1.25, cachedRead: 0.125, output: 10.0 }
+      - { model: "Gemini 3.5 Flash-Lite", input: 0.3, cachedRead: 0.03, output: 2.5 }
+      - { model: "Gemini 2.5 Flash", input: 0.3, cachedRead: 0.03, output: 2.5 }
+      - { model: "Kimi K3", input: 3.0, cachedRead: 0.3, output: 15.0 }
+      - { model: "GLM 5.3", input: 1.4, cachedRead: 0.26, output: 4.4 }
+      - { model: "GLM 5.2", input: 1.4, cachedRead: 0.26, output: 4.4 }
+      - { model: "GLM 5.3 Flash", input: 0.15, cachedRead: 0.03, output: 0.5 }
+      - { model: "DeepSeek V4 Pro 0813", input: 1.32, cachedRead: 0.044, output: 3.96 }
+      - { model: "DeepSeek V4.1 Flash", input: 0.3, cachedRead: 0.006, output: 1.2 }
+      - { model: "Mistral Large 4", input: 1.36, cachedRead: 0.14, output: 4.18 }
+      - { model: "Grok 4.3", input: 1.25, cachedRead: 0.2, output: 2.5 }
+      - { model: "MiniMax M3", input: 0.3, cachedRead: 0.06, output: 1.2 }
+      - { model: "MiMo V2.6 Pro", input: 0.435, cachedRead: 0.0036, output: 0.87 }
+      - { model: "MiMo V2.6 Flash", input: 0.14, cachedRead: 0.0028, output: 0.28 }
+    quotas:
+      - { label: "Monthly", unit: "USD usage", amount: 2849, window: month, refresh: monthly, disclosure: exact }
+    lastVerified: 2026-10-18
+    note: "Official: $2499/month buys a $2849 monthly compute budget, drawn down at the cost the provider reports for each request, so the rates are the per-model ones Standard Compute publishes. There are no 5-hour or weekly windows inside the month; requests run at full speed until the budget is spent, then return 402 until renewal, with no overage unless Pay as you go is enabled. Cached input is billed at the published cached-input rate. No cache write rate is published, so the build falls back to the input rate for writes; if a write actually costs more than fresh input, the requests per dollar shown here are an upper bound rather than a floor. Four of the 32 published models have no cached input rate (Qwen, marked Not listed), so they carry no row and the median is computed over 28 models; Standard Compute documents gateway cache breakpoints for Claude models. Scale adds dedicated throughput and priority support with a direct line to engineers. Every plan reaches every model, so tiers differ in budget, parallelism and scheduling, not model access. Sources: standardcompute.com/llm-api-pricing and standardcompute.com/standard-compute-facts (read 2026-10-18)."
+    noteDe: "Offiziell: 2499 $ pro Monat ergeben ein monatliches Compute-Budget von 2849 $, abgebucht zu den Kosten, die der Anbieter pro Request meldet, also zu den veroeffentlichten Preisen pro Modell. Innerhalb des Monats gibt es keine 5-Stunden- oder Wochen-Fenster; Requests laufen mit voller Geschwindigkeit bis das Budget aufgebraucht ist und antworten dann mit 402 bis zur Erneuerung, ohne Aufpreis, ausser man schaltet Pay as you go selbst ein. Cache-Lesen wird zum veroeffentlichten Cache-Read-Preis abgerechnet. Einen Preis fuers Schreiben in den Cache veroeffentlicht der Anbieter nicht, der Build setzt dafuer den Input-Preis an; kostet ein Write real mehr als frischer Input, sind die hier gezeigten Requests pro Dollar eine Obergrenze und keine Untergrenze. Vier der 32 veroeffentlichten Modelle haben keinen Cache-Read-Preis (Qwen, als Not listed markiert), sie bekommen daher keine Zeile, der Median wird ueber 28 Modelle gebildet; Gateway-Cache-Breakpoints dokumentiert Standard Compute fuer Claude-Modelle. Scale ergaenzt dedizierten Durchsatz und Priority-Support mit direkter Leitung zu den Entwicklern. Jeder Tarif erreicht jedes Modell, die Tarife unterscheiden sich also in Budget, Parallelitaet und Scheduling, nicht im Modellzugang. Quellen: standardcompute.com/llm-api-pricing und standardcompute.com/standard-compute-facts (gelesen 2026-10-18)."

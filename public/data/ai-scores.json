@@ -1,0 +1,7 @@
+{
+  "source": "LLM Stats (zeroeval.com), rankings endpoint",
+  "fetchedAt": null,
+  "count": 0,
+  "scores": {},
+  "note": "Nur noch als Fallback für Modelle, die LLM Stats noch nicht im Rankings hat. Aktuell leer, alle relevanten Modelle via API."
+}

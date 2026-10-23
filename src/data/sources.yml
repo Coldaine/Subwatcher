@@ -1,0 +1,234 @@
+# Quellen-Definition: Alle Live-Endpoints, die die Pipeline fetcht.
+# Jede Quelle hat: id, url, typ (json-api | html-docs | feed), parser, und die Felder die sie liefert.
+# Change-Detection: fetch.mjs speichert sha256 + fetchedAt; check.mjs difft gegen den letzten Snapshot.
+# Deterministisch: build.mjs nutzt NUR die gespeicherten Snapshots (manifest.json + cache/), nie Live-Fetches im Build.
+
+sources:
+  # ---- Maschinenlesbare Preis-Tracker (JSON-APIs, CORS offen, ideal) ----
+  - id: ocgo-pricing
+    url: "https://ocgo-pricing.all-the.rest/data/latest.json"
+    typ: json-api
+    parser: ocgo
+    provides: [plan_meta, model_prices, model_usage, patterns, peak_hours]
+    note: "OpenCode Go Preis-Tracker: Token-Preise, usage (Credits/Monat), multiplier, pattern (Workload-Profil)."
+
+  - id: cc-pricing
+    url: "https://cc-pricing.all-the.rest/data/latest.json"
+    typ: json-api
+    parser: cc
+    provides: [plan_meta, model_prices, allowances, patterns, request_estimates, peak_hours]
+    note: "Command Code Preis-Tracker: allowances je Plan, Token-Preise, requestEstimate (offizielle Request-Schätzung)."
+
+  - id: opendesign-pricing
+    url: "https://open-design.ai/pricing"
+    typ: html-docs
+    parser: opendesignPricing
+    provides: [plan_prices, plan_quotas, model_allowances, request_estimates]
+    note: "OpenDesign Design Plan (statisches Astro-HTML): Tarifkarten Go/Plus/Pro/Max mit Preis, Erstmonats- und Jahrespreis, Monats-Credits in USD; Modelltabelle mit Dollar-Obergrenze und 7-Tage-Request-Schaetzung je Modell und Tarif (data-usage-value). Alle vier Tarife werden in den Katalog gebaut (OD_BUILD_TIERS in build.mjs)."
+
+  - id: opendesign-credits
+    url: "https://open-design.ai/model-credits/"
+    typ: html-docs
+    parser: opendesignCredits
+    provides: [plan_quotas]
+    note: "OpenDesign Credit-Regeln: Monatsmaximum, Plan-Modell-Credits sowie 7-Tage- und 5-Stunden-Fenster je Tarif (Tabelle allowance-table)."
+
+  # ---- Offizielle Docs (statisches HTML, scrapebar) ----
+  - id: glm-coding-overview
+    url: "https://docs.bigmodel.cn/cn/coding-plan/overview"
+    typ: html-docs
+    parser: glm-overview
+    provides: [plan_quotas, credit_formula, mcp_costs, off_peak]
+    note: "GLM Coding Plan: 5h/Wochen-Quoten, Credit-Formel (in×6.9+cached×1.7+out×24)/10000, GLM-5.3-Flash-Koeffizienten, MCP 1.2, Off-Peak 50%. Preise NICHT hier."
+
+  - id: glm-team-overview
+    url: "https://docs.bigmodel.cn/cn/coding-plan/team"
+    typ: html-docs
+    parser: glm-overview
+    provides: [team_plan_quotas, credit_formula]
+    note: "GLM Team-Pläne."
+
+  - id: qwen-coding-plan
+    url: "https://www.alibabacloud.com/help/en/model-studio/coding-plan"
+    typ: html-docs
+    parser: qwen-docs
+    provides: [plan_meta, plan_quotas, task_conversion]
+    note: "Qwen Coding Plan: $50/Monat, 6k/5h, 45k/Woche, 90k/Monat, simple 5-10 / complex 10-30+ calls."
+
+  - id: qwen-token-personal
+    url: "https://www.alibabacloud.com/help/en/model-studio/token-plan-personal-overview"
+    typ: html-docs
+    parser: qwen-token-personal
+    provides: [plan_meta, plan_quotas, concurrent_agents, extra_bundle]
+    note: "Qwen Token Plan Personal: Lite $6/Std $18/Pro $68 (limited-time), 7d-Quoten, concurrent agents, Extra Bundle $15/20k."
+
+  - id: kimi-membership-pricing
+    url: "https://www.kimi.com/en/help/membership/membership-pricing"
+    typ: html-docs
+    parser: kimi-pricing
+    provides: [plan_meta, plan_prices, credit_pool]
+    note: "Kimi Membership Preise (CNY): Andante ¥49, Moderato ¥99, Allegretto ¥199, Allegro ¥699. Historisch; bevorzugt wird kimi-goods (kimi.ai, offizielle API)."
+
+  - id: kimi-goods
+    url: "https://www.kimi.ai/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods"
+    typ: json-api
+    method: POST
+    body: {}
+    parser: kimi-goods
+    provides: [plan_pricing, billing_cycle, waitlist_status]
+    note: "Kimi.ai offizielle Goods-API: Preise in USD-Cents, billingCycle (MONTH/YEAR = monatlich/jaehrlich), transitionSummary (REASON_SUBSCRIPTION_NEED_APPLY = nur Waitlist). Primärquelle für Kimi-Preise."
+
+  - id: kimi-code-membership
+    url: "https://www.kimi.com/code/docs/en/kimi-code/membership.html"
+    typ: html-docs
+    parser: kimi-code
+    provides: [quota_rules, extra_usage, rate_limits]
+    note: "Kimi Code: 7d-Quota (kein Rollover), 5h-Rate-Window, Extra Usage (RMB, nach Verbrauch)."
+
+  - id: kimi-ai-pricing
+    url: "https://www.kimi.ai/help/membership/membership-pricing"
+    typ: html-docs
+    parser: none
+    provides: [plan_prices, tier_names]
+    note: "Internationale kimi.ai-Preistabelle (USD): Moderato $19 / Allegretto $39 / Allegro $99 / Vivace $199 (Jahr $180/$372/$948/$1908). Belegt das Mapping der Goods-Checkout-Titel Plus/Pro/Max/Ultra auf diese Tarife; wird per Fingerprint auf Änderungen überwacht (Tarif-Umbenennung)."
+
+  # ---- Nicht-scrapebar (Auth/JS) → manuell in overrides.yml, Cron-Agent prüft ----
+  - id: glm-pricing-page
+    url: "https://open.bigmodel.cn/glm-coding"
+    typ: js-spa
+    parser: none
+    provides: [plan_prices]
+    auth: required
+    note: "GLM Preise nur per JS/API (401 ohne Auth). Quoten+Formel kommen aus glm-coding-overview; Preise als overrides + manuelle Verifikation."
+
+  # GitHub Copilot Business/Enterprise: Preise und AI-Credits stehen in der
+  # Plantabelle der Docs (die Individual-Seite listet nur Pro/Pro+/Max).
+  - id: copilot-plans
+    url: "https://docs.github.com/en/copilot/get-started/plans"
+    typ: html-docs
+    parser: copilot-plans
+    provides: [plan_meta, plan_quotas]
+    note: "Copilot Business 19 $/Sitz mit 1.900 AI-Credits pro Nutzer, Enterprise 39 $/Sitz mit 3.900."
+
+  - id: minimax-token-plan
+    url: "https://platform.minimax.io/subscribe/token-plan"
+    typ: js-spa
+    parser: none
+    provides: [plan_meta, plan_quotas]
+    auth: unknown
+    note: "MiniMax Token Plan ist JS-SPA; Daten evtl. per API. Erstmal overrides."
+
+  - id: mimo-token-plan
+    url: "https://mimo.mi.com/docs/en-US/price/token-plan"
+    typ: html-docs
+    parser: mimo
+    provides: [plan_meta, plan_quotas, token_pricing]
+    note: "MiMo Token Plan Docs: Preise, Monats-Credits, Credits pro Token je Modell (Update 2026-09-21)."
+
+  - id: stepfun-step-plan
+    url: "https://platform.stepfun.ai/docs/en/step-plan/overview"
+    typ: html-docs
+    parser: stepfun
+    provides: [plan_meta, plan_quotas, token_pricing]
+    note: "Step Plan Docs: Monats-Credits je Tarif, offizielle Umrechnung 1 $ Nutzung ~ 7M Credits."
+
+  - id: ollama-pricing
+    url: "https://ollama.com/pricing"
+    typ: html-docs
+    parser: ollama
+    provides: [plan_meta, plan_quotas, token_pricing]
+    note: "Ollama Cloud: Tarife mit Dollar-Credits und eigene Token-Preise je Modell."
+
+  - id: copilot-billing
+    url: "https://docs.github.com/copilot/concepts/billing/usage-based-billing-for-individuals"
+    typ: html-docs
+    parser: copilot-billing
+    provides: [plan_meta, plan_quotas]
+    note: "GitHub Copilot: AI-Credit-Kontingent je Tarif (1 Credit = 0,01 $), Reset monatlich."
+
+  - id: copilot-models
+    url: "https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing"
+    typ: html-docs
+    parser: copilot-models
+    provides: [token_pricing]
+    note: "GitHub Copilot: offizielle Token-Preise je Modell (Input, Cached, Cache-Write, Output)."
+
+  - id: cerebras-code
+    url: "https://www.cerebras.ai/blog/introducing-cerebras-code"
+    typ: html-docs
+    parser: cerebras
+    provides: [plan_meta, plan_quotas]
+    note: "Cerebras Code Pro/Max: Token pro Tag, offizielle Ankuendigung."
+
+  # ---- Privacy-Quellen (Data Policy je Anbieter, für den Privacy-Filter) ----
+  # Crawl-Check: HTTP-Status + HTML-Fingerprint. Text bei JS-SPA evtl. nicht
+  # extrahierbar, aber Änderungen werden erkannt → Review-Issue → manuelle Pflege in data/privacy.yml.
+  - id: privacy-command-code
+    url: "https://commandcode.ai/privacy"
+    typ: html-docs
+    parser: privacy-text
+    provides: [privacy]
+    note: "Command Code Privacy: kein Training auf Source-Code, Zero-Retention-Option, 30 Tage Default. Voll textuell parsebar."
+
+  - id: privacy-zhipu
+    url: "https://open.bigmodel.cn/privacy"
+    typ: js-spa
+    parser: none
+    provides: [privacy]
+    note: "GLM/Zhipu Privacy (JS-SPA, Text nicht extrahierbar), Fingerprint-Change-Detection, manuelle Pflege in privacy.yml."
+
+  - id: privacy-kimi
+    url: "https://www.moonshot.cn/privacy"
+    typ: js-spa
+    parser: none
+    provides: [privacy]
+    note: "Kimi/Moonshot Privacy (JS-SPA), Fingerprint-Change-Detection, manuelle Pflege."
+
+  - id: privacy-alibaba
+    url: "https://help.aliyun.com/zh/model-studio/privacy"
+    typ: js-spa
+    parser: none
+    provides: [privacy]
+    note: "Qwen/Alibaba Model Studio Privacy (JS-SPA), Fingerprint-Change-Detection. Kernaussage 'never use your data for model training' dokumentiert."
+
+  - id: privacy-minimax
+    url: "https://platform.minimax.io/legal/privacy"
+    typ: js-spa
+    parser: none
+    optional: true
+    provides: [privacy]
+    note: "MiniMax Privacy (aktuell 404, wird vom Crawler als Down gemeldet). Optional: Fehler bricht den Update-Lauf nicht ab."
+
+  # ---- Freebuff (werbefinanziert): Gratis-Tarif + bezahlte Tarife ----
+  - id: freebuff-pricing
+    url: "https://freebuff.com/pricing"
+    typ: html-docs
+    parser: freebuff-pricing
+    provides: [plan_meta, plan_prices, usage_volume, included_hours]
+    note: "Tarife Starter $8 / Plus $25 / Pro $60, je mit 'max spend / mo' als offiziellem Dollar-Volumen ($50/$83/$132) und Stunden je Modell und Tag. Gratis-Tarif: kein Dollar-Volumen mehr ('Sign in to see your account's allowance'); die publizierte Menge steht als 100 Freebucks/Tag je Region in der Homepage-FAQ."
+  - id: freebuff-faq
+    url: "https://freebuff.com/"
+    typ: html-docs
+    parser: freebuff-faq
+    provides: [freebucks, model_catalog, privacy_note]
+    note: "Homepage-FAQ als schema.org-JSON-LD (stabil): Freebucks pro Tag je Region (US 100 / 70 / 40 / 25), Limited-Mode-Werte, Modell-Katalog, Datenhinweis. Werbefinanzierung ('supported by text ads')."
+
+  # ---- AI-Scores (LLM Stats Leaderboard), nur 1x/Tag (cache_ttl_hours) ----
+  # Interner Leaderboard-Endpoint, kein Auth nötig. conservative (0-100) für alle Modelle.
+  - id: llm-stats-indexes
+    url: "https://api.zeroeval.com/leaderboard/indexes/compact?payloadVersion=2"
+    typ: json-api
+    parser: llm-stats
+    cache_ttl_hours: 24
+    provides: [ai_scores]
+    note: "LLM Stats Leaderboard: conservative (0-100) für 356 Modelle. Kein API-Key nötig."
+
+  # ---- Währungskurse (täglich, für einheitliche Preis-Anzeige) ----
+  # Wird 1x täglich mit-gescraped (wie die anderen Quellen) statt Client-seitiger
+  # Live-API-Call. open.er-api.com: kostenlos, kein Key, täglich aktualisiert.
+  - id: fx-rates
+    url: "https://open.er-api.com/v6/latest/USD"
+    typ: json-api
+    parser: fx
+    provides: [fx_rates]
+    note: "Tägliche USD-Wechselkurse (EUR/CNY/GBP/JPY) für die einheitliche Preis-Anzeige. Parser extrahiert nur die relevanten Währungen (stabiler contentHash)."

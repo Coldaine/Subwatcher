@@ -1,0 +1,100 @@
+# Privacy-Daten: selbst erhoben aus offiziellen Anbieter-Quellen.
+# Jede Aussage hat: provider, quelle (URL), aussage, zeroRetention, training, retentionDays, verifiedAt.
+# Prinzip: NUR was offiziell dokumentiert ist. Unbekannt bleibt unbekannt.
+# Belegt heisst: URL + Zitat in der Notiz. Ohne beides bleibt das Feld null.
+#
+# WICHTIG (ZDR-Chip und ZDR-Filter der Website): ZDR wird ausschliesslich aus
+# modelgenauer Aufbewahrung abgeleitet (Feed-Feld privacy.retentionDays, 0 Tage
+# bestaetigt) und gilt nur fuer genau diese Modell/Anbieter-Kombination.
+# Anbietersaetze hier (zeroRetention: true, "auf Anfrage", Blanket-Policies ohne
+# Modelldaten) erzeugen bewusst KEIN ZDR. Sie bleiben als Dokumentation stehen.
+
+privacy:
+
+  - provider: command-code
+    scope: provider
+    training: false
+    trainingNote: "Trainiert nicht auf deinen Quellcode; weist Provider an, Inhalte nicht zu trainieren."
+    zeroRetention: true
+    zeroRetentionNote: "Zero Data Retention Option: Eingaben/Ausgaben werden nie gespeichert. Auf Anfrage erzwingbar (CMD_ZDR=1); laut Docs kann das den Modellpreis je Anbieter aendern."
+    retentionDays: 30
+    retentionNote: "Request-Daten werden standardmäßig bis zu 30 Tage aufbewahrt (Betrieb/Sicherheit)."
+    sourceUrl: "https://commandcode.ai/privacy"
+    verifiedAt: 2026-09-14
+
+
+  - provider: alibaba
+    scope: provider
+    training: false
+    trainingNote: "Model Studio: Daten werden nie für Modelltraining genutzt (Privacy Notice)."
+    zeroRetention: false
+    zeroRetentionNote: "Kein Zero Retention: laut FAQ werden Daten aus Modell- und App-Aufrufen gespeichert."
+    retentionDays: null
+    retentionNote: "Keine feste Frist veroeffentlicht; Aufbewahrung nach Model-Studio-Servicevertrag."
+    sourceUrl: "https://docs.modelstudio.console.alibabacloud.com/en/model-studio/privacy-notice"
+    verifiedAt: 2026-09-14
+    note: "Zitat FAQ: \"Alibaba Cloud Model Studio will store data generated from model and application calls.\" (help.aliyun.com/en/model-studio/faq-about-alibaba-cloud-model-studio)"
+
+
+  - provider: opencode
+    scope: provider
+    training: false
+    trainingNote: "Alle Modelle in den USA gehostet, Anbieter mit Zero-Retention-Policy und ohne Training auf deine Daten. Ausnahmen sind dokumentiert."
+    zeroRetention: true
+    zeroRetentionNote: "Zero Retention mit dokumentierten Ausnahmen: freie Modelle duerfen waehrend der Gratisphase zum Verbessern genutzt werden, OpenAI- und Anthropic-Routen behalten Requests 30 Tage."
+    retentionDays: null
+    retentionNote: "30 Tage nur fuer die OpenAI- und Anthropic-Routen, sonst keine Aufbewahrung."
+    sourceUrl: "https://opencode.ai/docs/zen"
+    verifiedAt: 2026-09-14
+    note: "Ausnahmen laut Docs: Big Pickle, MiMo V2.5 Free, Ling 3.0 Flash Fin Free (Gratisphase), NVIDIA-Trial-Endpunkte, OpenAI/Anthropic (30 Tage), Muse Spark 1.3 Contributor Free (Prompts und Antworten duerfen fuer Meta-Training genutzt werden). Das Modell-Feed hat Vorrang fuers Training, wenn es je Modell etwas anderes sagt."
+
+
+  - provider: zhipu
+    scope: provider
+    training: false
+    trainingNote: "API Services: Inhalte werden in Echtzeit verarbeitet und nicht gespeichert, damit auch nicht fuer Training verwendet."
+    zeroRetention: true
+    zeroRetentionNote: "Data Processing Addendum fuer API Services: \"The Company do not store any of the content the Customer or its End Users provide or generate while using our Services.\""
+    retentionDays: null
+    retentionNote: "Nur fuer Kontodaten gilt eine Aufbewahrung bis zur Vertragsbeendigung."
+    sourceUrl: "https://docs.z.ai/legal-agreement/privacy-policy"
+    verifiedAt: 2026-09-14
+    note: "Gilt fuer die API Services (Datenverarbeitungs-Anhang, Abschnitt 4b). Die Endnutzer-Policy von z.ai erlaubt dagegen, Daten zur Modellverbesserung zu nutzen; der GLM Coding Plan laeuft ueber die API."
+
+
+  - provider: moonshot
+    scope: provider
+    training: true
+    trainingNote: "Kimi: Inhalte koennen standardmaessig fuer Modelltraining genutzt werden. Opt-out nur auf Anfrage beim Support."
+    zeroRetention: false
+    zeroRetentionNote: "Keine Zero-Retention-Zusage; Speicherung erfolgt in China."
+    retentionDays: null
+    retentionNote: "Keine feste Frist: Aufbewahrung nur so lange, wie fuer den Dienst erforderlich (Abschnitt 5.2)."
+    sourceUrl: "https://www.kimi.com/user/agreement/userPrivacy?version=v2"
+    verifiedAt: 2026-09-14
+    note: "Zitat Abschnitt 2.4: Wer nicht will, dass Inhalte fuers Modelltraining genutzt werden, muss den Support kontaktieren; danach wird die Nutzung eingestellt. Speicherort laut Abschnitt 5.1 in China, keine Uebermittlung ins Ausland ohne gesonderte Einwilligung."
+
+
+  - provider: minimax
+    scope: provider
+    training: null
+    zeroRetention: false
+    zeroRetentionNote: "Keine Zero-Retention-Zusage in der API-Policy gefunden."
+    retentionDays: null
+    retentionNote: "Keine feste Frist: Aufbewahrung nur so lange wie gesetzlich und fuer den Dienst erforderlich."
+    sourceUrl: "https://platform.minimax.io/protocol/privacy-policy"
+    verifiedAt: 2026-09-14
+    note: "API-Policy nennt keine Trainings-Aussage, deshalb bleibt training offen. Speicherung laut Policy in US-Rechenzentren."
+
+
+  - provider: freebuff
+    scope: provider
+    training: false
+    trainingNote: "Nur Modelle mit dem Label 'May use data for AI training' duerfen zum Training genutzt werden. Zitat Policy: 'A general notice that data is collected or stored does not by itself permit these uses.'"
+    zeroRetention: false
+    zeroRetentionNote: "Keine Zero-Retention-Zusage: Aufbewahrung 'for as long as reasonably necessary', inklusive Werbung und Betrugsabwehr."
+    retentionDays: null
+    retentionNote: "Keine feste Frist veroeffentlicht. Daten aus Trainings-gelabelten Modellen koennen nach Deidentifizierung oder Aufnahme ins Modell nicht mehr entfernt werden."
+    sourceUrl: "https://freebuff.com/privacy-policy"
+    verifiedAt: 2026-09-21
+    note: "Zitat Policy zum Label: Prompt- und Projektdaten 'may be retained and used by Company or the applicable third-party provider for AI training, development, evaluation, testing, fine-tuning, quality improvement, safety research'. Laut FAQ sind DeepSeek V4.1 Flash und Muse Spark 1.2 so gelabelt, die Modell-Privacy aus dem Feed hat Vorrang. Werbefinanzierung: 'Freebuff is supported by text ads.' Daten laufen fuer 'Codebase Evaluation' auch an Partner, die sie nicht fuer eigene Zwecke oder zum Training nutzen duerfen."

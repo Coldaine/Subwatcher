@@ -1,0 +1,27 @@
+# vibeplan.cc
+
+> Independent comparison of AI coding subscription plans: what one dollar really buys in
+> tokens and requests, with published quotas, live prices and an open JSON dataset. Rebuilt
+> daily from official sources; the build never guesses a number and never fetches at runtime.
+
+## Data
+- [latest.json](https://vibeplan.cc/data/latest.json): the whole dataset (plans, per-model rates, quotas, AI scores, privacy flags, changelog)
+- [sources.yml](https://github.com/harrytyp/coding-plan-comparison/blob/main/sources.yml): every source with URL, type and parser
+- [overrides.yml](https://github.com/harrytyp/coding-plan-comparison/blob/main/data/overrides.yml): the hand-verified entries and why each one is manual
+- [Methodology](https://vibeplan.cc/#method): the cost formula and every normalization step
+- [Changelog](https://vibeplan.cc/#changelog): generated from the repository commits, each entry linked
+- [Plan pages](https://vibeplan.cc/plans/): each one lists that plan's recorded history (price, tokens per dollar, disclosure) from the daily snapshots, e.g. https://vibeplan.cc/plans/opencode-go/
+- [Plan pages](https://vibeplan.cc/plans/): one page per comparable plan with its published quotas, per-model rates and the sources behind them
+- [Provider pages](https://vibeplan.cc/providers/): every tracked plan of a provider, sorted by tokens per dollar
+- [German entry page](https://vibeplan.cc/de/): KI-Coding-Abos im Vergleich
+
+## What it answers
+- Which plan gives the most tokens or requests per dollar paid, as a Pareto front of AI score against tokens per dollar
+- Which plans publish an included amount and which do not; undisclosed stays undisclosed
+- Which models train on your data, which are zero-retention for that exact model and vendor, which plans have API access
+- How credit formulas, cache pricing and workload patterns change the answer per model
+
+## Notes
+- License MIT. Cite with a link to https://vibeplan.cc/ (numbers change daily, so link rather than copy).
+- Languages: English and German (English is the default).
+- Corrections: https://github.com/harrytyp/coding-plan-comparison/issues

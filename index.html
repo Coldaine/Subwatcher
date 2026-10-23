@@ -1,0 +1,2623 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0f0e">
+<!-- Die zwei Schriften ueber dem Fal vorladen: schnellerer erster Textaufbau -->
+<link rel="preload" as="font" type="font/woff2" href="fonts/Inter-400.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="fonts/SpaceGrotesk-700.woff2" crossorigin>
+<title>AI coding plan comparison: tokens and requests per dollar paid | vibeplan.cc</title>
+<meta name="description" content="AI coding plan comparison: which subscription gives the most tokens and requests per dollar paid. Live prices, published quotas, cache-aware rates, zero-retention flags, open JSON dataset. English &amp; Deutsch.">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="website">
+<meta property="og:title" content="vibeplan.cc">
+<meta property="og:description" content="Compare AI coding plans and models by tokens and requests per dollar paid, with published quotas, live prices and an open dataset.">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:url" content="https://vibeplan.cc/">
+<meta property="og:site_name" content="vibeplan.cc">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="de_DE">
+<meta property="og:image" content="https://vibeplan.cc/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="vibeplan.cc: Pareto chart mark with the claim AI coding plans compared by tokens and requests per dollar paid">
+<meta name="twitter:image" content="https://vibeplan.cc/og-image.png">
+<meta name="theme-color" content="#0a0e14">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+/* ==========================================================================
+   Coding Plan Compare, design system v2
+   Hand-written CSS, no framework, no CDN, fonts served locally.
+   Dark is the default surface; light via [data-theme="light"].
+   ========================================================================== */
+
+@font-face{font-family:'Space Grotesk';font-style:normal;font-weight:700;font-display:swap;src:url('fonts/SpaceGrotesk-700.woff2') format('woff2');}
+@font-face{font-family:'Inter';font-style:normal;font-weight:400;font-display:swap;src:url('fonts/Inter-400.woff2') format('woff2');}
+@font-face{font-family:'Inter';font-style:normal;font-weight:500;font-display:swap;src:url('fonts/Inter-500.woff2') format('woff2');}
+@font-face{font-family:'Inter';font-style:normal;font-weight:600;font-display:swap;src:url('fonts/Inter-600.woff2') format('woff2');}
+@font-face{font-family:'Inter';font-style:normal;font-weight:700;font-display:swap;src:url('fonts/Inter-700.woff2') format('woff2');}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  --bg: #0a0e14;
+  --surface: #101721;
+  --surface-2: #151d28;
+  --surface-3: #1b2534;
+  --line: #1f2a38;
+  --ctl-line: #606d7a;
+  --line-soft: #182130;
+  --text: #e9eef5;
+  --text-2: #98a7b9;
+  --text-3: #7d8ea3;
+  --accent: #6ee7c7;
+  --accent-2: #3fbf9c;
+  --accent-ink: #06231c;
+  --accent-soft: #10261f;
+  --data-a: #6ec1e4;
+  --data-b: #f0a05a;
+  --data-c: #8091a5;
+  --data-pareto: #ffffff;
+  --warn: #f2c14e;
+  --warn-soft: #2a2410;
+  --danger: #f87171;
+  --danger-soft: #2c1618;
+  --ok: #6ee7c7;
+  --ok-soft: #10261f;
+  --info: #6ec1e4;
+  --info-soft: #12222e;
+  --grid: #1c2836;
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 16px;
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, .4);
+  --shadow-2: 0 8px 24px -8px rgba(0, 0, 0, .6);
+  --shadow-3: 0 24px 60px -12px rgba(0, 0, 0, .7);
+  --font-text: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Space Grotesk", Inter, system-ui, sans-serif;
+  --font-mono: "Space Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* Textrampe: fuenf Stufen statt dreizehn Zwischengroessen */
+  --fs-xs: 11px;
+  --fs-sm: 12.5px;
+  --fs-md: 13.5px;
+  --fs-base: 14.5px;
+  --fs-lg: 15.5px;
+  --maxw: 1560px;
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --surface-2: #f1f3f7;
+  --surface-3: #e9edf3;
+  --line: #e2e7ee;
+  --ctl-line: #8f8878;
+  --line-soft: #edf1f6;
+  --text: #0c1219;
+  --text-2: #4e5c70;
+  --text-3: #5f6f80;
+  --accent: #0c7a5f;
+  --accent-2: #0b7359;
+  --accent-ink: #ffffff;
+  --accent-soft: #e4f5ef;
+  --data-a: #1f7fb8;
+  --data-b: #c2600f;
+  --data-c: #64748b;
+  --data-pareto: #0c1219;
+  --warn: #a16207;
+  --warn-soft: #fef3c7;
+  --danger: #b91c1c;
+  --danger-soft: #fee2e2;
+  --ok: #0c7a5f;
+  --ok-soft: #e4f5ef;
+  --info: #1f7fb8;
+  --info-soft: #e3f1f9;
+  --grid: #e6ebf2;
+  --shadow-1: 0 1px 2px rgba(12, 18, 25, .06);
+  --shadow-2: 0 8px 24px -10px rgba(12, 18, 25, .18);
+  --shadow-3: 0 24px 60px -16px rgba(12, 18, 25, .25);
+  color-scheme: light;
+}
+
+html { -webkit-text-size-adjust: 100%; scrollbar-color: var(--line) transparent; }
+body { min-height: 100vh; display: flex; flex-direction: column; }
+main { flex: 1 0 auto; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: var(--font-text); font-size: var(--fs-base); line-height: 1.5;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+}
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 99px; border: 3px solid var(--bg); }
+::-webkit-scrollbar-thumb:hover { background: var(--text-3); }
+::-webkit-scrollbar-track { background: transparent; }
+
+h1, h2, h3, h4 { margin: 0; line-height: 1.2; letter-spacing: -0.02em; font-weight: 600; text-wrap: balance; }
+p { margin: 0; text-wrap: pretty; }
+a { color: inherit; text-decoration: none; }
+a:hover { color: var(--accent); }
+button { font: inherit; color: inherit; }
+::selection { background: color-mix(in oklab, var(--accent) 30%, transparent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+.num, .mono { font-variant-numeric: tabular-nums; }
+td.t-right, .rail-stat b, .sl-val, .dg-v { font-variant-numeric: tabular-nums; }
+.mono { font-family: var(--font-mono); }
+.muted { color: var(--text-2); }
+.strong { font-weight: 600; }
+.hidden, [hidden] { display: none !important; }
+.t-right { text-align: right; }
+.live { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); display: inline-block; }
+.dot { display: inline-flex; align-items: center; gap: 7px; }
+
+/* ---------------------------------------------------------------- chrome */
+.topbar {
+  position: sticky; top: 0; z-index: 60;
+  background: color-mix(in oklab, var(--bg) 88%, transparent);
+  backdrop-filter: saturate(160%) blur(14px);
+  border-bottom: 1px solid var(--line);
+}
+.topbar-inner {
+  max-width: var(--maxw); margin: 0 auto; padding: 0 20px; height: 56px;
+  display: flex; align-items: center; gap: 14px;
+}
+.brand { display: inline-flex; align-items: center; gap: 9px; flex: none; }
+.brand:hover { color: inherit; }
+.brand-mark {
+  width: 30px; height: 30px; border-radius: 9px; flex: none;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.brand-mark img { width: 26px; height: 26px; display: block; }
+.brand-mark svg { width: 17px; height: 17px; }
+.brand-text { font-family: var(--font-display); font-size: var(--fs-lg); font-weight: 700; letter-spacing: -0.01em; }
+.nav-spacer { flex: 1; }
+.nav-controls { display: flex; align-items: center; gap: 8px; }
+
+.cmdk-trigger {
+  display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+  padding: 6px 10px 6px 9px; min-width: 210px;
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius-sm);
+  color: var(--text-3); font-size: var(--fs-md);
+}
+.cmdk-trigger:hover { border-color: var(--text-3); color: var(--text-2); }
+.cmdk-trigger svg { width: 14px; height: 14px; flex: none; }
+.cmdk-trigger kbd {
+  margin-left: auto; font-family: var(--font-text); font-size: var(--fs-xs); font-weight: 600;
+  background: var(--surface-3); border: 1px solid var(--line); border-radius: 5px; padding: 1px 5px; color: var(--text-3);
+}
+
+.currency-select, .toolbar-select, .sort-select select, .rail-filters select, .dash-ctl select {
+  appearance: none; background: var(--surface-2); color: var(--text);
+  border: 1px solid var(--ctl-line); border-radius: var(--radius-sm);
+  font-size: var(--fs-md); font-weight: 500; padding: 6px 26px 6px 10px; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2398a7b9' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 7px center; background-size: 12px;
+}
+.currency-select:hover, .toolbar-select:hover, .dash-ctl select:hover { border-color: var(--text-3); }
+.ic-sun { display: none; }
+[data-theme="dark"] .ic-moon { display: none; }
+[data-theme="dark"] .ic-sun { display: block; }
+.icon-btn {
+  width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--line); background: var(--surface-2); border-radius: var(--radius-sm);
+  color: var(--text-2); cursor: pointer;
+}
+.icon-btn:hover { color: var(--text); border-color: var(--text-3); }
+.icon-btn svg { width: 16px; height: 16px; }
+.lang-switch { display: inline-flex; border: 1px solid var(--line); border-radius: var(--radius-sm); overflow: hidden; }
+.lang-switch button {
+  border: 0; background: var(--surface-2); color: var(--text-3); cursor: pointer;
+  padding: 6px 9px; font-size: var(--fs-sm); font-weight: 600;
+}
+.lang-switch button.active { background: var(--accent); color: var(--accent-ink); }
+
+/* tabs sit under the brand row as a quiet segmented strip */
+.tabs {
+  display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none;
+  max-width: var(--maxw); margin: 0 auto; padding: 0 20px;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex: none; border: 0; background: none; cursor: pointer; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 12px 11px; font-size: var(--fs-md); font-weight: 500; color: var(--text-3);
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  transition: color .15s ease;
+}
+.tab svg { width: 15px; height: 15px; opacity: .8; }
+.tab:hover { color: var(--text-2); }
+.tab.active { color: var(--text); font-weight: 600; border-bottom-color: var(--accent); }
+.tab.active svg { color: var(--accent); opacity: 1; }
+
+/* ---------------------------------------------------------------- header */
+.page-head {
+  max-width: var(--maxw); margin: 0 auto; padding: 26px 20px 0;
+  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px;
+}
+.app-title h1 { font-family: var(--font-display); font-size: clamp(24px, 2.6vw, 34px); font-weight: 700; letter-spacing: -0.03em; }
+.app-header { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; justify-content: space-between; width: 100%; }
+.app-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; font-size: var(--fs-sm); color: var(--text-3); margin-top: 8px; }
+.app-meta .strong { color: var(--text-2); }
+#disclaimer {
+  margin: 14px 20px 0; max-width: var(--maxw); padding: 9px 13px; border-radius: var(--radius-sm);
+  font-size: var(--fs-sm); color: var(--text-2); background: var(--warn-soft);
+  border: 1px solid color-mix(in oklab, var(--warn) 28%, transparent);
+  display: flex; gap: 8px; align-items: baseline;
+}
+#disclaimer strong { color: var(--warn); }
+.badge {
+  display: inline-flex; align-items: center; gap: 4px; padding: 2px 7px; border-radius: 5px;
+  font-size: var(--fs-xs); font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+  background: var(--info-soft); color: var(--info);
+}
+.badge-green { background: var(--ok-soft); color: var(--ok); }
+.badge-red { background: var(--danger-soft); color: var(--danger); }
+.badge-gray { background: var(--surface-2); color: var(--text-2); }
+.waitlist-badge { background: var(--warn-soft); color: var(--warn); }
+
+/* ---------------------------------------------------------------- layout */
+main { max-width: var(--maxw); margin: 0 auto; padding: 0 20px 40px; }
+.view { display: none; }
+.view.active { display: block; animation: viewIn .18s ease-out; }
+@keyframes viewIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+.view > section { padding-top: 18px; }
+
+/* KPI strip: no boxes, just numbers on a line */
+.kpi-grid {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px; background: var(--line-soft); border: 1px solid var(--line-soft);
+  border-radius: var(--radius); overflow: hidden; margin-top: 20px;
+}
+.kpi { background: var(--surface); padding: 16px 18px; }
+.kpi .k { font-size: var(--fs-xs); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--text-3); }
+.kpi .v { font-family: var(--font-display); font-size: 38px; font-weight: 700; letter-spacing: -0.04em; margin-top: 4px; font-variant-numeric: tabular-nums; line-height: 1; }
+.kpi .s { font-size: var(--fs-sm); color: var(--text-2); margin-top: 6px; }
+.kpi-meter { height: 3px; border-radius: 99px; background: var(--surface-3); overflow: hidden; display: flex; margin-top: 12px; }
+.kpi-meter span { height: 100%; display: block; }
+.kpi-meter .on { background: var(--accent); }
+.kpi-meter .rest { background: var(--text-3); opacity: .5; }
+
+.panel {
+  background: var(--surface); border: 1px solid var(--line-soft);
+  border-radius: var(--radius-lg); overflow: hidden; margin-top: 18px;
+}
+.panel-head {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 12px; padding: 15px 18px; border-bottom: 1px solid var(--line-soft);
+}
+.panel-head h2, .panel-head h3 { font-family: var(--font-display); font-size: var(--fs-lg); font-weight: 700; letter-spacing: -0.01em; }
+.panel-head p { font-size: var(--fs-sm); color: var(--text-3); margin-top: 3px; max-width: 75ch; }
+.section-head { padding: 15px 18px; border-bottom: 1px solid var(--line-soft); }
+.section-head h2 { font-family: var(--font-display); font-size: var(--fs-lg); font-weight: 700; }
+.section-head p { font-size: var(--fs-sm); color: var(--text-3); margin-top: 3px; max-width: 75ch; }
+
+/* ------------------------------------------------- workbench (overview) */
+.workbench { display: grid; grid-template-columns: 264px minmax(0, 1fr) 320px; gap: 18px; align-items: start; margin-top: 18px; }
+.rail { display: flex; flex-direction: column; gap: 14px; position: sticky; top: 76px; }
+/* Desktop: der Rail klebt und darf nicht laenger als das Fenster werden,
+   sonst ist der untere Teil nicht erreichbar (Filterblock ist hoch). */
+@media (min-width: 981px) {
+  .rail { max-height: calc(100vh - 96px); overflow-y: auto; overscroll-behavior: contain; }
+}
+.rail-block { background: var(--surface); border: 1px solid var(--line-soft); border-radius: var(--radius); padding: 14px; }
+.rail-title {
+  font-size: var(--fs-xs); font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+  color: var(--text-3); margin-bottom: 10px;
+}
+.rail-row { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+/* Filterblock im Rail: eine Spalte, alles auf gleicher Breite, gut tippbar */
+.rail-filters-body { display: flex; flex-direction: column; gap: 12px; }
+.rail-filters-body > .rail-row { margin-bottom: 0; }
+.rail-filters .rail-input { width: 100%; min-height: 44px; }
+.rail-filters .budget-filter, .rail-filters .ai-filter { display: flex; flex-direction: column; gap: 4px; }
+.rail-filters .budget-filter label, .rail-filters .ai-filter label { font-size: var(--fs-sm); color: var(--text-3); }
+.rail-filters .budget-filter output, .rail-filters .ai-filter output { font-size: var(--fs-sm); color: var(--text); font-weight: 700; }
+.rail-filters .attr-filter { flex-direction: column; align-items: stretch; gap: 0; }
+.rail-filters .attr-filter-title { margin: 2px 0 4px; }
+.rail-filters .col-picker-panel { position: static; margin-top: 6px; box-shadow: none; }
+/* In der Listenansicht sitzt derselbe Block ueber der Tabelle */
+.filters-host .rail-block { border-radius: var(--radius); margin-bottom: 12px; }
+.filters-host:empty { display: none; }
+/* Shortlist: eigener Block unter der Werkbank */
+.shortlist-panel { margin-top: 18px; }
+.shortlist-panel .sl-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 8px 22px; padding: 14px 18px 16px; }
+.shortlist-panel .sl-item { padding: 8px 0; }
+.rail-row:last-child { margin-bottom: 0; }
+.rail-row > span { font-size: var(--fs-xs); font-weight: 600; color: var(--text-2); }
+.rail-row select, .rail-row input[type="number"] {
+  width: 100%; padding: 7px 9px; font-size: var(--fs-md); font-family: var(--font-text);
+  background: var(--surface-2); color: var(--text); border: 1px solid var(--line); border-radius: var(--radius-sm);
+}
+.rail-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.rail-check { display: flex; align-items: center; gap: 8px; font-size: var(--fs-md); color: var(--text-2); cursor: pointer; padding: 4px 0; }
+.rail-check input { width: 15px; height: 15px; accent-color: var(--accent); }
+.rail-range { width: 100%; accent-color: var(--accent); }
+.rail-stat { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 5px 0; font-size: var(--fs-sm); color: var(--text-3); }
+.rail-stat b { font-family: var(--font-display); font-size: var(--fs-base); color: var(--text); font-variant-numeric: tabular-nums; }
+
+.chart-card { background: var(--surface); border: 1px solid var(--line-soft); border-radius: var(--radius-lg); overflow: hidden; }
+.chart-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--line-soft); }
+.chart-head h2 { font-family: var(--font-display); font-size: var(--fs-lg); font-weight: 700; }
+.chart-head p { font-size: var(--fs-sm); color: var(--text-3); margin-top: 2px; }
+.chart-tools { display: flex; align-items: center; gap: 6px; }
+/* Zoom-Bedienung: sichtbar und tippbar, nicht nur als Gastgeste */
+.zoom-tools { display: inline-flex; gap: 2px; }
+.zoom-tools .btn { min-width: 44px; padding: 0 8px; font-family: var(--pv-mono); font-size: var(--fs-md); }
+.lg-n {
+  font: 600 11px/1 var(--font-num); color: var(--text-3);
+  padding-left: 2px; font-variant-numeric: tabular-nums;
+}
+.lg.off { opacity: .26; }
+.lg.off .lg-n { display: none; }
+/* Plan-Hinweis: bewusst leise. Ein neutrales "i" am Namen, voller Text im
+   Tooltip, und der Text nur dort ausgeschrieben, wo man ihn ohnehin liest. */
+.note-mark {
+  display: inline-grid; place-items: center; width: 14px; height: 14px; margin-left: 5px;
+  border: 1px solid var(--line); border-radius: 50%; cursor: help; vertical-align: 1px;
+  font: 600 9.5px/1 var(--font-num); color: var(--text-3); font-style: normal;
+}
+.note-mark:hover { color: var(--text-2); border-color: var(--text-3); }
+.detail-note {
+  margin: 9px 0 2px; padding-top: 8px; max-width: 680px; border-top: 1px solid var(--line-soft);
+  color: var(--text-3); font-size: var(--fs-sm); line-height: 1.55;
+}
+.dd-note {
+  margin-top: 9px; padding-top: 9px; border-top: 1px solid var(--line-soft);
+  color: var(--text-3); font-size: var(--fs-xs); line-height: 1.5;
+}
+/* Sammelspalte "Sonstiges": leise Chips. Nur die Trainings-Aussage ist
+   farblich markiert, alles andere bleibt neutral, damit die Tabelle ruhig ist. */
+.attr {
+  display: inline-block; margin: 0 4px 3px 0; padding: 1px 7px 2px;
+  border: 1px solid var(--line-soft); border-radius: 999px; cursor: help;
+  font: 600 10.5px/1.7 var(--font-num); color: var(--text-2); background: var(--surface-2);
+  white-space: nowrap;
+}
+.attr-ok { color: var(--data-a); }
+.attr-warn { color: var(--data-b); }
+.attr-unknown { color: var(--text-3); }
+.attr-more { color: var(--text-3); border-style: dashed; }
+.attr-extra { display: none; }
+.dd-badges { display: flex; flex-wrap: wrap; gap: 2px 0; margin-top: 10px; }
+.chart-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 10px 16px; border-bottom: 1px solid var(--line-soft); font-size: var(--fs-sm); color: var(--text-2); }
+.chart-legend .lg { display: inline-flex; align-items: center; gap: 6px; }
+.dot-swatch { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+.dot-ring { background: var(--data-pareto); box-shadow: 0 0 0 2px var(--surface), 0 0 0 3.5px var(--data-pareto); width: 8px; height: 8px; }
+.legend-shape { width: 18px; height: 0; border-top: 2px solid var(--data-pareto); flex: none; }
+.legend-box { width: 13px; height: 10px; flex: none; border-radius: 2px; border: 1px dashed var(--accent); background: color-mix(in oklab, var(--accent) 16%, transparent); }
+.chart-stage { position: relative; padding: 12px 12px 4px 2px; min-height: 470px; }
+.chart-stage canvas { display: block; width: 100%; height: 450px; touch-action: pan-y; cursor: grab; }
+.chart-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 16px; border-top: 1px solid var(--line-soft); font-size: var(--fs-sm); color: var(--text-3); }
+.dash-error {
+  position: absolute; inset: 12px; z-index: 5; overflow: auto; padding: 12px 14px;
+  border-radius: var(--radius); font-size: var(--fs-md); line-height: 1.45;
+  background: var(--danger-soft); color: var(--danger); border: 1px solid color-mix(in oklab, var(--danger) 35%, transparent);
+}
+.chart-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 10px; color: var(--text-3); font-size: var(--fs-md); }
+
+.detail-card { background: var(--surface); border: 1px solid var(--line-soft); border-radius: var(--radius-lg); overflow: hidden; }
+/* Kein top-Versatz mehr: die Karte stand mit "top: 76px" 76 px unter ihrer Rasterzelle
+   (die allgemeine Panel-Regel setzt weiter unten position: relative) und lag damit ueber
+   dem naechsten Block. Die Ausrichtung uebernimmt jetzt das Raster. */
+.detail-head { padding: 14px 16px 12px; border-bottom: 1px solid var(--line-soft); }
+.detail-kicker { font-size: var(--fs-xs); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--text-3); }
+.dash-detail-empty { padding: 26px 16px; color: var(--text-3); font-size: var(--fs-md); }
+.dash-detail-content { padding: 14px 16px 16px; display: flex; flex-direction: column; }
+.dd-name { font-family: var(--font-display); font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+.dd-plan { font-size: var(--fs-sm); color: var(--text-2); margin-top: 3px; }
+.dd-score { display: flex; align-items: baseline; gap: 8px; margin: 14px 0 12px; }
+.dd-score b { font-family: var(--font-display); font-size: 30px; font-weight: 700; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.dd-score span { font-size: var(--fs-xs); color: var(--text-3); text-transform: uppercase; letter-spacing: .07em; }
+.dd-row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 9px 0; border-top: 1px solid var(--line-soft); }
+.dd-row .k { font-size: var(--fs-sm); color: var(--text-2); }
+.dd-row .v { font-size: var(--fs-base); font-weight: 600; font-variant-numeric: tabular-nums; }
+.dd-foot { margin-top: 14px; }
+.dd-badge { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.sl-rank {
+  flex: 0 0 16px; height: 16px; border-radius: 4px; display: grid; place-items: center;
+  font: 700 10px/1 var(--font-num); color: var(--text-3);
+  background: var(--surface-2); border: 1px solid var(--line-soft);
+}
+.sl-item:hover .sl-rank { color: var(--text); border-color: var(--line); }
+.sl-title { margin: 0; }
+.sl-item { display: flex; align-items: center; gap: 9px; width: 100%; text-align: left; background: none; border: 0; padding: 6px 0; cursor: pointer; font-size: var(--fs-md); color: var(--text-2); contain: inline-size; }
+.sl-item:hover { color: var(--text); }
+.sl-item .sl-bar { width: 26px; height: 4px; border-radius: 99px; background: var(--accent); flex: none; }
+.sl-item .sl-name { flex: 1 1 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sl-item .sl-val { font-variant-numeric: tabular-nums; color: var(--text); font-weight: 600; white-space: nowrap; flex: none; }
+
+/* ---------------------------------------------------------------- atoms */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer;
+  padding: 6px 12px; font-size: var(--fs-md); font-weight: 600;
+  background: var(--surface-2); color: var(--text); border: 1px solid var(--line); border-radius: var(--radius-sm);
+  transition: border-color .15s, background-color .15s;
+}
+.btn:hover { border-color: var(--text-3); }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn-primary:hover { background: var(--accent-2); border-color: var(--accent-2); }
+.btn-sm { padding: 4px 9px; font-size: var(--fs-sm); }
+.more-row { display: flex; justify-content: center; padding: 14px 0; }
+.more-row .btn { min-width: 190px; }
+.linklike { background: none; border: 0; padding: 0; cursor: pointer; font: inherit; color: var(--text-3); text-decoration: underline; text-underline-offset: 2px; }
+.linklike:hover { color: var(--accent); }
+
+.chip-btn {
+  border: 1px solid var(--ctl-line); background: var(--surface-2); color: var(--text-2);
+  border-radius: 99px; padding: 5px 11px; font-size: var(--fs-sm); font-weight: 500; cursor: pointer;
+}
+.chip-btn:hover { color: var(--text); border-color: var(--text-3); }
+.chip-btn.active { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+.seg { display: inline-flex; border: 1px solid var(--ctl-line); border-radius: 99px; overflow: hidden; background: var(--surface-2); }
+.seg button { border: 0; background: none; color: var(--text-2); cursor: pointer; padding: 5px 12px; font-size: var(--fs-sm); font-weight: 500; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button.active { background: var(--accent); color: var(--accent-ink); font-weight: 600; }
+
+.pop { position: relative; }
+.pop > summary { list-style: none; cursor: pointer; user-select: none; }
+.pop > summary::-webkit-details-marker { display: none; }
+.pop[open] > summary { border-color: var(--accent); color: var(--accent); }
+.pop-panel {
+  position: absolute; left: 0; top: calc(100% + 6px); z-index: 70; width: 300px;
+  background: var(--surface); border: 1px solid var(--ctl-line); border-radius: var(--radius);
+  box-shadow: var(--shadow-3); padding: 14px;
+}
+.pop-title { font-size: var(--fs-xs); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--text-3); margin: 0 0 8px; }
+.pop-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.sort-cur { font-weight: 600; color: var(--text); }
+.sort-arrow { color: var(--accent); font-weight: 700; }
+.mobile-only { display: none; }
+
+/* ---------------------------------------------------------------- toolbar */
+.table-toolbar, .filter-bar, .sort-bar {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+  padding: 12px 18px; border-bottom: 1px solid var(--line-soft);
+}
+.toolbar-search {
+  flex: 1 1 240px; max-width: 340px; padding: 7px 12px; font-size: var(--fs-md); font-family: var(--font-text);
+  background: var(--surface-2); color: var(--text); border: 1px solid var(--ctl-line); border-radius: var(--radius-sm);
+}
+.toolbar-search::placeholder { color: var(--text-3); }
+.toolbar-count { font-size: var(--fs-sm); color: var(--text-3); font-variant-numeric: tabular-nums; }
+.filter-count-badge {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 16px; height: 16px;
+  padding: 0 5px; border-radius: 99px; background: var(--accent-ink); color: var(--accent); font-size: var(--fs-xs); font-weight: 700;
+}
+
+/* ---------------------------------------------------------------- tables */
+.table-wrap { overflow-x: auto; }
+.sortable-table { width: 100%; border-collapse: collapse; text-align: left; }
+.sortable-table thead th {
+  position: sticky; top: 0; z-index: 2; background: var(--surface);
+  border-bottom: 1px solid var(--line); padding: 10px 18px;
+  font-size: var(--fs-xs); font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+  color: var(--text-3); white-space: nowrap; cursor: pointer;
+}
+.sortable-table thead th:hover { color: var(--text); }
+.sort-ind { opacity: 0; margin-left: 5px; font-size: var(--fs-xs); }
+.sortable-table thead th:hover .sort-ind, .sortable-table thead th[aria-sort] .sort-ind { opacity: 1; }
+.sortable-table thead th[aria-sort] { color: var(--accent); }
+.sortable-table tbody td { padding: 11px 18px; border-bottom: 1px solid var(--line-soft); font-size: var(--fs-md); vertical-align: middle; }
+.sortable-table tbody tr.row-main { cursor: pointer; }
+.sortable-table tbody tr.row-main:hover { background: var(--surface-2); }
+.sortable-table tbody tr.row-main.open { background: var(--surface-2); }
+.sortable-table tbody tr.row-detail td { padding: 14px 18px 16px; background: var(--surface-2); }
+/* Aufgeklappte Zeile als ruhiges Unterpanel: eigene Karte, eigene Beschriftungen,
+   aber ohne die Optik einer zweiten Tabelle (weiche Trennung statt harter Linie). */
+.detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px 20px; border-top: 1px solid var(--line-soft); padding-top: 12px; }
+.detail-grid .dg-k { font-size: var(--fs-xs); font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--text-3); }
+.detail-grid .dg-v { font-size: var(--fs-base); font-weight: 600; margin-top: 3px; font-variant-numeric: tabular-nums; }
+.cell-head { font-weight: 600; }
+.cell-sub { font-weight: 500; color: var(--text-2); }
+.score-bar { width: 46px; height: 5px; border-radius: 99px; background: var(--surface-3); overflow: hidden; display: inline-block; vertical-align: middle; }
+.score-fill { height: 100%; background: var(--accent); border-radius: 99px; }
+.rank-tag {
+  display: inline-flex; align-items: center; margin-left: 6px; padding: 1px 6px; border-radius: 5px;
+  background: var(--surface-3); color: var(--text-2); font-size: var(--fs-xs); font-weight: 700; font-variant-numeric: tabular-nums;
+}
+.plan-cell { display: inline-flex; align-items: center; gap: 10px; }
+.plan-avatar {
+  width: 27px; height: 27px; flex: none; border-radius: 8px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: var(--fs-xs); font-weight: 700; letter-spacing: .01em;
+  color: var(--av); background: color-mix(in oklab, var(--av) 16%, transparent);
+  border: 1px solid color-mix(in oklab, var(--av) 30%, transparent);
+}
+.privacy-badges { display: flex; flex-wrap: wrap; gap: 4px; }
+.privacy-badges .badge { text-transform: none; letter-spacing: 0; }
+.est-note { font-size: var(--fs-xs); color: var(--text-3); margin-left: 4px; }
+/* Preis-Zuschlag (z.B. Karten-Gebuehr): sichtbar am Preis, Details im Tooltip */
+.table-note { padding: 11px 18px; font-size: var(--fs-sm); color: var(--text-3); border-top: 1px solid var(--line-soft); }
+.skel-row td { padding: 13px 18px; }
+.skel {
+  height: 11px; border-radius: 6px; margin: 6px 0;
+  background: linear-gradient(90deg, var(--surface-2) 25%, var(--surface-3) 37%, var(--surface-2) 63%);
+  background-size: 400% 100%; animation: shimmer 1.4s ease-in-out infinite;
+}
+@keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
+
+/* ---------------------------------------------------------------- pickers */
+.col-picker { position: relative; }
+.col-picker-panel {
+  position: absolute; right: 0; top: calc(100% + 6px); z-index: 70; width: 250px;
+  background: var(--surface); border: 1px solid var(--ctl-line); border-radius: var(--radius);
+  box-shadow: var(--shadow-3); padding: 14px;
+}
+.col-picker-title { font-size: var(--fs-xs); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--text-3); margin-bottom: 10px; }
+.col-picker-panel label { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: var(--fs-md); cursor: pointer; color: var(--text-2); }
+.col-picker-panel input { accent-color: var(--accent); }
+
+/* ---------------------------------------------------------------- calculator */
+.calc-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; padding: 18px; border-bottom: 1px solid var(--line-soft); }
+.calc-ctl { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.calc-ctl > span:first-child { font-size: var(--fs-xs); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--text-3); }
+.calc-money { display: flex; align-items: stretch; width: 100%; max-width: 250px; background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius-sm); overflow: hidden; }
+.calc-money .sym { display: inline-flex; align-items: center; padding: 0 12px; background: var(--surface-3); color: var(--text-2); font-weight: 600; font-size: var(--fs-md); border-right: 1px solid var(--line); }
+.calc-money input { flex: 1 1 auto; min-width: 0; border: 0; outline: none; background: transparent; padding: 9px 12px; font-family: var(--font-display); font-size: var(--fs-lg); font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+.calc-range-row { display: flex; align-items: center; gap: 10px; width: 100%; }
+.calc-range-row .num { font-size: var(--fs-xs); color: var(--text-3); }
+.calc-range { flex: 1 1 auto; width: auto; max-width: 280px; accent-color: var(--accent); }
+.calc-out { font-size: var(--fs-sm); color: var(--text-2); font-weight: 600; font-variant-numeric: tabular-nums; }
+.calc-head {
+  display: grid; grid-template-columns: minmax(0, 1fr) 130px 150px; gap: 14px; padding: 10px 18px;
+  border-bottom: 1px solid var(--line); font-size: var(--fs-xs); font-weight: 700; text-transform: uppercase;
+  letter-spacing: .08em; color: var(--text-3); background: var(--surface-2);
+}
+.calc-head span:nth-child(2), .calc-head span:nth-child(3) { text-align: right; }
+.calc-results { display: flex; flex-direction: column; }
+.calc-row { display: grid; grid-template-columns: minmax(0, 1fr) 130px 150px; align-items: center; gap: 14px; padding: 12px 18px; border-bottom: 1px solid var(--line-soft); }
+.calc-row:last-child { border-bottom: 0; }
+.calc-main { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.calc-ranknum {
+  width: 22px; height: 22px; flex: none; border-radius: 50%; background: var(--accent-soft); color: var(--accent);
+  font-size: var(--fs-xs); font-weight: 700; display: inline-flex; align-items: center; justify-content: center; font-variant-numeric: tabular-nums;
+}
+.calc-plan { display: flex; flex-direction: column; min-width: 0; font-weight: 600; font-size: var(--fs-md); }
+.calc-score { margin-left: 6px; padding: 1px 6px; border: 1px solid var(--line); border-radius: 999px; font: 600 10.5px/1.6 var(--font-num); color: var(--text-3); font-variant-numeric: tabular-nums; }
+.calc-model { font-size: var(--fs-sm); font-weight: 400; color: var(--text-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.calc-nums { text-align: right; font-variant-numeric: tabular-nums; font-size: var(--fs-base); font-weight: 600; }
+.calc-nums .sub { display: block; font-size: var(--fs-xs); font-weight: 400; color: var(--text-3); }
+
+/* ---------------------------------------------------------- family bars */
+.fc-list { padding: 8px 18px 4px; }
+.fc-legend { font-size: var(--fs-xs); color: var(--text-3); margin-top: 4px; font-variant-numeric: tabular-nums; }
+.fc-row { padding: 13px 0; border-bottom: 1px solid var(--line-soft); }
+.fc-row:last-child { border-bottom: 0; }
+.fc-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.fc-family { font-family: var(--font-display); font-weight: 700; font-size: var(--fs-md); }
+.fc-delta { font-size: var(--fs-xs); font-weight: 600; padding: 2px 9px; border-radius: 99px; white-space: nowrap; }
+.fc-delta.up { background: var(--accent-soft); color: var(--accent); }
+.fc-delta.down { background: var(--surface-2); color: var(--text-2); }
+.fc-delta.draw { background: var(--surface-2); color: var(--text-3); }
+.fc-bars { display: flex; flex-direction: column; gap: 5px; }
+.fc-bar-row { display: grid; grid-template-columns: minmax(96px, 158px) minmax(0, 1fr) auto; align-items: center; gap: 10px; font-size: var(--fs-sm); }
+.fc-plan { color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fc-track { height: 7px; background: var(--surface-2); border-radius: 99px; overflow: hidden; }
+.fc-fill { display: block; height: 100%; background: var(--text-3); border-radius: 99px; opacity: .55; }
+.fc-fill.win { background: var(--accent); opacity: 1; }
+.fc-val { font-variant-numeric: tabular-nums; font-weight: 600; min-width: 68px; text-align: right; }
+
+/* ---------------------------------------------------------------- changelog */
+.cl-list { padding: 6px 18px 16px; }
+.cl-row { display: flex; gap: 16px; padding: 11px 0; border-bottom: 1px solid var(--line-soft); font-size: var(--fs-md); color: var(--text-2); }
+.cl-row:last-child { border-bottom: 0; }
+.cl-date { flex: none; width: 92px; color: var(--text-3); font-size: var(--fs-sm); font-weight: 600; font-variant-numeric: tabular-nums; }
+.cl-commit { font-family: var(--pv-mono); font-size: var(--fs-xs); color: var(--text-3); text-decoration: none; border-bottom: 1px dotted var(--line); }
+.cl-commit:hover { color: var(--text); }
+
+/* ---------------------------------------------------------------- method */
+.method-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; padding: 18px; }
+.method-card { background: var(--surface-2); border: 1px solid var(--line-soft); border-radius: var(--radius); padding: 15px; }
+.method-card h3 { font-size: var(--fs-md); font-weight: 600; margin-bottom: 6px; }
+.method-card p { font-size: var(--fs-md); color: var(--text-2); }
+.step-num {
+  display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px;
+  border-radius: 7px; background: var(--accent-soft); color: var(--accent); font-size: var(--fs-xs); font-weight: 700; margin-right: 8px;
+}
+#formula-block {
+  margin: 0 18px 18px; padding: 14px 16px; border-radius: var(--radius);
+  background: var(--surface-2); border: 1px solid var(--line-soft);
+  font-family: var(--font-mono); font-size: var(--fs-sm); color: var(--text-2);
+}
+details { border-bottom: 1px solid var(--line-soft); }
+details summary { padding: 13px 18px; font-size: var(--fs-md); font-weight: 500; cursor: pointer; }
+details summary:hover { color: var(--accent); }
+details[open] summary { color: var(--accent); }
+.faq-body { padding: 0 18px 16px; font-size: var(--fs-md); color: var(--text-2); }
+.method-more summary { padding-left: 0; }
+.legal-block { padding: 16px 18px; border-bottom: 1px solid var(--line-soft); }
+.legal-block h3 { font-size: var(--fs-base); font-weight: 600; margin-bottom: 6px; }
+.legal-block p { font-size: var(--fs-md); color: var(--text-2); margin-bottom: 8px; }
+.legal-block a { color: var(--accent); text-decoration: underline; }
+.legal-section { border-bottom: 1px solid var(--line-soft); }
+
+/* ---------------------------------------------------------------- footer */
+footer { border-top: 1px solid var(--line-soft); margin-top: 36px; }
+footer { margin-top: auto; }
+.footer-row {
+  max-width: var(--maxw); margin: 0 auto; padding: 22px 20px;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 10px; font-size: var(--fs-sm); color: var(--text-3);
+}
+.footer-links { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
+.footer-links a { color: var(--text-3); }
+.footer-links a:hover { color: var(--accent); }
+
+/* ---------------------------------------------------------------- overlay */
+.cmdk-overlay {
+  position: fixed; inset: 0; z-index: 120; display: flex; align-items: flex-start; justify-content: center;
+  padding-top: 12vh; background: color-mix(in oklab, var(--bg) 70%, transparent); backdrop-filter: blur(6px);
+}
+.cmdk {
+  width: min(560px, calc(100vw - 32px)); background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius-lg); box-shadow: var(--shadow-3); overflow: hidden;
+}
+.cmdk-input { display: flex; align-items: center; gap: 10px; padding: 13px 16px; border-bottom: 1px solid var(--line-soft); }
+.cmdk-input svg { width: 16px; height: 16px; color: var(--text-3); flex: none; }
+.cmdk-input input { flex: 1 1 auto; background: none; border: 0; outline: none; color: var(--text); font-size: var(--fs-lg); font-family: var(--font-text); }
+.cmdk-input:focus-within, .calc-money:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+.cmdk-list { max-height: 52vh; overflow-y: auto; padding: 6px; }
+.cmdk-item {
+  display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; cursor: pointer;
+  background: none; border: 0; padding: 9px 10px; border-radius: var(--radius-sm); font-size: var(--fs-md); color: var(--text-2);
+}
+.cmdk-item:hover, .cmdk-item.active { background: var(--surface-2); color: var(--text); }
+.cmdk-item .ci-kind { margin-left: auto; font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .07em; color: var(--text-3); }
+.cmdk-empty { padding: 22px 16px; text-align: center; color: var(--text-3); font-size: var(--fs-md); }
+
+.toast {
+  position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(12px);
+  background: var(--text); color: var(--bg); padding: 10px 16px; border-radius: var(--radius-sm);
+  font-size: var(--fs-md); font-weight: 500; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
+  z-index: 90; box-shadow: var(--shadow-2);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+#back-top {
+  position: fixed; right: 20px; bottom: 20px; z-index: 60; width: 38px; height: 38px; border-radius: 50%;
+  display: none; align-items: center; justify-content: center; cursor: pointer;
+  background: var(--surface); border: 1px solid var(--line); color: var(--text-2); box-shadow: var(--shadow-2);
+}
+#back-top.show { display: inline-flex; }
+#back-top:hover { color: var(--accent); border-color: var(--accent); }
+.attr-filter { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 14px; }
+.attr-filter-title { font: 700 10.5px/1 var(--font-num); text-transform: uppercase; letter-spacing: .07em; color: var(--text-3); }
+.dash-target-input {
+  width: 100%; padding: 7px 9px; font-size: var(--fs-md); font-family: var(--font-text);
+  background: var(--surface-2); color: var(--text); border: 1px solid var(--line); border-radius: var(--radius-sm);
+}
+
+/* tooltip */
+.dash-tooltip {
+  position: fixed; z-index: 70; display: none; pointer-events: none; max-width: 280px;
+  padding: 10px 12px; border-radius: var(--radius-sm); background: var(--surface);
+  border: 1px solid var(--line); box-shadow: var(--shadow-3); font-size: var(--fs-sm); line-height: 1.45;
+}
+.dash-tooltip .tt-title { font-family: var(--font-display); font-weight: 700; font-size: var(--fs-md); }
+.dash-tooltip .tt-sub { color: var(--text-3); }
+.dash-tooltip .tt-row { display: flex; justify-content: space-between; gap: 14px; font-variant-numeric: tabular-nums; color: var(--text-2); }
+.dash-tooltip .tt-row b { color: var(--text); }
+
+/* view transition on tab switch */
+main { view-transition-name: main-content; }
+::view-transition-old(main-content) { animation: vt-out .14s ease-out both; }
+::view-transition-new(main-content) { animation: vt-in .2s ease-out both; }
+@keyframes vt-out { to { opacity: 0; transform: translateY(-4px); } }
+@keyframes vt-in { from { opacity: 0; transform: translateY(6px); } }
+
+/* ---------------------------------------------------------------- responsive */
+@media (max-width: 1240px) {
+  .workbench { grid-template-columns: 236px minmax(0, 1fr); }
+  .detail-card { grid-column: 1 / -1; position: static; }
+}
+@media (max-width: 980px) {
+  .workbench { grid-template-columns: minmax(0, 1fr); }
+  .rail { position: static; }
+  .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 900px) {
+  /* Schmal: erst das Bild, dann die Regler. Wer die Seite oeffnet, will Daten
+     sehen, nicht zuerst Formularfelder. */
+  .workbench { display: flex; flex-direction: column; gap: 14px; }
+  /* Flex-Kinder schrumpfen nur mit min-width:0, sonst zwingt langer Inhalt
+     die Karte breiter als das Display (Seitenversatz nach rechts). */
+  .workbench > * { min-width: 0; max-width: 100%; }
+  .chart-card { order: 1; }
+  .detail-card { order: 2; }
+  .rail { order: 3; }
+  .tabs { scroll-behavior: smooth; }
+}
+@media (max-width: 760px) {
+  .topbar-inner { height: 52px; padding: 0 14px; gap: 8px; }
+  .brand-text { display: none; }
+  .cmdk-trigger { min-width: 0; padding: 6px 8px; }
+  .cmdk-trigger span, .cmdk-trigger kbd { display: none; }
+  .tabs { padding: 0 6px; -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 26px), transparent 100%); mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 26px), transparent 100%); }
+  .tab { padding: 9px 8px 11px; font-size: var(--fs-sm); }
+  .tab svg { display: none; }
+  .page-head { padding: 16px 14px 0; }
+  .app-title h1 { font-size: 20px; }
+  .app-meta { font-size: var(--fs-sm); gap: 4px 12px; }
+  #disclaimer { margin: 12px 14px 0; font-size: var(--fs-sm); }
+  main { padding: 0 14px 28px; }
+  .kpi { padding: 13px 14px; }
+  .kpi .v { font-size: 28px; }
+  .kpi .s { display: none; }
+  .chart-stage { min-height: 300px; padding: 8px 8px 0 0; }
+  .chart-stage canvas { height: 290px; }
+  .kpi-grid { gap: 1px; }
+  .calc-controls { padding: 14px; gap: 14px; }
+  .calc-row { grid-template-columns: minmax(0, 1fr) auto; row-gap: 4px; padding: 12px 14px; }
+  .calc-head { grid-template-columns: minmax(0, 1fr) auto; padding: 9px 14px; }
+  .calc-head span:nth-child(2) { display: none; }
+  .fc-list { padding: 8px 14px 4px; }
+  .fc-bar-row { grid-template-columns: minmax(70px, 104px) minmax(0, 1fr) auto; gap: 8px; }
+  .fc-val { min-width: 54px; }
+  .cl-row { flex-direction: column; gap: 2px; }
+  .cl-date { width: auto; }
+  .footer-row { padding: 18px 14px; }
+  .mobile-only { display: inline-flex; }
+  #sort-pop { display: none; }
+  .table-toolbar, .filter-bar, .sort-bar { padding: 10px 14px; }
+  .toolbar-search { flex: 1 1 100%; max-width: none; }
+  /* tables become labelled cards */
+  .sortable-table thead { display: none; }
+  .sortable-table, .sortable-table tbody, .sortable-table tr, .sortable-table td { display: block; width: 100%; }
+  .sortable-table tbody tr.row-main { width: auto; margin: 10px 14px; padding: 6px 0; background: var(--surface); border: 1px solid var(--line-soft); border-radius: var(--radius); }
+  .sortable-table tbody tr.row-detail td { margin: 0 14px 10px; width: auto; border-radius: var(--radius); }
+  .sortable-table tbody td { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 7px 14px; border-bottom: 0; font-size: var(--fs-md); }
+  .sortable-table tbody td::before { content: attr(data-label); flex: none; font-size: var(--fs-xs); font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--text-3); }
+  .sortable-table tbody tr.row-detail td::before { content: none; }
+  .detail-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .detail-grid .dg-v, .dash-detail-content, .sl-item { overflow-wrap: anywhere; }
+  /* Tags auf dem Handy vollständig: Zusatz-Chips statt "+n", Zeile bricht um */
+  .attr-extra { display: inline-block; }
+  .attr-more { display: none; }
+  .sortable-table tbody td.td-attrs { flex-wrap: wrap; gap: 6px 4px; }
+}
+@media (max-width: 420px) {
+  .tab { padding: 9px 6px 11px; font-size: var(--fs-xs); letter-spacing: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+}
+
+
+/* =========================================================================
+   Design layer: "Instrument Panel"
+   Tokens, type, layout, depth, states and motion on top of the app.js renderer.
+   Stands at the end of this <style> block, so its rules win on equal specificity.
+   ========================================================================= */
+
+/* Hauptbereich darf nicht auf Mindestbreite seines Inhalts wachsen
+   (sonst schiebt der Body als Flex-Zeile die Seite horizontal auf) */
+#main { min-width: 0; }
+
+/* ---------------------------------------------------------------- a11y */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.skip-link {
+  position: absolute; left: -9999px; top: 0; z-index: 200; padding: 11px 16px;
+  background: var(--accent); color: var(--accent-ink); border-radius: 0 0 var(--pv-radius) 0;
+  font-family: var(--pv-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .07em; text-decoration: none;
+}
+.skip-link:focus { left: 0; }
+.chart-legend .lg[hidden] { display: none; }
+
+/* ---------------------------------------------------------------- type */
+@font-face { font-family: 'Space Mono'; font-style: normal; font-weight: 400; font-display: swap; src: url('fonts/SpaceMono-400.woff2') format('woff2'); }
+@font-face { font-family: 'Space Mono'; font-style: normal; font-weight: 700; font-display: swap; src: url('fonts/SpaceMono-700.woff2') format('woff2'); }
+
+/* ---------------------------------------------------------------- tokens */
+:root {
+  --pv-mono: 'Space Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --pv-radius: 3px;
+  --pv-hair: color-mix(in oklab, var(--text) 12%, transparent);
+  --pv-grid: color-mix(in oklab, var(--text) 6%, transparent);
+  --pv-tick: color-mix(in oklab, var(--text) 22%, transparent);
+  --pv-ease: cubic-bezier(.22, .61, .36, 1);
+  --pv-ease-std: cubic-bezier(.4, 0, .2, 1);
+  --pv-dur-fast: 120ms;
+  --pv-dur-base: 200ms;
+  --pv-dur-slow: 380ms;
+  --pv-dur-enter: 500ms;
+  /* dark ground: instrument black */
+  --bg: #0b0e12;
+  --surface: #12171d;
+  --surface-2: #161c23;
+  --surface-3: #1c232c;
+  --line: #232c36;
+  --line-soft: #1b232b;
+  --text: #eef2f6;
+  --text-2: #9aa8b6;
+  --text-3: #7d8ea3;
+  --accent: #6ee7c7;
+  --accent-2: #3fbf9c;
+  --accent-ink: #06231c;
+  --accent-soft: #0f2a23;
+  --grid: #1a222b;
+  --radius-sm: 3px; --radius: 4px; --radius-lg: 6px;
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, .5);
+  --shadow-2: 0 10px 30px -18px rgba(0, 0, 0, .8);
+  --shadow-3: 0 30px 70px -30px rgba(0, 0, 0, .9);
+  color-scheme: dark;
+}
+[data-theme="light"] {
+  /* paper ground */
+  --bg: #f3f1ec;
+  --surface: #fffdfa;
+  --surface-2: #f7f5f0;
+  --surface-3: #efece5;
+  --line: #ddd8cd;
+  --line-soft: #e8e4db;
+  --text: #15130f;
+  --text-2: #55524a;
+  --text-3: #6b675e;
+  --accent: #0c7a5f;
+  --accent-2: #0b6b54;
+  --accent-ink: #ffffff;
+  --accent-soft: #e2f0ea;
+  --grid: #e4e0d6;
+  --data-c: #5f6f80;
+  --data-pareto: #15130f;
+  color-scheme: light;
+}
+
+/* ---------------------------------------------------------------- base */
+body {
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(var(--pv-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--pv-grid) 1px, transparent 1px);
+  background-size: 96px 96px, 96px 96px;
+  background-position: -1px -1px;
+  font-size: var(--fs-base);
+  line-height: 1.55;
+}
+::selection { background: color-mix(in oklab, var(--accent) 26%, transparent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.025em; }
+h2 { text-wrap: balance; }
+main { max-width: 1680px; padding: 0 28px 64px; }
+
+/* mono utility: labels, kickers, numerals */
+.kpi .k, .rail-title, .section-head p, .panel-head p, .app-meta, .chart-foot,
+.detail-kicker, .sl-title, .cl-date, .attr, .chip, .rank-tag,
+.waitlist-badge, .est-note, .table-note, .attr-filter-title, .toolbar-count {
+  font-family: var(--pv-mono);
+}
+/* ---------------------------------------------------------------- scroll progress */
+#pv-progress {
+  position: fixed; inset: 0 auto auto 0; height: 2px; width: 100%;
+  transform: scaleX(var(--pv-p, 0)); transform-origin: 0 50%;
+  background: linear-gradient(90deg, var(--accent), color-mix(in oklab, var(--accent) 35%, transparent));
+  z-index: 90; pointer-events: none;
+}
+
+/* ---------------------------------------------------------------- chrome */
+.nav {
+  background: color-mix(in oklab, var(--bg) 86%, transparent);
+  backdrop-filter: saturate(1.4) blur(10px);
+  border-bottom: 1px solid var(--pv-hair);
+}
+.nav-inner { height: 58px; max-width: 1680px; padding: 0 28px; }
+.brand-mark {
+  width: 28px; height: 28px; border-radius: 3px;
+  background: none; box-shadow: none;
+}
+.brand-text { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; font-size: var(--fs-lg); }
+.cmdk-trigger, .icon-btn, .lang-switch button, .currency-select {
+  font-family: var(--pv-mono); font-size: var(--fs-xs); letter-spacing: .04em; text-transform: uppercase;
+  border-radius: var(--pv-radius); border-color: var(--ctl-line);
+}
+
+/* tabs: mono labels, sliding indicator */
+.tabs { position: relative; gap: 2px; border-bottom: 0; padding: 0; }
+.tabs::after {
+  content: ""; position: absolute; bottom: -1px; left: 0; height: 2px; width: var(--pv-tab-w, 0px);
+  transform: translateX(var(--pv-tab-x, 0px));
+  background: var(--accent);
+  transition: transform var(--pv-dur-slow) var(--pv-ease-std), width var(--pv-dur-slow) var(--pv-ease-std);
+}
+.tab {
+  font-family: var(--pv-mono); font-size: var(--fs-sm); letter-spacing: .05em; text-transform: uppercase;
+  padding: 11px 12px 13px; border-bottom: 0; color: var(--text-2);
+  transition: color var(--pv-dur-base) var(--pv-ease);
+}
+.tab:hover { color: var(--text); }
+.tab.active { color: var(--text); border-bottom-color: transparent; }
+.tab svg { width: 13px; height: 13px; }
+
+/* ---------------------------------------------------------------- header */
+.app-header { padding: 44px 0 0; display: grid; gap: 18px; }
+.app-title h1 {
+  font-size: clamp(34px, 4.3vw, 60px); font-weight: 700; line-height: 1.02;
+  letter-spacing: -0.035em; max-width: 34ch;
+}
+.app-meta {
+  gap: 6px 18px; font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .06em;
+  color: var(--text-2); margin-top: 14px;
+}
+.app-meta .dot { gap: 8px; }
+.app-meta .dot + .dot::before { content: "/"; color: var(--pv-tick); margin-right: 10px; }
+#meta-updated::before, #meta-sources::before {
+  content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 18%, transparent);
+}
+.app-meta .dot:first-child::before { display: none; }
+#pv-lastseen {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--pv-mono); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .1em;
+  color: var(--accent); border: 1px solid color-mix(in oklab, var(--accent) 40%, transparent);
+  background: color-mix(in oklab, var(--accent) 10%, transparent);
+  padding: 3px 9px; border-radius: 999px;
+}
+.disclaimer {
+  margin: 0; border-left: 2px solid var(--warn); border-radius: 0 var(--pv-radius) var(--pv-radius) 0;
+  background: color-mix(in oklab, var(--warn-soft) 60%, var(--surface));
+  font-size: var(--fs-sm);
+}
+
+/* ---------------------------------------------------------------- kpi strip */
+.kpi-grid {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0;
+  border: 1px solid var(--pv-hair); border-radius: var(--radius);
+  background: var(--surface); box-shadow: var(--shadow-2);
+  overflow: hidden; margin-top: 26px;
+}
+.kpi { padding: 20px 22px 20px; border-right: 1px solid var(--pv-hair); background: transparent;
+  display: flex; flex-direction: column; }
+.kpi:last-child { border-right: 0; }
+.kpi .k {
+  font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .1em; color: var(--text-3);
+  display: flex; align-items: center; gap: 8px;
+}
+.kpi .k::before { content: ""; width: 14px; height: 1px; background: var(--pv-tick); }
+.kpi .v {
+  font-family: var(--pv-mono); font-weight: 700; font-size: clamp(30px, 2.6vw, 44px);
+  letter-spacing: -0.04em; line-height: 1; margin: 12px 0 6px; font-variant-numeric: tabular-nums;
+}
+.kpi .s { font-size: var(--fs-xs); color: var(--text-2); }
+.kpi-meter { margin-top: auto; height: 3px; background: var(--surface-3); border-radius: 0; }
+.kpi-meter .on { background: var(--accent); }
+.kpi-meter .off { background: color-mix(in oklab, var(--text) 14%, transparent); }
+
+/* ---------------------------------------------------------------- panels with corner ticks */
+.panel, .chart-card, .detail-card, #method, .legal-section {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--pv-hair);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-2);
+}
+.panel::before, .chart-card::before, .detail-card::before,
+.panel::after, .chart-card::after, .detail-card::after {
+  content: ""; position: absolute; width: 9px; height: 9px; pointer-events: none;
+  border-color: var(--pv-tick); border-style: solid;
+}
+.panel::before, .chart-card::before, .detail-card::before { top: -1px; left: -1px; border-width: 1px 0 0 1px; }
+.panel::after, .chart-card::after, .detail-card::after { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
+
+.panel-head, .section-head {
+  padding: 18px 22px 16px; border-bottom: 1px solid var(--pv-hair); align-items: end;
+}
+.panel-head h2, .panel-head h3, .section-head h2 {
+  font-family: var(--font-display); font-size: 20px; font-weight: 700; letter-spacing: -0.03em;
+}
+.section-head h2 { font-size: clamp(20px, 2vw, 27px); }
+.panel-head p, .section-head p {
+  font-size: var(--fs-sm); text-transform: uppercase; letter-spacing: .05em; color: var(--text-3); margin-top: 7px;
+}
+
+/* ---------------------------------------------------------------- workbench */
+.workbench { gap: 20px; margin-top: 26px; }
+.rail-block { padding: 16px 18px; border-bottom: 1px solid var(--pv-hair); }
+.rail-block:last-child { border-bottom: 0; }
+.rail { background: var(--surface); border: 1px solid var(--pv-hair); border-radius: var(--radius); box-shadow: var(--shadow-2); }
+.rail-title { font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .16em; color: var(--text-3); margin-bottom: 12px; }
+.rail-row { font-size: var(--fs-sm); gap: 10px; padding: 5px 0; }
+.rail-stat { font-size: var(--fs-sm); padding: 6px 0; border-bottom: 1px dashed var(--pv-hair); }
+.rail-stat:last-child { border-bottom: 0; }
+.rail-stat b, .rail-stat .v { font-family: var(--pv-mono); }
+.rail select, .rail input[type="range"] { border-radius: 2px; }
+.rail-check span, .rail-row span { color: var(--text-2); }
+
+.chart-head { padding: 16px 22px 14px; border-bottom: 1px solid var(--pv-hair); }
+.chart-head h2 { font-size: 20px; }
+.chart-legend { padding: 11px 22px; gap: 9px 26px; border-bottom: 1px solid var(--pv-hair); background: var(--surface-2); }
+.chart-legend .lg { font-family: var(--pv-mono); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .03em; color: var(--text-2); }
+.chart-legend .lg-n { font-family: var(--pv-mono); color: var(--text); min-width: 3ch; text-align: right; }
+.dot-swatch { width: 8px; height: 8px; border-radius: 50%; }
+.legend-shape { background: var(--accent); }
+.chart-stage { padding: 14px 14px 0 0; min-height: 380px; }
+.chart-foot {
+  padding: 11px 22px; border-top: 1px solid var(--pv-hair);
+  font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .05em; color: var(--text-3);
+}
+
+.detail-card { display: flex; flex-direction: column; }
+.detail-head { padding: 16px 20px 12px; border-bottom: 1px solid var(--pv-hair); }
+.detail-kicker { font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .16em; color: var(--text-3); }
+.dash-detail-empty { padding: 22px 20px; font-size: var(--fs-sm); color: var(--text-3); }
+.dash-detail-content { padding: 16px 20px; }
+.detail-grid .dg-k, .dd-row .k { font-family: var(--pv-mono); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .07em; color: var(--text-3); }
+.detail-grid .dg-v, .dd-row .v { font-family: var(--pv-mono); }
+.sl-title { font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .16em; color: var(--text-3); padding: 14px 20px 8px; }
+
+.sl-item .sl-val { font-family: var(--pv-mono); }
+
+/* ---------------------------------------------------------------- tables */
+.table-wrap { border-top: 0; }
+.sortable-table { font-size: var(--fs-md); }
+.sortable-table thead th {
+  font-family: var(--pv-mono); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .1em;
+  color: var(--text-3); background: var(--surface-2); padding: 11px 12px;
+  border-bottom: 1px solid var(--pv-hair); position: sticky; top: 58px; z-index: 5;
+}
+.sortable-table thead th[aria-sort] { color: var(--accent); }
+.sortable-table thead th[role="button"], .sortable-table thead th[data-sort], .sortable-table thead th:hover {
+  color: var(--text); background: var(--surface-3); cursor: pointer;
+}
+.sortable-table tbody td { padding: 7px 12px; border-bottom: 1px solid var(--pv-hair); line-height: 1.35; }
+.sortable-table tbody tr.row-main { transition: background-color var(--pv-dur-base) var(--pv-ease); }
+.sortable-table tbody tr.row-main:hover { background: color-mix(in oklab, var(--accent) 5%, transparent); }
+.sortable-table tbody tr.row-main:hover td:first-child { box-shadow: inset 2px 0 0 var(--accent); }
+.sortable-table tbody tr.row-main.open { background: color-mix(in oklab, var(--accent) 7%, transparent); }
+.num, .mono { font-family: var(--pv-mono); font-variant-numeric: tabular-nums; }
+.cell-head .plan-cell { gap: 10px; }
+/* Anbieter in dieselbe Zeile: halbiert die Zeilenhoehe */
+.cell-head .plan-cell .muted { display: inline; font-size: var(--fs-xs); margin-left: 7px; opacity: .8; }
+.plan-avatar {
+  width: 26px; height: 26px; border-radius: 3px; font-family: var(--pv-mono); font-size: var(--fs-xs);
+  background: color-mix(in oklab, var(--av) 14%, var(--surface));
+  color: color-mix(in oklab, var(--av) 72%, var(--text));
+  border: 1px solid color-mix(in oklab, var(--av) 34%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25);
+}
+/* Score-Balken neben der Zahl statt darunter: gleiche Startkante fuer alle Zeilen */
+.sortable-table tbody td .score-bar { display: inline-block; width: 46px; height: 3px; margin-left: 8px; vertical-align: 2px; }
+.score-bar { background: var(--surface-3); border-radius: 0; height: 3px; }
+.score-fill { background: linear-gradient(90deg, var(--accent), color-mix(in oklab, var(--accent) 45%, var(--text))); }
+.rank-tag { border-radius: 2px; font-size: var(--fs-xs); letter-spacing: .04em; }
+.row-detail td { background: var(--surface-2); }
+.more-row .btn, #plans-more { font-family: var(--pv-mono); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .08em; }
+
+/* ---------------------------------------------------------------- chips, attrs, controls */
+.chip {
+  border: 1px solid var(--pv-hair); border-radius: 999px; padding: 3px 10px;
+  font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .04em; background: var(--surface-2);
+}
+.chip button { font-family: var(--pv-mono); }
+.attr {
+  border-radius: 999px; border: 1px solid var(--pv-hair); padding: 2px 8px 3px;
+  font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .03em; background: var(--surface-2);
+}
+.attr-ok { border-color: color-mix(in oklab, var(--data-a) 40%, transparent); color: color-mix(in oklab, var(--data-a) 85%, var(--text)); }
+.attr-warn { border-color: color-mix(in oklab, var(--data-b) 40%, transparent); color: color-mix(in oklab, var(--data-b) 85%, var(--text)); }
+.attr-unknown, .attr-more { color: var(--text-3); }
+.attr-more { border-style: dashed; }
+.plan-avatar + .attr { margin-left: 0; }
+.btn, .chip-btn, .seg button, .linklike {
+  font-family: var(--pv-mono); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .07em;
+  border-radius: var(--pv-radius);
+}
+.btn { border: 1px solid var(--ctl-line); background: var(--surface-2); padding: 7px 13px; }
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.privacy-filter { font-family: var(--pv-mono); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .06em; color: var(--text-2); }
+select, input[type="search"], input[type="text"] { border-radius: var(--pv-radius); border-color: var(--ctl-line); }
+.table-toolbar, .filter-bar, .sort-bar { padding: 12px 22px; border-bottom: 1px solid var(--pv-hair); background: var(--surface-2); }
+.toolbar-count { font-size: var(--fs-xs); letter-spacing: .06em; color: var(--text-3); }
+
+/* ---------------------------------------------------------------- footer + palette */
+footer { border-top: 1px solid var(--pv-hair); background: var(--surface); }
+.footer-row { padding: 22px 28px; font-family: var(--pv-mono); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .06em; color: var(--text-3); }
+.footer-links a:hover { color: var(--accent); }
+.cmdk { border-radius: var(--radius); border: 1px solid var(--pv-hair); box-shadow: var(--shadow-3); }
+.cmdk-input { border-bottom: 1px solid var(--pv-hair); }
+.cmdk-list .cmdk-item { font-family: var(--pv-text); }
+
+/* ---------------------------------------------------------------- motion */
+@media (prefers-reduced-motion: no-preference) {
+  .view.active { animation: pv-view var(--pv-dur-slow) var(--pv-ease) both; }
+  @keyframes pv-view { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+  /* staggered reveal, driven by --pv-i set by this script */
+  .pv-rv { opacity: 0; transform: translateY(12px); }
+  .pv-rv.pv-in {
+    animation: pv-rise var(--pv-dur-enter) var(--pv-ease) both;
+    animation-delay: calc(var(--pv-i, 0) * 34ms);
+  }
+  @keyframes pv-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+  .pv-rv.pv-in { opacity: 1; transform: none; }
+  #pv-progress { transition: transform var(--pv-dur-fast) linear; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #pv-progress { display: none; }
+  .pv-rv { opacity: 1 !important; transform: none !important; }
+}
+
+/* ---------------------------------------------------------------- mobile */
+@media (min-width: 1101px) {
+  /* Der Tabellen-Wrap scrollt selbst, dadurch klebte der Kopf 58px unterhalb des
+     Wrap-Randes und Zeilen liefen darueber. Auf Desktop scrollt die Seite. */
+  .table-wrap { overflow: visible; }
+  /* Panels klippen fuer die Rundungen, aber "hidden" macht sie zum Scroll-Container
+     und killt sticky. clip klippt genauso, ohne Scroll-Container zu sein. */
+  .panel, .chart-card, .detail-card { overflow: clip; }
+  .sortable-table thead th { top: 58px; }
+  .sortable-table thead th.sorted { color: var(--accent-2); box-shadow: inset 0 -2px 0 var(--accent-2); }
+  .sortable-table thead th[aria-sort] { color: var(--accent-2); }
+  .sortable-table thead th[aria-sort] .sort-ind { opacity: 1; color: var(--accent-2); }
+  .workbench .rail { position: sticky; top: 76px; align-self: start; }
+  .workbench .rail-block { padding: 14px 16px; }
+}
+@media (max-width: 1100px) {
+  .sortable-table thead th { position: static; }
+}
+@media (max-width: 760px) {
+  main { padding: 0 14px 40px; }
+  .nav-inner { height: 52px; padding: 0 14px; }
+  .app-header { padding: 26px 0 0; }
+  .app-title h1 { font-size: 30px; max-width: none; }
+  .app-meta { font-size: var(--fs-xs); letter-spacing: .06em; }
+  .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .kpi { padding: 14px 16px 16px; }
+  .kpi:nth-child(2n) { border-right: 0; }
+  .kpi:nth-child(-n+2) { border-bottom: 1px solid var(--pv-hair); }
+  .kpi .v { font-size: 28px; }
+  .panel-head, .section-head { padding: 14px 16px; }
+  .panel-head h2, .panel-head h3 { font-size: var(--fs-lg); }
+  .panel::before, .panel::after, .chart-card::before, .chart-card::after { display: none; }
+  .sortable-table tbody td { padding: 8px 14px; }
+  .sortable-table tbody tr.row-main { margin: 10px 0; box-shadow: var(--shadow-1); }
+  .chart-stage { min-height: 300px; padding: 10px 8px 0 0; }
+  .footer-row { padding: 18px 14px; }
+}
+
+.reference-plans { margin-top: 24px; border-top: 1px solid var(--ctl-line); padding-top: 18px; }
+.reference-plans h3 { font-size: var(--fs-lg); margin: 0 0 6px; font-weight: 600; }
+.ref-intro { color: var(--text-3); font-size: var(--fs-sm); line-height: 1.55; max-width: 82ch; margin: 0 0 14px; }
+.ref-list { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
+.ref-plan { border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; background: var(--surface-2); }
+.ref-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.ref-head strong { font-size: var(--fs-md); font-weight: 600; }
+.ref-price { font-size: var(--fs-sm); color: var(--text-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ref-meta { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 5px; font-size: var(--fs-sm); color: var(--text-3); }
+.ref-quota { color: var(--text-2); font-variant-numeric: tabular-nums; }
+.ref-note { font-size: var(--fs-sm); line-height: 1.55; color: var(--text-3); margin: 8px 0 0; }
+@media (max-width: 640px) { .ref-list { grid-template-columns: 1fr; } }
+
+/* =========================================================================
+   UI pass: eine Kopfzeile, Statuszeile, linker Filter-Drawer,
+   Tap-Ziele ab 44px, Ueberschriften-Skala. Steht zuletzt, gewinnt bei
+   gleicher Spezifitaet gegen die Regeln darueber.
+   ========================================================================= */
+
+/* 1) Eine Kopfzeile (max 56px), Tab-Leiste mit deutlichem Abstand darunter */
+.nav-inner { height: 56px; display: flex; align-items: center; gap: 12px; flex-wrap: nowrap; }
+.nav .tabs { margin: 34px auto 0; }
+
+/* 2) Kennzahlen sitzen im Kopf zwischen Marke und Suche (eine Zeile, >= 12px) */
+.status-meta {
+  display: flex; flex-wrap: nowrap; align-items: baseline; gap: 4px 12px;
+  flex: none; /* nie klippen: lieber gestufte Ausblendung unten */
+  font-family: var(--pv-mono); font-size: 12px; line-height: 1.4; color: var(--text-3);
+}
+.status-meta .dot { display: inline-flex; align-items: baseline; gap: 5px; flex: none; }
+.status-meta .num { color: var(--text); font-variant-numeric: tabular-nums; }
+/* Gestufte Ausblendung statt Abschneiden: die Zeile passt in jede Fensterbreite */
+@media (max-width: 1359px) { .status-meta .sm3 { display: none; } }
+@media (max-width: 1179px) { .status-meta .sm2 { display: none; } }
+/* Auf schmalen Geräten hat die Zeile keinen Platz; die Zahlen stehen in der Tabelle */
+@media (max-width: 899px) { .status-meta { display: none; } }
+.status-meta .dot b { color: var(--text); }
+.status-meta .dot + .dot::before { content: "\00b7"; color: var(--pv-tick); margin-right: 8px; }
+#pv-lastseen { margin-left: 4px; }
+
+/* Filter-Dock: liegt ueber den Views, gilt fuer Uebersicht und Plaene */
+.filter-dock { margin-top: 14px; }
+.filter-dock[hidden] { display: none; }
+/* Ohne aktive Filter braucht die Zeile keinen Platz */
+.filter-dock.is-empty { display: none; }
+
+/* Rail-Bloecke: ein-/ausklappbar, Standard eingeklappt */
+.rail-block > summary { cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between; min-height: 44px; gap: 8px; }
+.rail-block:not([open]) { padding-top: 8px; padding-bottom: 8px; }
+.rail-block:not([open]) > summary { margin-bottom: 0; }
+.rail-block > summary::-webkit-details-marker { display: none; }
+.rail-block > summary::after { content: "+"; font-family: var(--pv-mono); color: var(--text-3); }
+.rail-block[open] > summary::after { content: "\2013"; }
+
+/* 3) Chart direkt unter der Statuszeile */
+#workbench { margin-top: 18px; }
+
+/* 4) Mobile Reihenfolge im Workbench: Chart, Rail, Detail */
+@media (max-width: 900px) {
+  .chart-card { order: 1; }
+  .detail-card { order: 2; }
+  .rail { order: 3; }
+}
+
+/* 5) Tap-Ziele >= 44px (transparente Flaeche, Optik bleibt ruhig) */
+.rail-check { min-height: 44px; padding: 6px 0; }
+.privacy-filter, #tierd-filter {
+  display: inline-flex; align-items: center; gap: 8px;
+  min-height: 44px; padding: 6px 0;
+}
+.col-picker-panel label { min-height: 44px; }
+.rail-check input, .privacy-filter input,
+.col-picker-panel input { width: 18px; height: 18px; }
+.brand { min-width: 44px; min-height: 44px; padding: 4px 2px; }
+.footer-links a, .footer-links .linklike, #open-legal {
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0 2px;
+}
+.footer-links { gap: 10px 18px; }
+
+/* 6) Ueberschriften-Skala + Mindestschrift im Satz */
+:root { --fs-xs: 12px; }
+.section-head h2,
+.panel-head h2, .panel-head h3,
+.chart-head h2, .reference-plans h3 { font-size: 20px; }
+.kpi .s { font-size: var(--fs-sm); }
+.lg-n { font-size: 12px; }
+@media (max-width: 760px) {
+  .panel-head h2, .panel-head h3,
+  .section-head h2, .chart-head h2, .reference-plans h3 { font-size: 18px; }
+}
+
+/* 7) Filter als linker Drawer (mobil) statt Bottom-Sheet */
+.rail-trigger, .rail-scrim, .rail-drawer-head, .rail-apply { display: none; }
+
+@media (max-width: 900px) {
+  /* Griff: fest sichtbar unten links, damit Filtern ohne Scrollen geht */
+  .rail-trigger {
+    display: inline-flex; align-items: center; gap: 9px;
+    position: fixed; left: 14px; bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    z-index: 96; min-height: 48px; padding: 0 16px;
+    font-family: var(--pv-mono); font-size: var(--fs-sm); font-weight: 700;
+    text-transform: uppercase; letter-spacing: .06em;
+    color: var(--accent-ink); background: var(--accent);
+    border: 1px solid color-mix(in oklab, var(--accent) 65%, #000);
+    border-radius: 999px; box-shadow: 0 10px 24px rgb(0 0 0 / .38);
+    cursor: pointer;
+  }
+  .rail-trigger-count {
+    min-width: 21px; height: 21px; padding: 0 5px; border-radius: 999px;
+    display: grid; place-items: center; font-size: var(--fs-xs);
+    background: rgb(0 0 0 / .26); color: inherit;
+  }
+  .rail-scrim { display: block; position: fixed; inset: 0; z-index: 99; background: rgb(3 7 18 / .55); }
+  /* Schublade: gleiche Bedienelemente wie im Desktop-Rail, nur als Overlay */
+  #rail {
+    position: fixed; inset: 0 auto 0 0; z-index: 100;
+    width: min(90vw, 340px); max-height: none; height: 100%;
+    padding: 10px 14px calc(16px + env(safe-area-inset-bottom, 0px));
+    overflow-y: auto; overscroll-behavior: contain;
+    background: var(--surface); border-right: 1px solid var(--line);
+    box-shadow: 0 0 44px rgb(0 0 0 / .5);
+    transform: translateX(-102%); visibility: hidden;
+    transition: transform .24s cubic-bezier(.22, .61, .36, 1), visibility 0s linear .24s;
+  }
+  #rail.open { transform: translateX(0); visibility: visible; transition: transform .24s cubic-bezier(.22, .61, .36, 1), visibility 0s; }
+  .rail-drawer-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 0 0 8px; }
+  .rail-drawer-title { font-family: var(--pv-mono); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .1em; color: var(--text-3); }
+  .rail-close {
+    min-width: 44px; min-height: 44px; display: grid; place-items: center;
+    font-size: 22px; line-height: 1; color: var(--text-2);
+    background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; cursor: pointer;
+  }
+  .rail-apply {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 48px; margin-top: 2px; font-weight: 700;
+    color: var(--accent-ink); background: var(--accent);
+    border: 1px solid color-mix(in oklab, var(--accent) 65%, #000);
+    border-radius: 12px; cursor: pointer;
+  }
+  .rail-apply-count { font-family: var(--pv-mono); font-size: var(--fs-xs); opacity: .85; }
+  body.rail-open { overflow: hidden; }
+}
+
+/* 8) Plaene kompakter: Zeilenhoehe ~44px (Desktop) */
+.sortable-table tbody td { padding: 5px 12px; }
+/* 8b) Attribut-Chips flacher, damit die Zeile nicht auf zwei Chip-Reihen waechst */
+.attr { line-height: 1.35; padding: 0 6px 1px; margin: 0 4px 2px 0; }
+/* 8c) Schliessen-Kreuz der Filter-Chips: 44px Trefferflaeche ohne groessere Optik */
+/* Trefferflaeche 44px ohne die Chip-Groesse zu veraendern (Pseudo-Element) */
+.chip button { position: relative; }
+.chip button::after { content: ""; position: absolute; inset: -12px -10px; }
+
+/* 5) Tap-Targets: Klickflaeche >= 44px, Optik unveraendert */
+.rail-check, .rail-row { min-height: 44px; }
+.footer-links a, .footer-links .linklike { min-height: 44px; display: inline-flex; align-items: center; padding: 10px 2px; }
+.brand { min-height: 44px; display: inline-flex; align-items: center; }
+.rail-check input, .privacy-filter input { width: 18px; height: 18px; }
+/* 5b) Kopfzeile, Tabs und Chips ebenfalls >= 44px */
+.cmdk-trigger, .currency-select, .toolbar-select, .sort-select select,
+.icon-btn, .lang-switch button, .tab, .chip-btn, .skip-link { min-height: 44px; }
+.icon-btn, .lang-switch button { min-width: 44px; }
+.tab { padding-top: 12px; padding-bottom: 12px; }
+/* 5c) restliche Bedienelemente auf 44px Klickflaeche */
+.btn, #plans-more, #fcomp-more, #open-legal, .note-mark, .sl-item { min-height: 44px; }
+#open-legal { min-width: 44px; }
+.rail select, .dash-target-input, #budget-slider, #ai-slider { min-height: 44px; }
+.cmdk-trigger { min-width: 44px; }
+
+/* 9) Feedback: Footer-Button + Panel. Panel liegt auf Body-Ebene, weil main
+   view-transition-name traegt und sonst Containing Block fuer position:fixed waere. */
+#open-feedback {
+  cursor: pointer; margin: 0; padding: 10px 2px; background: none; border: 0;
+  font: inherit; color: var(--text-3); letter-spacing: inherit; text-transform: inherit;
+}
+#open-feedback:hover { color: var(--accent); }
+.fbk-overlay {
+  position: fixed; inset: 0; z-index: 95; display: flex; align-items: center; justify-content: center;
+  padding: 16px; background: rgba(3, 6, 10, .62);
+}
+.fbk-overlay[hidden] { display: none; }
+.fbk {
+  display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 560px;
+  max-height: calc(100vh - 32px); overflow: auto; padding: 18px;
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); box-shadow: var(--shadow-3);
+}
+.fbk-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.fbk-head h2 { margin: 0; font-family: var(--font-display); font-size: var(--fs-lg); letter-spacing: -.01em; }
+.fbk-close {
+  display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
+  min-width: 44px; min-height: 44px; padding: 0; cursor: pointer; font-size: 18px; line-height: 1;
+  color: var(--text-2); background: none; border: 1px solid var(--line); border-radius: var(--radius-sm);
+}
+.fbk-close:hover { color: var(--accent); border-color: var(--accent); }
+.fbk-lead { margin: 0; font-size: var(--fs-sm); color: var(--text-2); }
+.fbk textarea, .fbk input[type="text"] {
+  width: 100%; padding: 10px 12px; font: inherit; font-size: var(--fs-base); color: var(--text);
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius-sm);
+}
+.fbk textarea { min-height: 132px; resize: vertical; }
+.fbk textarea:focus-visible, .fbk input[type="text"]:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent);
+}
+/* Honeypot: fuer Bots sichtbar, fuer Menschen nicht (kein display:none, sonst ueberspringen es manche) */
+.fbk-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.fbk-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.fbk-status { font-size: var(--fs-xs); color: var(--text-3); }
+.fbk-status[data-state="ok"] { color: var(--accent-2); }
+.fbk-status[data-state="err"] { color: var(--warn); }
+.fbk-fallbacks { display: flex; flex-wrap: wrap; gap: 8px; }
+.fbk-fallbacks[hidden] { display: none; }
+.fbk-note { margin: 0; font-size: var(--fs-xs); color: var(--text-3); }
+.btn:disabled { opacity: .55; cursor: progress; }
+body.fbk-open { overflow: hidden; }
+@media (max-width: 520px) {
+  .fbk { padding: 14px; }
+  .fbk-foot .btn, .fbk-fallbacks .btn { flex: 1 1 auto; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .fbk { animation: fbk-in 180ms cubic-bezier(.22, .61, .36, 1) both; }
+  @keyframes fbk-in { from { opacity: 0; transform: translateY(8px) scale(.99); } to { opacity: 1; transform: none; } }
+}
+
+/* 7) Filter als linkes Drawer (mobil/tablet) statt Blatt von unten */
+@media (max-width: 900px) {
+  /* Karten kompakter, damit 50 Zeilen nicht 20 Bildschirme werden */
+  .sortable-table tbody td { padding: 4px 14px; }
+}
+
+/* ===== Additional UIs: Compare Showdown, Workload Sizer, Data Sync Hub ===== */
+.compare-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+.compare-card {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.compare-card.leader {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+.compare-card-head {
+  padding: 16px;
+  background: var(--surface-3);
+  border-bottom: 1px solid var(--line);
+  position: relative;
+}
+.compare-card-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1;
+}
+.compare-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.compare-section:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.compare-kicker {
+  font-family: var(--pv-mono);
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  color: var(--text-3);
+  letter-spacing: .06em;
+}
+.compare-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--fs-sm);
+}
+.compare-row .k { color: var(--text-2); }
+.compare-row .v { font-family: var(--pv-mono); font-weight: 600; color: var(--text); }
+.compare-row .v.highlight { color: var(--accent); font-size: var(--fs-base); }
+
+/* Sizer styles */
+.sizer-layout {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 24px;
+  margin-top: 20px;
+}
+@media (max-width: 900px) {
+  .sizer-layout { grid-template-columns: 1fr; }
+}
+.sizer-controls {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.sizer-results {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.sizer-card {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.sizer-card.headroom-good {
+  border-color: color-mix(in oklab, var(--accent) 40%, var(--line));
+}
+.sizer-card.headroom-warn {
+  border-color: color-mix(in oklab, var(--warn) 50%, var(--line));
+}
+.sizer-card.headroom-bad {
+  border-color: color-mix(in oklab, var(--danger) 50%, var(--line));
+  opacity: .85;
+}
+.sizer-meter-bar {
+  height: 6px;
+  background: var(--surface-3);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+.sizer-meter-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width .3s ease;
+}
+.sizer-kpi-strip {
+  background: var(--surface-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--pv-mono);
+  font-size: var(--fs-xs);
+}
+
+/* Sync styles */
+.sync-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+.sync-card {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.sync-prov-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+  margin-top: 14px;
+}
+.sync-prov-item {
+  background: var(--surface-3);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--fs-xs);
+}
+</style>
+  <link rel="canonical" href="https://vibeplan.cc/">
+<link rel="alternate" hreflang="en" href="https://vibeplan.cc/?lang=en">
+<link rel="alternate" hreflang="de" href="https://vibeplan.cc/?lang=de">
+<link rel="alternate" hreflang="x-default" href="https://vibeplan.cc/">
+<link rel="alternate" type="application/atom+xml" title="vibeplan.cc changelog" href="https://vibeplan.cc/feed.xml">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://vibeplan.cc/#website",
+        "url": "https://vibeplan.cc/",
+        "name": "vibeplan.cc",
+        "inLanguage": ["en", "de"],
+        "description": "Compare AI coding plans and models by tokens and requests per dollar paid, with published quotas, live prices and an open JSON dataset."
+      },
+      {
+        "@type": "Dataset",
+        "name": "AI coding plan comparison dataset",
+        "description": "Plan prices, included token and request quotas, derived rates per dollar paid and model benchmark scores for AI coding subscriptions.",
+        "license": "https://opensource.org/licenses/MIT",
+        "creator": { "@type": "Person", "name": "Kolja Knodel", "url": "https://github.com/harrytyp",
+          "sameAs": ["https://github.com/harrytyp/coding-plan-comparison"] },
+        "publisher": { "@type": "Organization", "name": "vibeplan.cc", "url": "https://vibeplan.cc/", "logo": "https://vibeplan.cc/og-image.png" },
+        "keywords": ["AI coding plan comparison", "coding plan comparison", "tokens per dollar", "LLM subscription pricing", "coding agent quotas"],
+        "isAccessibleForFree": true,
+        "dateModified": "__DATEMODIFIED__",
+        "distribution": [{
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://vibeplan.cc/data/latest.json"
+        }]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+<a class="skip-link" href="#main" data-i18n="a11y.skip">Skip to content</a>
+
+<!-- ===== NAV ===== -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="#" data-i18n-nav-brand>
+      <span class="brand-mark">
+        <img src="favicon.svg" alt="" width="22" height="22" decoding="async">
+      </span>
+      <span class="brand-text" data-i18n="nav.brand">vibeplan.cc</span>
+    </a>
+    <!-- Kennzahlen im Kopf: eine Zeile zwischen Marke und Suche -->
+    <div class="status-meta" id="status-meta">
+      <span class="dot"><b class="num" id="stat-plans">…</b><span data-i18n="status.plans">plans</span></span>
+      <span class="dot sm3"><b class="num" id="stat-comparable">…</b><span data-i18n="status.comparable">comparable</span></span>
+      <span class="dot sm3"><b class="num" id="stat-models">…</b><span data-i18n="status.models">model families</span></span>
+      <span class="dot sm2"><b class="num" id="stat-sources">…</b><span data-i18n="status.sources">sources</span></span>
+      <span class="dot"><span id="meta-updated"></span></span>
+    </div>
+    <div class="nav-spacer"></div>
+    <div class="nav-controls" id="nav-controls">
+      <button class="cmdk-trigger" id="cmdk-trigger" type="button" aria-label="Open command palette">
+        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <span data-i18n="cmdk.placeholder">Search or jump to</span>
+        <kbd>/</kbd>
+      </button>
+      <select id="currency-select" class="currency-select" aria-label="Currency">
+        <option value="USD">USD $</option>
+        <option value="EUR">EUR €</option>
+        <option value="CNY">CNY ¥</option>
+        <option value="GBP">GBP £</option>
+        <option value="JPY">JPY ¥</option>
+      </select>
+      <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme" title="Theme">
+        <svg aria-hidden="true" focusable="false" class="ic-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        <svg aria-hidden="true" focusable="false" class="ic-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.4v2.4M12 19.2v2.4M2.4 12h2.4M19.2 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M18.8 5.2l-1.7 1.7M6.9 17.1l-1.7 1.7"/></svg>
+      </button>
+      <div class="lang-switch">
+        <button data-lang="en" class="active">EN</button>
+        <button data-lang="de">DE</button>
+      </div>
+    </div>
+  </div>
+  <!-- ===== EINE Navigation: Tab-Leiste ===== -->
+  <nav class="tabs" id="tabs" role="tablist">
+    <button class="tab active" type="button" role="tab" data-view="overview"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span data-i18n="tab.overview">Overview</span></button>
+    <button class="tab" type="button" role="tab" data-view="plans"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span data-i18n="tab.plans">Plans</span></button>
+    <button class="tab" type="button" role="tab" data-view="compare"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg><span data-i18n="tab.compare">Compare</span></button>
+    <button class="tab" type="button" role="tab" data-view="sizer"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg><span data-i18n="tab.sizer">Workload Sizer</span></button>
+    <button class="tab" type="button" role="tab" data-view="calc"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 12h2M12 12h2M16 12h0M8 16h2M12 16h2"/></svg><span data-i18n="tab.calc">Calculator</span></button>
+    <button class="tab" type="button" role="tab" data-view="sync"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg><span data-i18n="tab.sync">Data Sync</span></button>
+    <button class="tab" type="button" role="tab" data-view="method"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2z"/><path d="M8 3v18"/></svg><span data-i18n="tab.method">Methodology</span></button>
+    <button class="tab" type="button" role="tab" data-view="changelog"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg><span data-i18n="tab.changelog">Changelog</span></button>
+  </nav>
+</nav>
+
+<main id="main">
+  <!-- Die Kennzahlen stehen im Kopf; hier bleibt nur die Überschrift für die Gliederung -->
+  <h1 class="sr-only">AI coding plan comparison: tokens and requests per dollar paid</h1>
+  <div class="disclaimer" id="disclaimer" hidden>
+    <strong id="disclaimer-title"></strong> <span id="disclaimer-text"></span>
+  </div>
+
+  <!-- ===== AKTIVE FILTER: nur die Zusammenfassung; bedient wird im Rail-Menue ===== -->
+  <div class="filter-dock" id="filter-dock">
+    <div class="filter-bar" id="filter-bar">
+      <span class="filter-count-badge" id="filter-count-badge" hidden>0</span>
+      <span class="filter-active" id="filter-active"></span>
+    </div>
+  </div>
+
+  <!-- ===== VIEW: ÜBERSICHT ===== -->
+  <div class="view active" id="view-overview">
+  <!-- ===== WERKBANK: CHART OBEN, DANN RAIL + DETAIL ===== -->
+  <div class="workbench" id="workbench">
+    <aside class="rail" id="rail">
+      <!-- Mobil: Kopfzeile der Schublade (Desktop ausgeblendet) -->
+      <div class="rail-drawer-head">
+        <span class="rail-drawer-title" data-i18n="rail.title">Filters and axes</span>
+        <button class="rail-close" id="rail-close" type="button" data-i18n-aria="rail.close" aria-label="Close">×</button>
+      </div>
+      <!-- Filter: einzige Bedienstelle, gilt fuer Graph und Liste -->
+      <details class="rail-block rail-filters" id="rail-filters">
+        <summary class="rail-title">
+          <span data-i18n="rail.filters">Filters</span>
+        </summary>
+        <div class="rail-filters-body">
+          <input type="search" id="plans-search" class="rail-input" placeholder="Filter plans…" data-i18n-ph="plans.searchPh" data-i18n-aria="plans.searchAria">
+          <label class="rail-row">
+            <span data-i18n="plans.meter">Meter</span>
+            <select id="plans-meter-filter" data-i18n-aria="plans.meterAria">
+              <option value="" data-i18n="plans.allMeters">All meters</option>
+              <option value="dollar_usage" data-i18n="plans.meter.dollar">Dollar usage</option>
+              <option value="credits" data-i18n="plans.meter.credits">Credits</option>
+              <option value="tokens" data-i18n="plans.meter.tokens">Tokens</option>
+              <option value="requests" data-i18n="plans.meter.requests">Requests</option>
+              <option value="prompts" data-i18n="plans.meter.prompts">Prompts</option>
+            </select>
+          </label>
+          <div class="budget-filter" id="budget-filter">
+            <label data-i18n="plans.budget">Max $/mo</label>
+            <input type="range" id="budget-slider" min="0" max="300" step="5" value="300" data-i18n-aria="plans.budgetAria">
+            <output id="budget-value" class="num">$300</output>
+          </div>
+          <div class="ai-filter" id="ai-filter">
+            <label data-i18n="plans.aiScore">Min AI score</label>
+            <input type="range" id="ai-slider" min="0" max="70" step="1" value="0" data-i18n-aria="plans.aiAria">
+            <output id="ai-value" class="num">0</output>
+          </div>
+          <div class="attr-filter" id="attr-filter">
+            <span class="attr-filter-title" data-i18n="plans.attrs">Attributes</span>
+            <label class="privacy-filter"><input type="checkbox" data-attr="noTraining"><span data-i18n="attr.noTraining">no training</span></label>
+            <label class="privacy-filter"><input type="checkbox" data-attr="zdr"><span data-i18n="attr.zdr">ZDR</span></label>
+            <label class="privacy-filter"><input type="checkbox" data-attr="unknown"><span data-i18n="attr.unknown">not stated</span></label>
+            <label class="privacy-filter"><input type="checkbox" id="noapi-toggle"><span data-i18n="plans.includeNoApi">Include no-API plans</span></label>
+            <label class="privacy-filter"><input type="checkbox" id="training-toggle"><span data-i18n="plans.includeTraining">Include models that train on your data</span></label>
+            <label class="privacy-filter" id="tierd-filter"><input type="checkbox" id="tierd-toggle"><span data-i18n="plans.includePriceBased">Include price-based plans (Kimi)</span></label>
+          </div>
+          <div class="col-picker" id="col-picker">
+            <button class="btn col-picker-btn" id="col-picker-btn" type="button" data-i18n="plans.columns">Columns</button>
+            <div class="col-picker-panel" id="col-picker-panel" hidden>
+              <div class="col-picker-title" data-i18n="plans.columns.title">Show columns</div>
+              <label><input type="checkbox" data-col="plan" checked> <span data-i18n="plans.th.plan">Plan</span></label>
+              <label><input type="checkbox" data-col="model" checked> <span data-i18n="plans.th.model">Model</span></label>
+              <label><input type="checkbox" data-col="score" checked> <span data-i18n="plans.th.score">AI score</span></label>
+              <label><input type="checkbox" data-col="tokens" checked> <span data-i18n="plans.th.tokens">Tokens / $</span></label>
+              <label><input type="checkbox" data-col="req10" checked> <span data-i18n="plans.th.req10">Requests / $</span></label>
+              <label><input type="checkbox" data-col="rawtokens" checked> <span data-i18n="plans.th.rawtokens">Tokens / mo</span></label>
+              <label><input type="checkbox" data-col="rawreq" checked> <span data-i18n="plans.th.rawreq">Requests / mo</span></label>
+              <label><input type="checkbox" data-col="cap" checked> <span data-i18n="plans.th.cap">Included volume</span></label>
+              <label><input type="checkbox" data-col="price" checked> <span data-i18n="plans.th.price">Plan price / mo</span></label>
+              <label><input type="checkbox" data-col="privacy" checked> <span data-i18n="plans.th.privacy">Privacy</span></label>
+            </div>
+          </div>
+          <span class="toolbar-count" id="plans-count" role="status"></span>
+        </div>
+      </details>
+      <details class="rail-block">
+        <summary class="rail-title" data-i18n="rail.axes">Axes</summary>
+        <label class="rail-row">
+          <span data-i18n="dash.x">X axis</span>
+          <select id="dash-x">
+            <option value="tokens" data-i18n="dash.m.tokens" selected>Tokens / $</option>
+            <option value="req10" data-i18n="dash.m.req10">Requests / $</option>
+            <option value="rawtokens" data-i18n="dash.m.rawtokens">Tokens / mo</option>
+            <option value="rawreq" data-i18n="dash.m.rawreq">Requests / mo</option>
+            <option value="price" data-i18n="dash.m.price">Plan price / mo</option>
+          </select>
+        </label>
+        <label class="rail-row">
+          <span data-i18n="dash.y">Y axis</span>
+          <select id="dash-y">
+            <option value="score" data-i18n="dash.m.score" selected>AI score</option>
+            <option value="tokens" data-i18n="dash.m.tokens">Tokens / $</option>
+            <option value="req10" data-i18n="dash.m.req10">Requests / $</option>
+            <option value="rawtokens" data-i18n="dash.m.rawtokens">Tokens / mo</option>
+            <option value="rawreq" data-i18n="dash.m.rawreq">Requests / mo</option>
+          </select>
+        </label>
+        <label class="rail-check"><input type="checkbox" id="dash-pareto" checked><span data-i18n="dash.pareto">Pareto line</span></label>
+        <label class="rail-check"><input type="checkbox" id="dash-logx" checked><span data-i18n="dash.logx">Logarithmic X</span></label>
+      </details>
+
+      <details class="rail-block">
+        <summary class="rail-title" data-i18n="rail.target">Target zone</summary>
+        <label class="rail-check"><input type="checkbox" id="dash-green"><span data-i18n="dash.green">Show target</span></label>
+        <label class="rail-row"><span data-i18n="rail.minx">Minimum X</span>
+          <input type="number" id="dash-target-x" class="dash-target-input" step="any" placeholder="auto" data-i18n-aria="dash.targetHint"></label>
+        <label class="rail-row"><span data-i18n="rail.miny">Minimum Y</span>
+          <input type="number" id="dash-target-y" class="dash-target-input" step="any" placeholder="auto" data-i18n-aria="dash.targetHint"></label>
+      </details>
+
+      <details class="rail-block">
+        <summary class="rail-title" data-i18n="rail.stats">In this view</summary>
+        <div class="rail-stat"><span data-i18n="rail.points">Points</span><b id="rail-points">…</b></div>
+        <div class="rail-stat"><span data-i18n="rail.paretoCount">Pareto points</span><b id="rail-pareto">…</b></div>
+        <div class="rail-stat"><span data-i18n="rail.best">Best rate</span><b id="rail-best">…</b></div>
+        <div class="rail-stat"><span data-i18n="rail.median">Median score</span><b id="rail-median">…</b></div>
+      </details>
+      <!-- Mobil: Schublade schliessen und das Ergebnis ansehen -->
+      <button class="rail-apply" id="rail-apply" type="button">
+        <span data-i18n="rail.show">Show results</span>
+        <span class="rail-apply-count" id="rail-apply-count"></span>
+      </button>
+    </aside>
+
+    <section class="chart-card">
+      <div class="chart-head">
+        <div class="chart-tools">
+          <div class="zoom-tools" role="group" aria-label="Zoom">
+            <button class="btn btn-sm" id="dash-zoom-out" type="button" aria-label="Zoom out" data-i18n-aria="dash.zoomOut" title="Zoom out" data-i18n-title="dash.zoomOut">&minus;</button>
+            <button class="btn btn-sm" id="dash-zoom-in" type="button" aria-label="Zoom in" data-i18n-aria="dash.zoomIn" title="Zoom in" data-i18n-title="dash.zoomIn">+</button>
+          </div>
+          <button class="btn btn-sm" id="dash-reset-btn" type="button" data-i18n="dash.resetZoom" hidden>Reset zoom</button>
+        </div>
+      </div>
+      <div class="chart-legend" id="dash-legend">
+        <span class="lg" data-legend="noTraining"><span class="dot-swatch" style="background:var(--data-a)"></span><span data-i18n="dash.legend.noTraining">no training on your data</span><b class="lg-n" data-count="noTraining"></b></span>
+        <span class="lg" data-legend="trains"><span class="dot-swatch" style="background:var(--data-b)"></span><span data-i18n="dash.legend.trains">trains on your data</span><b class="lg-n" data-count="trains"></b></span>
+        <span class="lg" data-legend="unknown"><span class="dot-swatch" style="background:var(--data-c)"></span><span data-i18n="dash.legend.unknown">privacy unknown</span><b class="lg-n" data-count="unknown"></b></span>
+        <span class="lg" data-legend="frontier"><span class="dot-swatch dot-ring"></span><span data-i18n="dash.legend.frontier">Pareto point</span><b class="lg-n" data-count="frontier"></b></span>
+        <span class="lg" data-legend="pareto"><span class="legend-shape"></span><span data-i18n="dash.legend.pareto">Pareto frontier</span></span>
+        <span class="lg" data-legend="target"><span class="legend-box"></span><span data-i18n="dash.legend.green">Target zone</span></span>
+      </div>
+      <div class="chart-stage" id="chart-stage">
+        <canvas id="dash-canvas" role="img" tabindex="0" aria-label="Scatter plot of plans and models" data-i18n-aria="dash.chartAria" aria-describedby="dash-chart-desc"></canvas>
+        <p class="sr-only" id="dash-chart-desc" data-i18n="dash.chartDesc">Use the arrow keys to move between dots, Enter opens its numbers, Escape clears the selection. The same values are in the table below.</p>
+      </div>
+      <div class="chart-foot">
+        <span id="dash-note"></span>
+        <span class="muted" data-i18n="dash.hint">Wheel or pinch to zoom, drag to pan, double click to reset</span>
+      </div>
+    </section>
+
+    <aside class="detail-card" id="dash-detail">
+      <div class="detail-head"><span class="detail-kicker" data-i18n="dash.detailTitle">Selected point</span></div>
+      <div class="dash-detail-empty" id="dash-detail-empty" data-i18n="dash.clickHint">Pick a dot to see its numbers</div>
+      <div class="dash-detail-content" id="dash-detail-content" hidden></div>
+    </aside>
+  </div>
+
+  <!-- ===== STAERKSTE PLAENE: eigener Block unter der Werkbank ===== -->
+  <section class="panel shortlist-panel" id="shortlist-panel">
+    <div class="panel-head">
+      <div>
+        <h2 class="sl-title" data-i18n="dash.shortlist">Strongest plans in this view</h2>
+      </div>
+    </div>
+    <div id="sl-list" class="sl-list"></div>
+  </section>
+
+  </div><!-- /view-overview -->
+
+  <!-- ===== VIEW: PLÄNE ===== -->
+  <div class="view" id="view-plans">
+  <section id="plans" class="panel">
+    <div class="panel-head">
+      <div>
+        <h2 data-i18n="plans.h2">All plans and models</h2>
+        <p data-i18n="plans.sub">Rates are tokens or requests per 1 paid unit, in your currency.</p>
+      </div>
+    </div>
+    <!-- Sortier-Leiste: IMMER sichtbar (Mobile + Desktop) -->
+    <div class="filters-host" id="filters-host"></div>
+    <div class="sort-bar" id="sort-bar">
+      <details class="pop" id="sort-pop">
+        <summary class="btn">
+          <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:14px;height:14px"><path d="M3 6h13M3 12h9M3 18h5M17 10v9M17 19l3-3M17 19l-3-3"/></svg>
+          <span data-i18n="sort.label">Sort</span>
+          <span class="sort-cur" id="sort-current"></span>
+          <span class="sort-arrow" id="sort-current-dir"></span>
+        </summary>
+        <div class="pop-panel">
+          <div class="pop-title" data-i18n="sort.by">Sort by</div>
+          <div class="pop-chips" id="sort-fields"></div>
+          <div class="pop-title" data-i18n="sort.dir">Direction</div>
+          <div class="seg" id="sort-dir-seg">
+            <button type="button" data-dir="desc">↓ <span data-i18n="sort.descShort">highest first</span></button>
+            <button type="button" data-dir="asc">↑ <span data-i18n="sort.ascShort">lowest first</span></button>
+          </div>
+        </div>
+      </details>
+      <label class="sort-select mobile-only" id="sort-select">
+        <span data-i18n="sort.label">Sort</span>
+        <select id="sort-select-key">
+          <option value="tokens" data-i18n="sort.tokens">Tokens / $</option>
+          <option value="score" data-i18n="sort.score">AI score</option>
+          <option value="req10" data-i18n="sort.req10">Requests / $</option>
+          <option value="rawtokens" data-i18n="sort.rawtokens">Tokens / mo</option>
+          <option value="rawreq" data-i18n="sort.rawreq">Requests / mo</option>
+          <option value="price" data-i18n="sort.price">Plan price</option>
+          <option value="plan" data-i18n="sort.plan">Plan</option>
+          <option value="model" data-i18n="sort.model">Model</option>
+        </select>
+        <select id="sort-select-dir">
+          <option value="desc" data-i18n="sort.desc">↓ desc</option>
+          <option value="asc" data-i18n="sort.asc">↑ asc</option>
+        </select>
+      </label>
+    </div>
+    
+    
+<div class="table-wrap" id="plans-table-wrap">
+      <table id="plans-table" class="sortable-table">
+        <caption class="sr-only" data-i18n="plans.caption">Plans and models, sortable columns</caption>
+        <thead>
+          <tr>
+            <th scope="col" data-sort="plan" data-i18n="plans.th.plan">Plan</th>
+            <th scope="col" data-sort="model" data-i18n="plans.th.model">Model</th>
+            <th scope="col" data-sort="score" data-i18n="plans.th.score">AI score</th>
+            <th scope="col" data-sort="tokens" data-i18n="plans.th.tokens">Tokens / $</th>
+            <th scope="col" data-sort="req10" data-i18n="plans.th.req10">Requests / $</th>
+            <th scope="col" data-sort="rawtokens" data-i18n="plans.th.rawtokens">Tokens / mo</th>
+            <th scope="col" data-sort="rawreq" data-i18n="plans.th.rawreq">Requests / mo</th>
+            <th scope="col" data-i18n="plans.th.cap">Included volume</th>
+            <th scope="col" data-sort="price" data-i18n="plans.th.price">Plan price / mo</th>
+            <th scope="col" data-i18n="plans.th.privacy">Privacy</th>
+          </tr>
+        </thead>
+        <tbody id="plans-tbody">
+          <tr class="skel-row"><td colspan="10"><div class="skel"></div><div class="skel"></div><div class="skel"></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="more-row"><button class="btn" id="plans-more" type="button" hidden></button></div>
+    <section id="reference-plans" class="reference-plans" hidden aria-labelledby="reference-plans-title">
+      <h3 id="reference-plans-title"></h3>
+      <p id="reference-plans-intro" class="ref-intro"></p>
+      <div id="reference-plans-list" class="ref-list"></div>
+    </section>
+  </section>
+
+  <!-- ===== MODELLE: gleiche Familie über Pläne ===== -->
+  <section id="models" class="panel">
+    <div class="section-head">
+      <h2 data-i18n="fcomp.h2">Same model, different plans</h2>
+      <p data-i18n="fcomp.sub">Requests per $1 paid for the same model across plans.</p>
+      <p class="fc-legend" id="fcomp-legend"></p>
+    </div>
+    <div class="fc-list" id="fcomp-list">
+      <div class="skel-row"><div class="skel"></div><div class="skel"></div></div>
+    </div>
+    <div class="more-row"><button class="btn" id="fcomp-more" type="button" hidden></button></div>
+  </section>
+
+  </div><!-- /view-plans -->
+
+  <!-- ===== VIEW: RECHNER ===== -->
+  <div class="view" id="view-calc">
+  <!-- ===== BUDGET-RECHNER (ein Abo pro Konto, kein Stacking) ===== -->
+  <section id="calc" class="panel">
+    <div class="section-head">
+      <h2 data-i18n="calc.h2">Budget calculator</h2>
+      <p data-i18n="calc.sub">One subscription per account, no stacking. Enter what you pay per month and see the most tokens each single plan buys you.</p>
+    </div>
+    <div class="calc-controls">
+      <label class="calc-ctl">
+        <span data-i18n="calc.budget">Budget / mo</span>
+        <span class="calc-money">
+          <span class="sym" id="calc-cur">$</span>
+          <input type="number" id="calc-budget" min="0" step="1" value="20">
+        </span>
+      </label>
+      <label class="calc-ctl">
+        <span data-i18n="calc.score">Min AI score</span>
+        <span class="calc-range-row">
+          <span class="num" id="calc-score-min">0</span>
+          <input type="range" id="calc-score" class="calc-range" min="0" max="70" step="1" value="0">
+          <span class="num" id="calc-score-max">70</span>
+        </span>
+        <output id="calc-score-out" class="calc-out num"></output>
+      </label>
+    </div>
+    <div class="calc-head">
+      <span data-i18n="calc.th.plan">Plan · model</span>
+      <span data-i18n="calc.th.tokens">Tokens / mo</span>
+      <span data-i18n="calc.th.cost">Price · left</span>
+    </div>
+    <div id="calc-results" class="calc-results"></div>
+    <p class="table-note" id="calc-empty" hidden></p>
+    <p class="table-note" data-i18n="calc.note">Ranked by monthly tokens.</p>
+  </section>
+
+  </div><!-- /view-calc -->
+
+  <!-- ===== VIEW: COMPARE SHOWDOWN ===== -->
+  <div class="view" id="view-compare">
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>Side-by-Side Compare Showdown</h2>
+          <p class="panel-sub">Direct column-by-column differential across up to 4 AI coding subscriptions. Compare token yield, 5h throughput caps, cost per request, and model allowances.</p>
+        </div>
+        <div class="panel-actions">
+          <button type="button" class="btn btn-ghost" id="compare-export-csv">Export CSV</button>
+        </div>
+      </div>
+
+      <!-- Presets bar -->
+      <div style="padding: 12px 20px; background: var(--surface-3); border-bottom: 1px solid var(--line); display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: var(--fs-xs);">
+        <span style="font-family: var(--pv-mono); color: var(--text-3); text-transform: uppercase;">Presets:</span>
+        <button type="button" class="btn btn-ghost" id="compare-preset-pro" style="font-size: var(--fs-xs); padding: 4px 10px;">Pro 4: Cursor · Claude Code · Copilot · Windsurf</button>
+        <button type="button" class="btn btn-ghost" id="compare-preset-max" style="font-size: var(--fs-xs); padding: 4px 10px;">Heavy/Max: Claude Max 20x · Command Code GOAT · Devin</button>
+        <button type="button" class="btn btn-ghost" id="compare-preset-budget" style="font-size: var(--fs-xs); padding: 4px 10px;">Budget: OpenCode Go · GLM Lite · Qwen Plan</button>
+      </div>
+
+      <!-- Plan Selectors row -->
+      <div style="padding: 16px 20px; background: var(--surface-2); border-bottom: 1px solid var(--line); display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
+        <div>
+          <label style="font-family: var(--pv-mono); font-size: var(--fs-xs); color: var(--text-3); display: block; margin-bottom: 4px;">Column 1 Plan</label>
+          <select id="compare-select-0" class="currency-select" style="width: 100%; padding: 6px 10px;"></select>
+        </div>
+        <div>
+          <label style="font-family: var(--pv-mono); font-size: var(--fs-xs); color: var(--text-3); display: block; margin-bottom: 4px;">Column 2 Plan</label>
+          <select id="compare-select-1" class="currency-select" style="width: 100%; padding: 6px 10px;"></select>
+        </div>
+        <div>
+          <label style="font-family: var(--pv-mono); font-size: var(--fs-xs); color: var(--text-3); display: block; margin-bottom: 4px;">Column 3 Plan</label>
+          <select id="compare-select-2" class="currency-select" style="width: 100%; padding: 6px 10px;"></select>
+        </div>
+        <div>
+          <label style="font-family: var(--pv-mono); font-size: var(--fs-xs); color: var(--text-3); display: block; margin-bottom: 4px;">Column 4 Plan</label>
+          <select id="compare-select-3" class="currency-select" style="width: 100%; padding: 6px 10px;"></select>
+        </div>
+      </div>
+
+      <!-- Compare Grid Results Host -->
+      <div id="compare-cards-host" class="compare-grid" style="padding: 20px;"></div>
+    </section>
+  </div><!-- /view-compare -->
+
+  <!-- ===== VIEW: WORKLOAD SIZER ===== -->
+  <div class="view" id="view-sizer">
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>Developer Quota & Workload Sizer</h2>
+          <p class="panel-sub">Simulate your team's real daily coding volume. We calculate true monthly token throughput and test all 139 subscriptions for rate-limit headroom and burst throttling.</p>
+        </div>
+      </div>
+
+      <div class="sizer-layout" style="padding: 20px;">
+        <!-- Left: Sliders -->
+        <div class="sizer-controls">
+          <div style="font-family: var(--pv-mono); font-size: var(--fs-xs); color: var(--accent); text-transform: uppercase; font-weight: 600;">
+            Daily Usage Profile (22 dev days / mo)
+          </div>
+
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: var(--fs-sm); margin-bottom: 6px;">
+              <span>Daily Agent Requests</span>
+              <b id="sizer-daily-val" style="font-family: var(--pv-mono); color: var(--accent);">80 req/day</b>
+            </div>
+            <input type="range" id="sizer-daily" min="10" max="400" step="5" value="80" style="width: 100%; accent-color: var(--accent);">
+          </div>
+
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: var(--fs-sm); margin-bottom: 6px;">
+              <span>New Input Tokens</span>
+              <b id="sizer-prompt-val" style="font-family: var(--pv-mono); color: var(--text);">1,000 tok</b>
+            </div>
+            <input type="range" id="sizer-prompt" min="200" max="5000" step="100" value="1000" style="width: 100%; accent-color: var(--accent);">
+          </div>
+
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: var(--fs-sm); margin-bottom: 6px;">
+              <span>Prompt Cache Ratio</span>
+              <b id="sizer-cache-val" style="font-family: var(--pv-mono); color: var(--accent);">85% (50k context)</b>
+            </div>
+            <input type="range" id="sizer-cache" min="30" max="98" step="1" value="85" style="width: 100%; accent-color: var(--accent);">
+          </div>
+
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: var(--fs-sm); margin-bottom: 6px;">
+              <span>Output Generated Code</span>
+              <b id="sizer-output-val" style="font-family: var(--pv-mono); color: var(--text);">162 tok</b>
+            </div>
+            <input type="range" id="sizer-output" min="50" max="1500" step="25" value="162" style="width: 100%; accent-color: var(--accent);">
+          </div>
+
+          <div style="padding-top: 10px; border-top: 1px solid var(--line);">
+            <div style="display: flex; justify-content: space-between; font-size: var(--fs-sm); margin-bottom: 6px;">
+              <span>Monthly Budget Cap</span>
+              <b id="sizer-budget-val" style="font-family: var(--pv-mono); color: var(--accent); font-size: var(--fs-base);">$30 / mo</b>
+            </div>
+            <input type="range" id="sizer-budget" min="0" max="200" step="5" value="30" style="width: 100%; accent-color: var(--accent);">
+          </div>
+
+          <div class="sizer-kpi-strip">
+            <div>
+              <span style="color: var(--text-3); display: block;">Monthly Volume:</span>
+              <span id="sizer-kpi-req" style="color: var(--text); font-weight: 700;">1,760 requests</span>
+            </div>
+            <div style="text-align: right;">
+              <span style="color: var(--text-3); display: block;">Tokens Consumed:</span>
+              <span id="sizer-kpi-tokens" style="color: var(--accent); font-weight: 700;">90.1M tokens</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Ranked Plans -->
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-family: var(--pv-mono); font-size: var(--fs-xs); color: var(--text-2);">
+            <span id="sizer-count-out">Evaluating plans...</span>
+            <span>Ranked by headroom surplus</span>
+          </div>
+          <div id="sizer-results-host" class="sizer-results"></div>
+        </div>
+      </div>
+    </section>
+  </div><!-- /view-sizer -->
+
+  <!-- ===== VIEW: DATA SYNC & OPS HUB ===== -->
+  <div class="view" id="view-sync">
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>Data Pipeline & Live Synchronization Hub</h2>
+          <p class="panel-sub">Official dataset feeds, change detection reports, and live synchronization engine connecting to upstream vibeplan.cc.</p>
+        </div>
+        <div class="panel-actions">
+          <button type="button" class="btn btn-primary" id="sync-trigger-btn">
+            Sync Live from vibeplan.cc
+          </button>
+        </div>
+      </div>
+
+      <div style="padding: 20px;">
+        <div class="sync-grid">
+          <div class="sync-card">
+            <span class="compare-kicker">DATASET FRESHNESS</span>
+            <div style="font-size: var(--fs-lg); font-weight: 700; color: var(--text);" id="sync-status-date">Loading...</div>
+            <p style="font-size: var(--fs-xs); color: var(--text-2);">Daily automated builds at 03:17 UTC by upstream repository.</p>
+          </div>
+
+          <div class="sync-card">
+            <span class="compare-kicker">COVERAGE METRICS</span>
+            <div style="font-size: var(--fs-lg); font-weight: 700; color: var(--accent);" id="sync-status-plans">139 plans · 40 providers</div>
+            <p style="font-size: var(--fs-xs); color: var(--text-2);">All list prices, credit formulas, and zero-retention policies.</p>
+          </div>
+
+          <div class="sync-card">
+            <span class="compare-kicker">UPSTREAM ORIGIN</span>
+            <div style="font-size: var(--fs-sm); font-family: var(--pv-mono); color: var(--text); word-break: break-all;">https://vibeplan.cc/data/latest.json</div>
+            <p style="font-size: var(--fs-xs); color: var(--text-2);">Direct JSON feed with cache-invalidation content hashes.</p>
+          </div>
+        </div>
+
+        <div style="margin-top: 24px;">
+          <h3 style="font-size: var(--fs-base); margin-bottom: 6px;">Provider Distribution</h3>
+          <p style="font-size: var(--fs-xs); color: var(--text-2); margin-bottom: 12px;">All tracked AI coding ecosystems in the current catalog:</p>
+          <div id="sync-prov-host" class="sync-prov-list"></div>
+        </div>
+      </div>
+    </section>
+  </div><!-- /view-sync -->
+
+  <!-- ===== VIEW: CHANGELOG ===== -->
+  <div class="view" id="view-changelog">
+  <!-- ===== CHANGELOG ===== -->
+  <section id="changelog" class="panel">
+    <div class="section-head">
+      <h2 data-i18n="cl.h2">Changelog</h2>
+      <p data-i18n="cl.sub">What changed for you, newest first.</p>
+    </div>
+    <div id="cl-list" class="cl-list"></div>
+  </section>
+
+  </div><!-- /view-changelog -->
+
+  <!-- ===== VIEW: METHODIK ===== -->
+  <div class="view" id="view-method">
+  <!-- ===== METHOD ===== -->
+  <section id="method">
+    <div class="section-head">
+      <h2 data-i18n="method.h2">What “60 for 10” actually buys</h2>
+      <p data-i18n="method.sub">An advertised “60 for 10” says little about what a plan delivers. This is how we make plans comparable, and every step is reproducible.</p>
+    </div>
+
+    <div class="formula mono" id="formula-block"></div>
+
+    <div class="method-grid">
+      <div class="method-card">
+        <div class="step-num">1</div>
+        <h3 data-i18n="method.s1.t">The provider's own token prices</h3>
+        <p data-i18n="method.s1.p">Every model behind a plan has published API token prices: input, output, cached-read and cached-write. We use them to turn credits or dollar usage into requests.</p>
+      </div>
+      <div class="method-card">
+        <div class="step-num">2</div>
+        <h3 data-i18n="method.s2.t">Provider credit formulas</h3>
+        <p data-i18n="method.s2.p">Providers define their own credits (GLM: <span class="mono">(in×6.9 + cached×1.7 + out×24)/10000</span>). We take those formulas from the official docs instead of inventing them.</p>
+      </div>
+      <div class="method-card">
+        <div class="step-num">3</div>
+        <h3 data-i18n="method.s3.t">Cache-aware workload model</h3>
+        <p data-i18n="method.s3.p">Coding agents hit the cache constantly. We price input as 5% fresh and 95% cached-write, and use the real rates for cached reads and output, per model and workload pattern.</p>
+      </div>
+    </div>
+    <details class="method-more">
+      <summary data-i18n="method.more">Show all steps</summary>
+      <div class="method-grid">
+      <div class="method-card">
+        <div class="step-num">4</div>
+        <h3 data-i18n="method.s4.t">Time windows are throughput caps</h3>
+        <p data-i18n="method.s4.p">A 5-hour window is a throughput limit rather than a monthly quota. Weekly credits scale to a month (×4.33), and we never multiply 5-hour caps into monthly numbers.</p>
+      </div>
+      <div class="method-card">
+        <div class="step-num">5</div>
+        <h3 data-i18n="method.s5.t">One workload pattern per model family</h3>
+        <p data-i18n="method.s5.p">Some feeds reuse one generic workload pattern. For shared model families we use the most precise per-model pattern for both plans, so neither plan gets a cheaper pattern.</p>
+      </div>
+      <div class="method-card">
+        <div class="step-num">6</div>
+        <h3 data-i18n="method.s6.t">Undisclosed numbers stay empty</h3>
+        <p data-i18n="method.s6.p">If a provider does not publish its numbers, we say so. We do not invent credits or back-calculate quotas.</p>
+      </div>
+      <div class="method-card">
+        <div class="step-num">7</div>
+        <h3 data-i18n="method.s7.t">Listed prices, plus fees where a vendor adds them</h3>
+        <p data-i18n="method.s7.p">We show the price each vendor lists. Command Code adds a card processing fee to every plan and does not publish the rate, it appears at checkout, so those prices carry a “+ fee” mark. Where a vendor publishes a complete price, we show it unchanged.</p>
+      </div>
+      </div>
+    </details>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section id="faq" class="panel">
+    <div class="section-head">
+      <h2 data-i18n="faq.h2">Frequently asked questions</h2>
+    </div>
+    <details>
+      <summary data-i18n="faq.q7"></summary>
+      <div class="faq-body" data-i18n="faq.a7"></div>
+    </details>
+    <details>
+      <summary data-i18n="faq.q8"></summary>
+      <div class="faq-body" data-i18n="faq.a8"></div>
+    </details>
+    <details>
+      <summary data-i18n="faq.q9"></summary>
+      <div class="faq-body" data-i18n="faq.a9"></div>
+    </details>
+    <details>
+      <summary data-i18n="faq.q1"></summary>
+      <div class="faq-body" data-i18n="faq.a1"></div>
+    </details>
+    <details>
+      <summary data-i18n="faq.q2"></summary>
+      <div class="faq-body" data-i18n="faq.a2"></div>
+    </details>
+    <details>
+      <summary data-i18n="faq.q3"></summary>
+      <div class="faq-body" data-i18n="faq.a3"></div>
+    </details>
+    <details>
+      <summary data-i18n="faq.q4"></summary>
+      <div class="faq-body" data-i18n="faq.a4"></div>
+    </details>
+    <details>
+      <summary data-i18n="faq.q5"></summary>
+      <div class="faq-body" data-i18n="faq.a5"></div>
+    </details>
+    <details>
+      <summary data-i18n="faq.q6"></summary>
+      <div class="faq-body" data-i18n="faq.a6"></div>
+    </details>
+  </section>
+
+  </div><!-- /view-method -->
+
+  <!-- ===== VIEW: RECHTLICHES ===== -->
+  <div class="view" id="view-legal">
+  <!-- ===== LEGAL ===== -->
+  <section id="legal" class="legal-section">
+    <div class="section-head">
+      <h2 data-i18n="legal.h2">Legal</h2>
+      <p data-i18n="legal.sub">Privacy, imprint and liability information.</p>
+    </div>
+
+    <div class="legal-block" id="privacy">
+      <h3 data-i18n="legal.privacy.h3">Privacy</h3>
+      <div data-i18n="legal.privacy.body">
+        <p><strong>No cookies, no trackers.</strong> This site sets no cookies and makes no connections to third parties. All data is served from this GitHub Pages site itself.</p>
+        <p><strong>Local storage (your browser only).</strong> Your preferences (language, theme, currency, visible columns) are stored in your browser's localStorage so the page can remember them between visits. This data never leaves your device. localStorage is not a cookie and is not used for tracking.</p>
+        <p><strong>GitHub Pages hosting.</strong> This site is hosted by GitHub Pages. As with any web host, GitHub's servers process technical access data (IP address, user agent, requested files) in server logs. Please refer to GitHub's privacy policy for details on their data processing.</p>
+        <p><strong>No analytics, no advertising.</strong> We do not use analytics tools, advertising networks, or third-party embeds.</p>
+        <p><strong>Contact.</strong> For any privacy request, please use the contact details in the imprint.</p>
+      </div>
+    </div>
+
+    <div class="legal-block" id="imprint">
+      <h3 data-i18n="legal.imprint.h3">Imprint / Provider identification</h3>
+      <div data-i18n="legal.imprint.body">
+        <p>This website is operated by an individual maintainer on a non-commercial, informational basis.</p>
+        <p>Operator: Kolja Knodel<br>Contact: <a href=https://github.com/harrytyp>GitHub: harrytyp</a></p>
+        <p>As a private, non-commercial website, a full postal address is not required. If this service becomes commercial or targets the DACH region, the imprint must be extended (e.g. §5 DDG in Germany) with your full name and address.</p>
+      </div>
+    </div>
+
+    <div class="legal-block" id="disclaimer">
+      <h3 data-i18n="legal.disclaimer.h3">Disclaimer</h3>
+      <div data-i18n="legal.disclaimer.body">
+        <p>All prices, quotas, and conditions shown here are collected from public provider sources on a best-effort basis. They may change at any time. Always confirm current terms on the official provider website before purchasing.</p>
+        <p>This site is independent and not affiliated with, endorsed by, or sponsored by any provider shown. We do not sell plans and have no affiliate links.</p>
+        <p>Information is provided "as is" without warranty of any kind. We are not liable for any decisions made based on this data.</p>
+      </div>
+    </div>
+  </section>
+  </div><!-- /view-legal -->
+</main>
+
+<!-- ===== FOOTER (schlank, ein Block) ===== -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-row">
+      <span data-i18n="foot.rights">© 2026 vibeplan.cc · MIT license</span>
+      <span class="footer-links">
+        <span data-i18n="foot.scope"></span>
+        <a href="data/latest.json" target="_blank" data-i18n="foot.json">latest.json (API)</a>
+        <a href="/coding-plan-comparison/" data-i18n="foot.compare">AI coding plan comparison</a>
+        <a href="https://github.com/harrytyp/coding-plan-comparison" target="_blank" data-i18n="foot.repo">GitHub</a>
+        <a href="https://github.com/harrytyp/coding-plan-comparison/blob/main/sources.yml" target="_blank" data-i18n="foot.sources">sources.yml</a>
+        <a href="https://llm-stats.com" target="_blank" data-i18n="foot.llmstats">AI scores: llm-stats.com</a>
+        <button class="linklike" id="open-feedback" type="button" data-i18n="foot.feedback">Feedback</button>
+        <button class="linklike" id="open-legal" type="button" data-i18n="foot.legalTitle">Legal</button>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== COMMAND PALETTE ===== -->
+<!-- ===== MOBIL: fester Filter-Griff + Hintergrund der Schublade ===== -->
+<button class="rail-trigger" id="rail-trigger" type="button" hidden aria-controls="rail" aria-expanded="false">
+  <svg class="rail-trigger-glyph" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+    <path d="M4 7h16M4 12h16M4 17h16"/>
+    <circle cx="9" cy="7" r="2.4" fill="currentColor" stroke="none"/>
+    <circle cx="15" cy="12" r="2.4" fill="currentColor" stroke="none"/>
+    <circle cx="9" cy="17" r="2.4" fill="currentColor" stroke="none"/>
+  </svg>
+  <span data-i18n="rail.trigger">Filters</span>
+  <span class="rail-trigger-count" id="rail-trigger-count" hidden>0</span>
+</button>
+<div class="rail-scrim" id="rail-scrim" hidden></div>
+
+<div class="cmdk-overlay" id="cmdk" hidden>
+  <div class="cmdk" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div class="cmdk-input">
+      <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input type="text" id="cmdk-input" placeholder="Search plans, models or jump to a view" autocomplete="off" spellcheck="false" data-i18n-aria="cmdk.aria">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="cmdk-list" id="cmdk-list"></div>
+  </div>
+</div>
+
+<!-- ===== FEEDBACK (Body-Ebene, gleiche Begruendung wie oben) ===== -->
+<div class="fbk-overlay" id="fbk-overlay" hidden>
+  <div class="fbk" role="dialog" aria-modal="true" aria-labelledby="fbk-title">
+    <div class="fbk-head">
+      <h2 id="fbk-title" data-i18n="fbk.title">Send feedback</h2>
+      <button class="fbk-close" id="fbk-close" type="button" aria-label="Close" data-i18n-aria="fbk.close" data-i18n-title="fbk.close">×</button>
+    </div>
+    <p class="fbk-lead" data-i18n="fbk.lead"></p>
+    <textarea id="fbk-text" maxlength="4000" required data-i18n-aria="fbk.ph" data-i18n-ph="fbk.ph"></textarea>
+    <input id="fbk-contact" type="text" maxlength="200" autocomplete="email" data-i18n-aria="fbk.contactPh" data-i18n-ph="fbk.contactPh">
+    <input id="fbk-hp" class="fbk-hp" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <div class="fbk-foot">
+      <button class="btn btn-primary" id="fbk-send" type="button" data-i18n="fbk.send">Send</button>
+      <span class="fbk-status" id="fbk-status" role="status" aria-live="polite"></span>
+    </div>
+    <div class="fbk-fallbacks" id="fbk-fallbacks" hidden>
+      <a class="btn" id="fbk-mail" href="#" data-i18n="fbk.mail">Open in mail app</a>
+      <button class="btn" id="fbk-copy" type="button" data-i18n="fbk.copy">Copy text</button>
+    </div>
+    <p class="fbk-note" data-i18n="fbk.privacy"></p>
+  </div>
+</div>
+
+<!-- Fixe Overlays gehoeren auf Body-Ebene: #main traegt view-transition-name und ist
+     damit Containing Block fuer position:fixed, sonst landet das Sheet unter dem Fold. -->
+<!-- ===== MOBILE BOTTOM-SHEET: Filter & Columns konsolidiert ===== -->
+<div class="toast" id="toast"></div>
+<div class="sr-only" id="a11y-status" role="status" aria-live="polite"></div>
+<div class="sr-only" id="chart-status" role="status" aria-live="polite"></div>
+<button id="back-top" type="button" hidden aria-label="Back to top">↑</button>
+
+<script src="vendor/d3-zoom.min.js"></script>
+<script src="app.js?v=__VERSION__"></script>
+<script>
+/* =========================================================================
+   Design layer: motion + interaction. Scroll progress, staggered reveal,
+   count-up, tab indicator, chart redraw after a theme switch.
+   Runs on top of the shared app.js renderer. Nothing here is required for
+   the page to work: every block is defensive and reduced-motion aware.
+   ========================================================================= */
+(function () {
+  'use strict';
+  var reduce = false;
+  try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+
+  /* ---------------------------------------------------------- scroll progress */
+  (function () {
+    if (reduce) return;
+    var bar = document.createElement('div');
+    bar.id = 'pv-progress';
+    document.body.appendChild(bar);
+    var queued = false;
+    function paint() {
+      queued = false;
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      var p = h > 0 ? Math.min(1, Math.max(0, window.scrollY / h)) : 0;
+      bar.style.setProperty('--pv-p', p.toFixed(4));
+    }
+    window.addEventListener('scroll', function () {
+      if (queued) return;
+      queued = true;
+      window.requestAnimationFrame(paint);
+    }, { passive: true });
+    paint();
+  })();
+
+  /* ---------------------------------------------------------- tab indicator */
+  (function () {
+    var tabs = $('#tabs');
+    if (!tabs) return;
+    function move() {
+      var act = $('.tab.active', tabs);
+      if (!act) return;
+      tabs.style.setProperty('--pv-tab-x', act.offsetLeft + 'px');
+      tabs.style.setProperty('--pv-tab-w', act.offsetWidth + 'px');
+    }
+    tabs.addEventListener('click', function () { setTimeout(move, 0); });
+    window.addEventListener('resize', move);
+    setTimeout(move, 60);
+    setTimeout(move, 600);
+    // i18n switch rebuilds labels
+    $$('.lang-switch button').forEach(function (b) { b.addEventListener('click', function () { setTimeout(move, 120); }); });
+    move();
+  })();
+
+  /* ---------------------------------------------------------- staggered reveal */
+  var seen = new WeakSet();
+  function reveal(scope, step) {
+    if (reduce) return;
+    var nodes = $$('.kpi', scope).concat($$('tr.row-main', scope));
+    nodes.slice(0, 60).forEach(function (el, i) {
+      if (seen.has(el)) return;
+      seen.add(el);
+      el.classList.add('pv-rv');
+      el.style.setProperty('--pv-i', String(Math.min(i, 12) * (step || 1)));
+      window.requestAnimationFrame(function () { el.classList.add('pv-in'); });
+    });
+  }
+  function activeView() { return $('.view.active') || document; }
+  function watch() {
+    var grid = $('#stats-grid');
+    var bodies = ['#plans-tbody', '#top-tbody'].map(function (s) { return $(s); }).filter(Boolean);
+    var obs = new MutationObserver(function () {
+      reveal(activeView());
+      countUp();
+    });
+    if (grid) obs.observe(grid, { childList: true, subtree: true });
+    bodies.forEach(function (b) { obs.observe(b, { childList: true }); });
+    var tabs = $('#tabs');
+    if (tabs) tabs.addEventListener('click', function () { setTimeout(function () { reveal(activeView()); }, 30); });
+    var views = $('#main');
+    if (views) obs.observe(views, { childList: false, subtree: false, attributes: true, attributeFilter: ['class'] });
+    reveal(activeView());
+  }
+
+  /* ---------------------------------------------------------- kpi count up */
+  var counted = new WeakMap();
+  var animating = new WeakSet();
+  function countUp() {
+    if (reduce) return;
+    $$('.kpi .v').forEach(function (el) {
+      if (animating.has(el)) return;
+      var raw = (el.textContent || '').trim();
+      var m = raw.match(/^([0-9][0-9.,\u00a0 ]*)$/);
+      if (!m) return;
+      var target = parseInt(raw.replace(/[^0-9]/g, ''), 10);
+      if (!isFinite(target) || target <= 0) return;
+      if (counted.get(el) === raw) return;
+      counted.set(el, raw);
+      animating.add(el);
+      var sep = raw.indexOf(',') >= 0 ? ',' : (raw.indexOf('.') >= 0 && raw.length > 3 ? '.' : '');
+      var t0 = null;
+      var dur = 380;
+      function frame(ts) {
+        if (t0 === null) t0 = ts;
+        var p = Math.min(1, (ts - t0) / dur);
+        var eased = 1 - Math.pow(1 - p, 3);
+        // nie eine falsche Null zeigen: bei 85 Prozent des Zielwerts einsteigen
+        var from = Math.round(target * 0.85);
+        var v = Math.round(from + (target - from) * eased);
+        el.textContent = sep ? v.toLocaleString('en-US').replace(/,/g, sep === ',' ? ',' : '.') : String(v);
+        if (p < 1) window.requestAnimationFrame(frame);
+        else { el.textContent = raw; animating.delete(el); }
+      }
+      window.requestAnimationFrame(frame);
+    });
+  }
+
+  /* ---------------------------------------------------------- "data updated" chip */
+  function lastSeen() {
+    var meta = $('#meta-updated');
+    // Nicht in den Kopf haengen: die Pille ist breit und wuerde die Kennzahlenzeile
+    // aus dem Header draengen. Neben dem Chart ist sie ohnehin am Platz.
+    var host = $('.chart-foot') || $('.status-meta');
+    if (!meta || !host) return;
+    var now = (meta.textContent || '').trim();
+    if (!now) return;
+    var KEY = 'cpc-snapshot-seen';
+    var prev = null;
+    try { prev = window.localStorage.getItem(KEY); } catch (e) {}
+    try { window.localStorage.setItem(KEY, now); } catch (e) {}
+    if (!prev || prev === now) return;
+    var chip = document.createElement('span');
+    chip.id = 'pv-lastseen';
+    chip.textContent = document.documentElement.lang === 'de' ? 'Daten seit deinem letzten Besuch erneuert' : 'data updated since your last visit';
+    host.appendChild(chip);
+  }
+
+  /* ---------------------------------------------------------- theme switch redraw */
+  // app.js zeichnet den Chart nur bei Resize/Filterwechsel neu. Nach dem
+  // Theme-Wechsel bleibt die Canvas daher in den alten Farben stehen (auch live).
+  (function () {
+    var btn = document.querySelector('#theme-toggle');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      window.setTimeout(function () {
+        try { window.dispatchEvent(new Event('resize')); } catch (e) {}
+      }, 60);
+    });
+  })();
+
+  function boot() {
+    try { watch(); } catch (e) {}
+    try { countUp(); } catch (e) {}
+    try { lastSeen(); } catch (e) {}
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(boot, 80); });
+  else setTimeout(boot, 80);
+  // app.js fills the KPIs after its data fetch resolves
+  window.addEventListener('load', function () { setTimeout(function () { try { countUp(); } catch (e) {} }, 250); });
+})();
+
+/* =========================================================================
+   Feedback: Footer-Button, Panel, POST an den eigenen Endpunkt /api/feedback.
+   Faellt der Endpunkt aus (kein Worker, offline), bietet das Panel Mail/Kopie
+   an. Kein Framework, keine Verbindung zu Dritten (gleiche Domain).
+   ========================================================================= */
+(function () {
+  'use strict';
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var overlay = $('#fbk-overlay'), opener = $('#open-feedback');
+  if (!overlay || !opener) return;
+  var text = $('#fbk-text'), contact = $('#fbk-contact'), hp = $('#fbk-hp');
+  var send = $('#fbk-send'), status = $('#fbk-status'), fallbacks = $('#fbk-fallbacks');
+  var mailLink = $('#fbk-mail'), copyBtn = $('#fbk-copy'), closeBtn = $('#fbk-close');
+  var MAIL_TO = 'feedback@vibeplan.cc';
+  // Statusmeldungen sind Zustand, nicht Markup: kurze eigene Tabelle statt I18N-Zugriff.
+  var WORD = {
+    en: { sending: 'Sending…', ok: 'Thanks, it arrived.', err: 'Not sent. Retry, or use the mail link.',
+          empty: 'Please write something first.', copied: 'Copied.' },
+    de: { sending: 'Wird gesendet…', ok: 'Danke, ist angekommen.', err: 'Nicht gesendet. Nochmal versuchen oder den Mail-Link nutzen.',
+          empty: 'Bitte erst etwas schreiben.', copied: 'Kopiert.' }
+  };
+  function lang() { return document.documentElement.lang === 'de' ? 'de' : 'en'; }
+  function say(kind, state) {
+    status.textContent = kind ? WORD[lang()][kind] : '';
+    if (state) status.dataset.state = state; else status.removeAttribute('data-state');
+  }
+  function context() {
+    var view = $('.view.active'), active = $('#filter-active');
+    return {
+      url: location.href, lang: lang(), theme: document.documentElement.getAttribute('data-theme') || '',
+      view: view ? view.id : '',
+      filters: active ? (active.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 300) : '',
+      visible: $$('#plans-tbody tr.row-main').length, width: window.innerWidth, at: new Date().toISOString()
+    };
+  }
+  function asText() {
+    var c = context();
+    return [(text.value || '').trim(), '', '---',
+      'contact: ' + ((contact.value || '').trim() || '-'),
+      'page: ' + c.url, 'view: ' + c.view, 'lang: ' + c.lang].join('\n');
+  }
+  function openPanel() {
+    overlay.hidden = false;
+    document.body.classList.add('fbk-open');
+    fallbacks.hidden = true; say('');
+    try { text.focus(); } catch (e) {}
+  }
+  function closePanel() {
+    overlay.hidden = true;
+    document.body.classList.remove('fbk-open');
+    try { opener.focus(); } catch (e) {}
+  }
+  function offerFallback() {
+    fallbacks.hidden = false;
+    mailLink.href = 'mailto:' + MAIL_TO + '?subject=' + encodeURIComponent('vibeplan.cc feedback')
+      + '&body=' + encodeURIComponent(asText());
+  }
+  opener.addEventListener('click', openPanel);
+  if (closeBtn) closeBtn.addEventListener('click', closePanel);
+  overlay.addEventListener('click', function (e) { if (e.target === overlay) closePanel(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !overlay.hidden) closePanel(); });
+  if (copyBtn) copyBtn.addEventListener('click', function () {
+    var t = asText(), done = function () { say('copied', 'ok'); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done, done);
+    else done();
+  });
+  send.addEventListener('click', function () {
+    var msg = (text.value || '').trim();
+    if (msg.length < 3) { say('empty', 'err'); text.focus(); return; }
+    if (hp && hp.value) { say('ok', 'ok'); return; }  // Honeypot: Bots bekommen keinen Hinweis
+    send.disabled = true; say('sending');
+    fetch('/api/feedback', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ message: msg.slice(0, 4000), contact: (contact.value || '').trim().slice(0, 200), context: context() })
+    }).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      say('ok', 'ok'); text.value = ''; contact.value = '';
+      window.setTimeout(closePanel, 1400);
+    }).catch(function () {
+      say('err', 'err'); offerFallback();
+    }).then(function () { send.disabled = false; });
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="vibeplan">
+  <title>vibeplan</title>
+  <defs>
+    <linearGradient id="vpBg" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0" stop-color="#18232f"/>
+      <stop offset="1" stop-color="#0a0e14"/>
+    </linearGradient>
+    <linearGradient id="vpCurve" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#3fbf9c"/>
+      <stop offset="1" stop-color="#6ee7c7"/>
+    </linearGradient>
+    <radialGradient id="vpGlow" cx="0.74" cy="0.28" r="0.62">
+      <stop offset="0" stop-color="#6ee7c7" stop-opacity="0.30"/>
+      <stop offset="1" stop-color="#6ee7c7" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Badge: dunkle Kachel mit feiner Kante, damit die Marke auf hell wie dunkel sitzt -->
+  <rect width="512" height="512" rx="116" fill="url(#vpBg)"/>
+  <rect x="3" y="3" width="506" height="506" rx="113" fill="none" stroke="#6ee7c7" stroke-opacity="0.22" stroke-width="6"/>
+  <circle cx="378" cy="150" r="215" fill="url(#vpGlow)"/>
+  <!-- Pareto-Front: Stufen nach rechts oben, Endpunkt als Punkt markiert -->
+  <path d="M108 396h68V324h68V236h68V156h72" fill="none" stroke="url(#vpCurve)"
+        stroke-width="44" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="384" cy="156" r="29" fill="#e9eef5"/>
+</svg>

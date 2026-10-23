@@ -1,0 +1,6 @@
+{
+  "name": "VibePlan — AI Coding Plan Comparison & Quota Explorer",
+  "description": "Interactive benchmark comparing 139+ AI coding subscriptions across 40 providers (Cursor, Claude Code, Copilot, Windsurf) by true token economics, quotas, and cache-aware rates.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
