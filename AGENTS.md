@@ -320,12 +320,21 @@ Läufe. Die Reihenfolge ist nicht beliebig:
   staged nur `GENERATED_PATHS` mit `git add -- <pfad>`; `cache/`, `parsed/`, `.env*`,
   `.github/`, Agent-Konfiguration und `src/` sind gesperrt. `cache/` und `parsed/` stehen
   in `.gitignore`.
-- **Tests:** `tests/fetch-retry.test.mjs` (Retry-Verhalten) und `tests/pipeline.test.mjs`
-  (Exit-Codes, Quellenkonfiguration, Fingerabdruck, Review-Dedup inklusive leerem
-  Daten-Diff und unveränderter Quelle, Mirror, Staging, Struktur beider Workflows).
-  `fetch.mjs` läuft nur bei direktem Start, damit ein Import in Tests nicht alle
-  Quellen fetcht. Die PR-Validierung führt nur diese beiden Dateien aus, weil
-  `tests/build.test.mjs` `parsed/` und generierte Seiten braucht.
+- **Tests:** `tests/fetch-retry.test.mjs` (Retry-Verhalten), `tests/parsers.test.mjs`
+  (Fixture-Regressionen fuer die aktuelle und die aeltere Markup-Fassung von GLM und
+  Copilot, inklusive ehrlichem Leerzustand ohne Koeffiziententabelle) und
+  `tests/pipeline.test.mjs` (Exit-Codes, Quellenkonfiguration, Fingerabdruck,
+  Review-Dedup inklusive leerem Daten-Diff und unveränderter Quelle, Mirror, Staging,
+  Struktur beider Workflows). `fetch.mjs` läuft nur bei direktem Start, damit ein
+  Import in Tests nicht alle Quellen fetcht. Die PR-Validierung führt diese drei
+  Dateien aus (alle netzwerkfrei); `tests/build.test.mjs` braucht `parsed/` und die
+  generierten Seiten und läuft im Produktionslauf nach der Generierung.
+- **Katalog-Tests pinnen keine Anbietermodelle.** GLM-Koeffizienten und die
+  Copilot-Modelliste aendern sich unabhaengig vom Code (GPT-5.4 -> GPT-5.4 nano,
+  neue Modellzeilen). `tests/build.test.mjs` prueft deshalb den Quellkontrakt: jede
+  veroeffentlichte Zeile wird eine Modellzeile, und die Zahlen folgen aus den
+  geparsten Koeffizienten/Preisen. Feste Zahlen bleiben in den Fixture-Tests, damit
+  die Formel weiterhin unabhaengig nachgerechnet wird.
 
 ## Gemessene Plaene (Tier M)
 

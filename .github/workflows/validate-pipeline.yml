@@ -69,5 +69,8 @@ jobs:
       - name: Verify pipeline orchestration and staging policy
         run: node --test tests/pipeline.test.mjs
 
+      - name: Verify parser fixtures for current provider markup
+        run: node --test tests/parsers.test.mjs
+
       - name: Verify fetch retry behavior
         run: node --test tests/fetch-retry.test.mjs

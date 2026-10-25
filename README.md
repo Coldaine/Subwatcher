@@ -120,10 +120,17 @@ No `npm install` is needed: the pipeline scripts use Node built-ins only.
 `cache/` and `parsed/` stay gitignored. The production workflow runs only on its
 schedule or by hand, and its write token stays in that job. Pull requests are
 checked by `.github/workflows/validate-pipeline.yml`, which has `contents: read`,
-disables persisted credentials, and runs the network-free pipeline and retry
-tests plus syntax checks (no acquisition, no generated commits, no issues). The
-workflow never runs PR code with write permissions, never uses
+disables persisted credentials, and runs the network-free pipeline, parser-fixture
+and retry tests plus syntax checks (no acquisition, no generated commits, no
+issues). The workflow never runs PR code with write permissions, never uses
 `pull_request_target`, and never merges or deploys.
+
+Catalog tests follow the published source instead of pinning provider models:
+GLM's coefficient table and Copilot's model list change independently of this
+code (for example GPT-5.4 becoming GPT-5.4 nano). The build tests assert that
+every published row becomes a model row and that the numbers follow from the
+parsed coefficients and prices; fixed example numbers live in
+`tests/fixtures/` so the formula stays independently verified.
 
 When a `parser: none` source (GLM pricing, MiniMax, kimi.ai) changes, `fetch.mjs`
 stores a normalized HTML fingerprint so the change is visible without nonces or

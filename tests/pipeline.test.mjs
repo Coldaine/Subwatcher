@@ -413,6 +413,7 @@ test("PR validation workflow is read-only, pinned and does not run acquisition",
 
   const runs = steps.map((s) => s.run).filter((run) => run && run !== "|");
   assert.ok(runs.some((run) => run.includes("node --test tests/pipeline.test.mjs")));
+  assert.ok(runs.some((run) => run.includes("node --test tests/parsers.test.mjs")), "parser fixtures run without network");
   assert.ok(runs.some((run) => run.includes("node --test tests/fetch-retry.test.mjs")));
 
   assert.doesNotMatch(validationText, /\$\{\{\s*secrets\./);
