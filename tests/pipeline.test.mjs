@@ -270,6 +270,18 @@ test("mirror dry-run computes changes without writing", (t) => {
   assert.equal(existsSync(join(root, "plans/stale/index.html")), true, "dry-run does not delete");
 });
 
+test("mirror removes a generated root directory when its source disappeared", (t) => {
+  const { pub, root } = mirrorFixture(t);
+  mirrorAll({ publicDir: pub, rootDir: root, version: "abc1234" });
+  assert.equal(existsSync(join(root, "providers/acme/index.html")), true);
+
+  rmSync(join(pub, "providers"), { recursive: true, force: true });
+  const changed = mirrorAll({ publicDir: pub, rootDir: root, version: "abc1234" });
+  assert.ok(changed.includes("providers"), "removal is reported");
+  assert.equal(existsSync(join(root, "providers")), false, "stale provider pages are gone");
+  assert.equal(readFileSync(join(root, "README.md"), "utf8"), "user file\n", "user file untouched");
+});
+
 test("staging stages only allowlisted generated paths", (t) => {
   const repo = tempDir(t);
   execFileSync("git", ["init", "-q"], { cwd: repo });
