@@ -71,7 +71,7 @@ scripts/check.mjs     -> diff report: which sources changed (exit 2 = changed)
 
 Defined in `sources.yml`: machine-readable price feeds (OpenCode Go, Command Code, Kimi goods API, LLM Stats leaderboard, FX rates) plus official docs (GLM, Qwen, Kimi, MiniMax, MiMo, Freebuff) plus provider privacy pages.
 
-Anything not scrapeable (GLM prices behind an auth API, MiniMax JS-SPA) lives in `data/overrides.yml` with `lastVerified`. A scheduled agent rechecks those sources and updates the file on change. `data/privacy.yml` holds manually verified data policies per provider.
+Anything not scrapeable (GLM prices behind an auth API, MiniMax JS-SPA) lives in `data/overrides.yml` with `lastVerified`. A scheduled workflow flags those sources for manual review when their HTML fingerprint changes; the override itself is still updated by a human. `data/privacy.yml` holds manually verified data policies per provider.
 
 ## Normalization (what makes plans comparable)
 
@@ -93,12 +93,32 @@ cost per request = (0.05 x input + 0.95 x cachedWrite) x pattern.input
 
 ## CI / updates
 
-`.github/workflows/update.yml`, daily 03:17 UTC:
+`.github/workflows/update.yml` runs daily at 03:17 UTC and can be started manually
+(`workflow_dispatch`). It checks out the full history, restores the previous source
+snapshots from `actions/cache` (`restore-keys: snapshots-`), then runs:
 
-1. `fetch` all sources (snapshots + change detection)
-2. `parse` + `build` + tests
-3. commit on change
-4. review issue when SPA sources changed prices, then `overrides.yml` is updated manually
+1. `node scripts/changelog-from-git.mjs` (the build embeds the changelog)
+2. `node scripts/fetch.mjs` (retry/fallback behavior lives in `fetch.mjs`)
+3. `node scripts/check.mjs`; exit `0` and `2` are accepted (`2` = sources changed),
+   anything else fails the run
+4. `node scripts/parse-all.mjs` and `node scripts/build.mjs`
+5. `node scripts/history.mjs`, then `landing.mjs`, `pages.mjs`, `seo.mjs`
+6. `npm test`; the tests read `parsed/`, the generated plan pages and
+   `public/sitemap.xml`, so they run after generation, not right after fetch
+7. `node scripts/publish.mjs mirror` (root mirrors, `__VERSION__` replaced with
+   the run commit) and `node scripts/publish.mjs stage` (explicit allowlist only)
+8. commit and push to `main` when something changed, then open or update the
+   deduplicated review issue for changed SPA pricing sources
+
+No `npm install` is needed: the pipeline scripts use Node built-ins only.
+`cache/` and `parsed/` stay gitignored. The workflow never runs PR code, never
+uses `pull_request_target`, and never merges or deploys.
+
+When a `parser: none` source (GLM pricing, MiniMax, kimi.ai) changes, `fetch.mjs`
+stores a normalized HTML fingerprint so the change is visible without nonces or
+cache-busters producing daily false positives. The workflow then creates
+`Manual review: SPA pricing sources changed` (or comments on the open one), and
+`data/overrides.yml` is updated manually with a fresh `lastVerified`.
 
 ## Layout
 
