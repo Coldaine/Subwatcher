@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-cn">
+<head><title>GLM Coding Plan (older layout)</title></head>
+<body>
+  <h2>积分额度</h2>
+  <table>
+    <tbody>
+      <tr><td>Lite 套餐</td><td>2,000</td><td>10,000</td></tr>
+      <tr><td>Pro 套餐</td><td>12,000</td><td>60,000</td></tr>
+      <tr><td>Max 套餐</td><td>28,000</td><td>140,000</td></tr>
+    </tbody>
+  </table>
+
+  <h2>积分抵扣计算方式</h2>
+  <p>模型消耗积分数=（输入 Token × Input 抵扣系数 + 缓存命中 Token × Cached Input 抵扣系数 + 输出 Token × Output 抵扣系数） / 10000</p>
+  <table>
+    <tbody>
+      <tr><td>模型</td><td>GLM-5.2</td><td>6.9</td><td>1.7</td><td>24</td></tr>
+      <tr><td>MCP 工具</td><td>联网搜索</td><td>-</td><td>-</td><td>1.2</td></tr>
+    </tbody>
+  </table>
+  <p>非高峰时段内，模型调用按基础积分消耗的 50% 抵扣</p>
+
+  <h2>可用额度参考</h2>
+  <p>参考区间。</p>
+</body>
+</html>

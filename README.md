@@ -71,7 +71,7 @@ scripts/check.mjs     -> diff report: which sources changed (exit 2 = changed)
 
 Defined in `sources.yml`: machine-readable price feeds (OpenCode Go, Command Code, Kimi goods API, LLM Stats leaderboard, FX rates) plus official docs (GLM, Qwen, Kimi, MiniMax, MiMo, Freebuff) plus provider privacy pages.
 
-Anything not scrapeable (GLM prices behind an auth API, MiniMax JS-SPA) lives in `data/overrides.yml` with `lastVerified`. A scheduled agent rechecks those sources and updates the file on change. `data/privacy.yml` holds manually verified data policies per provider.
+Anything not scrapeable (GLM prices behind an auth API, MiniMax JS-SPA) lives in `data/overrides.yml` with `lastVerified`. A scheduled workflow flags those sources for manual review when their HTML fingerprint changes; the override itself is still updated by a human. `data/privacy.yml` holds manually verified data policies per provider.
 
 ## Normalization (what makes plans comparable)
 
@@ -93,12 +93,52 @@ cost per request = (0.05 x input + 0.95 x cachedWrite) x pattern.input
 
 ## CI / updates
 
-`.github/workflows/update.yml`, daily 03:17 UTC:
+`.github/workflows/update.yml` runs daily at 03:17 UTC and can be started manually
+(`workflow_dispatch`). It checks out the full history, restores the previous source
+snapshots from `actions/cache` (`restore-keys: snapshots-`), then runs:
 
-1. `fetch` all sources (snapshots + change detection)
-2. `parse` + `build` + tests
-3. commit on change
-4. review issue when SPA sources changed prices, then `overrides.yml` is updated manually
+1. `node scripts/changelog-from-git.mjs` (the build embeds the changelog)
+2. `node scripts/fetch.mjs` (retry/fallback behavior lives in `fetch.mjs`)
+3. `node scripts/check.mjs`; exit `0` and `2` are accepted (`2` = sources changed),
+   anything else fails the run
+4. `node scripts/parse-all.mjs` and `node scripts/build.mjs`
+5. `node scripts/history.mjs`, then `landing.mjs`, `pages.mjs`, `seo.mjs`
+6. `npm test`; the tests read `parsed/`, the generated plan pages and
+   `public/sitemap.xml`, so they run after generation, not right after fetch
+7. `node scripts/publish.mjs mirror` (root mirrors, `__VERSION__` replaced with
+   the run commit) and `node scripts/publish.mjs stage` (explicit allowlist only)
+8. commit and push to `main` when something changed
+9. open or update the deduplicated review issue for changed manual sources
+
+Step 9 is independent of step 8: a JS-SPA pricing page can change while no
+machine-generated artifact changes, and the issue still has to appear. The step
+runs on every run where fetch and change detection succeeded, including runs
+where tests or the push failed. `scripts/review-issue.mjs` makes no GitHub call
+when no manual pricing source changed.
+
+No `npm install` is needed: the pipeline scripts use Node built-ins only.
+`cache/` and `parsed/` stay gitignored. The production workflow runs only on its
+schedule or by hand, and its write token stays in that job. Pull requests are
+checked by `.github/workflows/validate-pipeline.yml`, which has `contents: read`,
+disables persisted credentials, and runs the network-free pipeline, parser-fixture
+and retry tests plus syntax checks (no acquisition, no generated commits, no
+issues). The workflow never runs PR code with write permissions, never uses
+`pull_request_target`, and never merges or deploys.
+
+Catalog tests follow the published source instead of pinning provider models:
+GLM's coefficient table and Copilot's model list change independently of this
+code (for example GPT-5.4 becoming GPT-5.4 nano). The build tests assert that
+every published row becomes a model row and that the numbers follow from the
+parsed coefficients and prices; fixed example numbers live in
+`tests/fixtures/` so the formula stays independently verified.
+
+When a `parser: none` source (GLM pricing, MiniMax, kimi.ai) changes, `fetch.mjs`
+stores a normalized HTML fingerprint so the change is visible without nonces or
+cache-busters producing daily false positives. A fingerprint change proves the
+published page changed, not that a price changed. The workflow therefore asks
+for a human check (`Manual review: SPA pricing sources changed`, or a comment on
+the open one), and `data/overrides.yml` is only updated manually with a fresh
+`lastVerified`.
 
 ## Layout
 

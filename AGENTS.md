@@ -264,13 +264,33 @@ Mail- und Kopier-Rueckfall auf `feedback@vibeplan.cc` an.
   brauchen weiterhin `node scripts/build-preview.mjs`; die Root-Spiegelung macht die CI.
 
 ## Workflow
-`.github/workflows/update.yml`: täglich 03:17 UTC — fetch → parse → build → test → commit bei
-Änderung → Review-Issue wenn SPA-Preise (GLM/MiniMax) sich ändern → overrides.yml manuell pflegen.
+`.github/workflows/update.yml`: täglich 03:17 UTC und manuell (`workflow_dispatch`).
+`concurrency: update-data` mit `cancel-in-progress: false` verhindert parallele
+Läufe. Die Reihenfolge ist nicht beliebig:
 
+1. `changelog-from-git.mjs` (der Build bettet `data/changelog.yml` ein)
+2. `fetch.mjs` (Retry/Fallback, Snapshot-Restore aus `actions/cache`)
+3. `check.mjs`; `check-exit.mjs` akzeptiert 0 = unverändert und 2 = geändert,
+   jeder andere Exit ist ein Fehler
+4. `parse-all.mjs` → `build.mjs`
+5. `history.mjs` → `landing.mjs` → `pages.mjs` → `seo.mjs`
+6. `npm test` (die Tests lesen `parsed/`, die Planseiten und `public/sitemap.xml`,
+   deshalb erst nach der vollständigen Generierung)
+7. `publish.mjs mirror` (Root-Spiegel, `__VERSION__` = Run-Commit) und
+   `publish.mjs stage` (nur die explizite Allowlist)
+8. Commit/Push bei Änderung
+9. Review-Issue unabhängig davon, ob Schritt 8 etwas committed hat
+
+- **Quellen-Konfiguration:** `sources.yml` liegt im Repo-Root. Die Kopie unter
+  `src/data/` war ein Bootstrap-Artefakt; kein Skript liest sie.
+- **Kein `npm install`:** die Pipeline-Skripte nutzen nur Node-Builtins und lokale
+  Module. `npm test` läuft mit dem eingebauten Test-Runner.
 - **Snapshots überleben den Lauf (`actions/cache`).** `cache/` bleibt aus dem Repo, wird aber
   vor dem Fetch aus dem letzten Lauf wiederhergestellt (`restore-keys: snapshots-`). Ohne das
   hatte CI keinen Ersatzstand: ein einziger Aussetzer einer Quelle riss den ganzen Tageslauf mit
   und die Seite fror ein (27./28.09. `privacy-minimax` 404, 04.10. `glm-coding-overview` fetch failed).
+  Der Save-Step läuft mit `if: always()`, damit ein späterer Testfehler die frischen
+  Snapshots nicht wegwirft.
 - **Wiederholversuche in `fetch.mjs` (`fetchWithRetry`).** 3 Versuche mit 2s/8s Backoff bei
   Netzwerkfehler, Timeout, HTTP 429 und 5xx; 404/403 werden nicht wiederholt (dauerhafte Aussage
   der Quelle). Danach: Snapshot behalten und weiterlaufen, wenn einer existiert. Fehlt der
@@ -279,8 +299,42 @@ Mail- und Kopier-Rueckfall auf `feedback@vibeplan.cc` an.
 - **Veraltete Quellen sind sichtbar.** Ist ein Snapshot älter als 48h (`STALE_SOURCE_HOURS`),
   steht die Quelle in `latest.json.staleSources` und in `warnings`; die Kopfzeile der Seite hängt
   dann „· n Quellen veraltet" an den Datenstand, die Quelle mit Datum steht im `title`.
-- **Test:** `tests/fetch-retry.test.mjs` (Retry-Verhalten). `fetch.mjs` läuft nur bei direktem
-  Start, damit ein Import in Tests nicht alle 30 Quellen fetcht.
+- **SPA-Änderungen werden erkannt.** Quellen ohne Parser (`parser: none`, z.B. GLM-Preise,
+  MiniMax, kimi.ai) bekommen in `fetch.mjs` einen normalisierten HTML-Fingerabdruck
+  (`scripts/fingerprint.mjs`): Nonces, Integrity-Attribute und Cache-Buster fallen raus.
+  Der erste Lauf ist die Basislinie; danach markiert `changed: true` die Quelle, ohne dass
+  der Roh-HTML-Hash täglich Fehlalarm auslöst. Der Fingerabdruck belegt eine geänderte
+  Seite, **nicht** einen geänderten Preis.
+- **Review-Issue ist dedupliziert und commit-unabhängig.** `scripts/review-issue.mjs` wählt nur
+  geänderte manuelle Preisquellen (nicht Privacy-only) und sucht nach dem exakten Titel
+  `Manual review: SPA pricing sources changed`: offenes Issue → Kommentar, sonst neu.
+  Eine SPA-Preisseite kann sich ändern, ohne dass ein generiertes Artefakt sich ändert; der
+  Step läuft deshalb mit `if: always() && steps.fetch.outcome == 'success' && hashFiles(...)`
+  auch bei leerem Daten-Diff und nach Test-/Push-Fehlern. Ohne Kandidaten macht das Skript
+  keinen GitHub-Aufruf. Der Workflow ändert `data/overrides.yml` nie selbst.
+- **Der Schreib-Token bleibt im Update-Job.** Der Produktionsworkflow läuft nur per Cron/Hand.
+  Pull Requests prüft `.github/workflows/validate-pipeline.yml` mit `contents: read`,
+  `persist-credentials: false` und den netzwerkfreien Tests (kein Fetch, keine Commits,
+  keine Issues, keine Secrets, kein `pull_request_target`).
+- **Staging ist gescoped.** `scripts/publish.mjs` spiegelt eine feste Liste nach Root und
+  staged nur `GENERATED_PATHS` mit `git add -- <pfad>`; `cache/`, `parsed/`, `.env*`,
+  `.github/`, Agent-Konfiguration und `src/` sind gesperrt. `cache/` und `parsed/` stehen
+  in `.gitignore`.
+- **Tests:** `tests/fetch-retry.test.mjs` (Retry-Verhalten), `tests/parsers.test.mjs`
+  (Fixture-Regressionen fuer die aktuelle und die aeltere Markup-Fassung von GLM und
+  Copilot, inklusive ehrlichem Leerzustand ohne Koeffiziententabelle) und
+  `tests/pipeline.test.mjs` (Exit-Codes, Quellenkonfiguration, Fingerabdruck,
+  Review-Dedup inklusive leerem Daten-Diff und unveränderter Quelle, Mirror, Staging,
+  Struktur beider Workflows). `fetch.mjs` läuft nur bei direktem Start, damit ein
+  Import in Tests nicht alle Quellen fetcht. Die PR-Validierung führt diese drei
+  Dateien aus (alle netzwerkfrei); `tests/build.test.mjs` braucht `parsed/` und die
+  generierten Seiten und läuft im Produktionslauf nach der Generierung.
+- **Katalog-Tests pinnen keine Anbietermodelle.** GLM-Koeffizienten und die
+  Copilot-Modelliste aendern sich unabhaengig vom Code (GPT-5.4 -> GPT-5.4 nano,
+  neue Modellzeilen). `tests/build.test.mjs` prueft deshalb den Quellkontrakt: jede
+  veroeffentlichte Zeile wird eine Modellzeile, und die Zahlen folgen aus den
+  geparsten Koeffizienten/Preisen. Feste Zahlen bleiben in den Fixture-Tests, damit
+  die Formel weiterhin unabhaengig nachgerechnet wird.
 
 ## Gemessene Plaene (Tier M)
 
