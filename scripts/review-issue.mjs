@@ -64,9 +64,9 @@ export function renderReviewBody({ sources, runUrl = "", date = new Date().toISO
   const rows = sources
     .map((s) => `| \`${s.id}\` | ${s.url} | \`${s.previous ?? "none"}\` | \`${s.current ?? "none"}\` | ${s.fetchedAt ?? "unknown"} |`)
     .join("\n");
-  return `The daily update detected changes in sources that are not machine-parseable. Their pricing needs a human check before \`data/overrides.yml\` can be updated (the site never guesses a number).
+  return `The daily update detected a change in the published page of one or more sources that cannot be machine-parsed. A changed page fingerprint does not prove that a price changed: it only means the page needs a human check before \`data/overrides.yml\` is updated (the site never guesses a number).
 
-| Source | URL | Previous fingerprint | Current fingerprint | Fetched |
+| Source | URL | Previous page fingerprint | Current page fingerprint | Fetched |
 | --- | --- | --- | --- | --- |
 ${rows}
 

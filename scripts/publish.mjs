@@ -19,6 +19,7 @@ import {
   readFileSync,
   readdirSync,
   rmdirSync,
+  rmSync,
   unlinkSync,
   writeFileSync,
 } from "node:fs";
@@ -48,7 +49,7 @@ const DIR_MIRRORS = [
   { from: "plans", to: "plans", required: true },
   { from: "de", to: "de", required: true },
   { from: "coding-plan-comparison", to: "coding-plan-comparison", required: true },
-  { from: "providers", to: "providers", required: false },
+  { from: "providers", to: "providers", required: false, removeIfMissing: true },
   { from: "preview", to: "preview", required: false },
 ];
 
@@ -210,6 +211,16 @@ export function mirrorAll({ publicDir, rootDir, version = "", dryRun = false }) 
     assertInside(pub, source);
     if (!existsSync(source)) {
       if (item.required) throw new Error(`mirror source missing: public/${item.from}`);
+      // providers/ is a generated directory: if the generator produced none,
+      // stale provider pages must not stay published at the root.
+      if (item.removeIfMissing) {
+        const stale = resolve(root, item.to);
+        assertInside(root, stale);
+        if (existsSync(stale)) {
+          if (!dryRun) rmSync(stale, { recursive: true, force: true });
+          changed.push(normalize(item.to));
+        }
+      }
       continue;
     }
     const target = resolve(root, item.to);

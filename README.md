@@ -107,18 +107,31 @@ snapshots from `actions/cache` (`restore-keys: snapshots-`), then runs:
    `public/sitemap.xml`, so they run after generation, not right after fetch
 7. `node scripts/publish.mjs mirror` (root mirrors, `__VERSION__` replaced with
    the run commit) and `node scripts/publish.mjs stage` (explicit allowlist only)
-8. commit and push to `main` when something changed, then open or update the
-   deduplicated review issue for changed SPA pricing sources
+8. commit and push to `main` when something changed
+9. open or update the deduplicated review issue for changed manual sources
+
+Step 9 is independent of step 8: a JS-SPA pricing page can change while no
+machine-generated artifact changes, and the issue still has to appear. The step
+runs on every run where fetch and change detection succeeded, including runs
+where tests or the push failed. `scripts/review-issue.mjs` makes no GitHub call
+when no manual pricing source changed.
 
 No `npm install` is needed: the pipeline scripts use Node built-ins only.
-`cache/` and `parsed/` stay gitignored. The workflow never runs PR code, never
-uses `pull_request_target`, and never merges or deploys.
+`cache/` and `parsed/` stay gitignored. The production workflow runs only on its
+schedule or by hand, and its write token stays in that job. Pull requests are
+checked by `.github/workflows/validate-pipeline.yml`, which has `contents: read`,
+disables persisted credentials, and runs the network-free pipeline and retry
+tests plus syntax checks (no acquisition, no generated commits, no issues). The
+workflow never runs PR code with write permissions, never uses
+`pull_request_target`, and never merges or deploys.
 
 When a `parser: none` source (GLM pricing, MiniMax, kimi.ai) changes, `fetch.mjs`
 stores a normalized HTML fingerprint so the change is visible without nonces or
-cache-busters producing daily false positives. The workflow then creates
-`Manual review: SPA pricing sources changed` (or comments on the open one), and
-`data/overrides.yml` is updated manually with a fresh `lastVerified`.
+cache-busters producing daily false positives. A fingerprint change proves the
+published page changed, not that a price changed. The workflow therefore asks
+for a human check (`Manual review: SPA pricing sources changed`, or a comment on
+the open one), and `data/overrides.yml` is only updated manually with a fresh
+`lastVerified`.
 
 ## Layout
 

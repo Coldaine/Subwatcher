@@ -46,6 +46,7 @@ jobs:
         run: node scripts/changelog-from-git.mjs
 
       - name: Fetch sources
+        id: fetch
         run: node scripts/fetch.mjs
 
       - name: Detect source changes
@@ -89,11 +90,9 @@ jobs:
         run: node scripts/publish.mjs stage
 
       - name: Commit and push when changed
-        id: commit
         shell: bash
         run: |
           if git diff --cached --quiet; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
             echo "No generated change."
             exit 0
           fi
@@ -101,19 +100,32 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "chore(data): daily update $(date -u +%F)"
           for attempt in 1 2 3; do
+            git fetch origin main
+            # If main advanced after checkout, do not rebase generated output
+            # onto it: that would publish a dataset built from older sources.
+            # Fail and let the next run rebuild from the newer commit.
+            if ! git merge-base --is-ancestor origin/main HEAD; then
+              echo "main advanced during this run; refusing to publish stale output" >&2
+              exit 1
+            fi
             if git push origin HEAD:main; then
-              echo "changed=true" >> "$GITHUB_OUTPUT"
               exit 0
             fi
             if [ "$attempt" -eq 3 ]; then
               echo "push failed after 3 attempts" >&2
               exit 1
             fi
-            git pull --rebase origin main
+            sleep 5
           done
 
+      # A manual SPA pricing source can change without any machine-generated
+      # artifact changing, so this step must not depend on a data commit. It also
+      # runs when tests or the push failed: a changed page still needs a human.
+      # review-issue.mjs makes no GitHub call when no candidate exists, and it
+      # deduplicates by title. The snapshot save below runs last so it cannot
+      # baseline the change away before the issue exists.
       - name: Open or update the manual review issue
-        if: steps.commit.outputs.changed == 'true'
+        if: always() && steps.fetch.outcome == 'success' && hashFiles('cache/manifest.json') != ''
         env:
           GH_TOKEN: ${{ github.token }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

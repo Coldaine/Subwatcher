@@ -278,7 +278,8 @@ Läufe. Die Reihenfolge ist nicht beliebig:
    deshalb erst nach der vollständigen Generierung)
 7. `publish.mjs mirror` (Root-Spiegel, `__VERSION__` = Run-Commit) und
    `publish.mjs stage` (nur die explizite Allowlist)
-8. Commit/Push bei Änderung, danach Review-Issue
+8. Commit/Push bei Änderung
+9. Review-Issue unabhängig davon, ob Schritt 8 etwas committed hat
 
 - **Quellen-Konfiguration:** `sources.yml` liegt im Repo-Root. Die Kopie unter
   `src/data/` war ein Bootstrap-Artefakt; kein Skript liest sie.
@@ -302,19 +303,29 @@ Läufe. Die Reihenfolge ist nicht beliebig:
   MiniMax, kimi.ai) bekommen in `fetch.mjs` einen normalisierten HTML-Fingerabdruck
   (`scripts/fingerprint.mjs`): Nonces, Integrity-Attribute und Cache-Buster fallen raus.
   Der erste Lauf ist die Basislinie; danach markiert `changed: true` die Quelle, ohne dass
-  der Roh-HTML-Hash täglich Fehlalarm auslöst.
-- **Review-Issue ist dedupliziert.** `scripts/review-issue.mjs` wählt nur geänderte
-  manuelle Preisquellen (nicht Privacy-only) und sucht nach dem exakten Titel
+  der Roh-HTML-Hash täglich Fehlalarm auslöst. Der Fingerabdruck belegt eine geänderte
+  Seite, **nicht** einen geänderten Preis.
+- **Review-Issue ist dedupliziert und commit-unabhängig.** `scripts/review-issue.mjs` wählt nur
+  geänderte manuelle Preisquellen (nicht Privacy-only) und sucht nach dem exakten Titel
   `Manual review: SPA pricing sources changed`: offenes Issue → Kommentar, sonst neu.
-  Der Workflow ändert `data/overrides.yml` nie selbst.
+  Eine SPA-Preisseite kann sich ändern, ohne dass ein generiertes Artefakt sich ändert; der
+  Step läuft deshalb mit `if: always() && steps.fetch.outcome == 'success' && hashFiles(...)`
+  auch bei leerem Daten-Diff und nach Test-/Push-Fehlern. Ohne Kandidaten macht das Skript
+  keinen GitHub-Aufruf. Der Workflow ändert `data/overrides.yml` nie selbst.
+- **Der Schreib-Token bleibt im Update-Job.** Der Produktionsworkflow läuft nur per Cron/Hand.
+  Pull Requests prüft `.github/workflows/validate-pipeline.yml` mit `contents: read`,
+  `persist-credentials: false` und den netzwerkfreien Tests (kein Fetch, keine Commits,
+  keine Issues, keine Secrets, kein `pull_request_target`).
 - **Staging ist gescoped.** `scripts/publish.mjs` spiegelt eine feste Liste nach Root und
   staged nur `GENERATED_PATHS` mit `git add -- <pfad>`; `cache/`, `parsed/`, `.env*`,
   `.github/`, Agent-Konfiguration und `src/` sind gesperrt. `cache/` und `parsed/` stehen
   in `.gitignore`.
 - **Tests:** `tests/fetch-retry.test.mjs` (Retry-Verhalten) und `tests/pipeline.test.mjs`
-  (Exit-Codes, Quellenkonfiguration, Fingerabdruck, Review-Dedup, Mirror, Staging,
-  Workflow-Reihenfolge). `fetch.mjs` läuft nur bei direktem Start, damit ein Import in
-  Tests nicht alle Quellen fetcht.
+  (Exit-Codes, Quellenkonfiguration, Fingerabdruck, Review-Dedup inklusive leerem
+  Daten-Diff und unveränderter Quelle, Mirror, Staging, Struktur beider Workflows).
+  `fetch.mjs` läuft nur bei direktem Start, damit ein Import in Tests nicht alle
+  Quellen fetcht. Die PR-Validierung führt nur diese beiden Dateien aus, weil
+  `tests/build.test.mjs` `parsed/` und generierte Seiten braucht.
 
 ## Gemessene Plaene (Tier M)
 

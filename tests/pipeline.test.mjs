@@ -110,8 +110,66 @@ test("review selection: only changed manual pricing sources, never privacy-only"
   assert.match(body, /kimi-ai-pricing/);
   assert.match(body, /data\/overrides\.yml/);
   assert.match(body, /lastVerified/);
+  // A normalized page fingerprint is evidence of a page change, not of a price
+  // change. The issue must ask for a check, not assert a new price.
+  assert.match(body, /does not prove that a price changed/);
+  assert.match(body, /page fingerprint/);
+  assert.doesNotMatch(body, /price changed to|new price is/i);
   assert.doesNotMatch(body, /privacy-zhipu|opencode-go/);
   assert.doesNotMatch(body, /secret|token/i);
+});
+
+test("a changed manual-pricing source is reconciled when the generated-data diff is empty", (t) => {
+  // Manual SPA pricing can change while no machine-generated artifact changes.
+  // The review reconciliation must not depend on there being a data commit.
+  const { pub, root } = mirrorFixture(t);
+  mirrorAll({ publicDir: pub, rootDir: root, version: "abc1234" });
+  assert.deepEqual(
+    mirrorAll({ publicDir: pub, rootDir: root, version: "abc1234" }),
+    [],
+    "generated-data diff is empty, so nothing would be committed",
+  );
+
+  const { sources, manifest } = reviewFixture();
+  const selected = selectReviewSources(sources, manifest);
+  assert.deepEqual(selected.map((s) => s.id), ["glm-pricing-page", "kimi-ai-pricing"]);
+
+  const calls = [];
+  const result = syncReviewIssue({
+    sources: selected,
+    runGh: (args, input) => {
+      calls.push({ args, input });
+      if (args[0] === "issue" && args[1] === "list") return JSON.stringify([{ number: 12, title: REVIEW_TITLE }]);
+      return "";
+    },
+    log: () => {},
+  });
+  assert.equal(result.action, "updated", "review runs despite the empty generated diff");
+  assert.equal(calls[0].args[1], "list");
+  assert.equal(calls[1].args[1], "comment");
+  assert.match(calls[1].input, /glm-pricing-page/);
+  assert.match(calls[1].input, /bbbbbbbbbbbb/, "changed-source evidence is kept");
+});
+
+test("an unchanged manual-pricing source makes no issue calls", () => {
+  const { sources, manifest } = reviewFixture();
+  const unchanged = {
+    sources: {
+      ...manifest.sources,
+      "glm-pricing-page": { ...manifest.sources["glm-pricing-page"], changed: false, contentHash: "a".repeat(64) },
+      "kimi-ai-pricing": { ...manifest.sources["kimi-ai-pricing"], changed: false, contentHash: "1".repeat(64) },
+    },
+  };
+  assert.deepEqual(selectReviewSources(sources, unchanged), []);
+
+  let called = false;
+  const result = syncReviewIssue({
+    sources: selectReviewSources(sources, unchanged),
+    runGh: () => { called = true; return "[]"; },
+    log: () => {},
+  });
+  assert.deepEqual(result, { action: "none" });
+  assert.equal(called, false, "no gh call without a changed manual-pricing source");
 });
 
 test("review issue de-duplicates by exact title and comments instead of creating", () => {
@@ -243,49 +301,109 @@ test("staging stages only allowlisted generated paths", (t) => {
   assert.ok(GENERATED_PATHS.includes("data/latest.json"));
 });
 
-test("workflow contract: daily schedule, snapshot restore, order and no PR execution", () => {
-  const workflow = readFileSync(join(ROOT, ".github/workflows/update.yml"), "utf8");
-  assert.match(workflow, /cron:\s*"17 3 \* \* \*"/, "daily 03:17 UTC");
-  assert.match(workflow, /workflow_dispatch:/, "manual trigger");
-  assert.match(workflow, /fetch-depth:\s*0/, "full history for changelog/history");
-  assert.match(workflow, /restore-keys:\s*\|\s*\n\s*snapshots-/, "snapshot restore fallback");
-  assert.match(workflow, /concurrency:\s*\n\s*group:\s*update-data/);
-  assert.match(workflow, /cancel-in-progress:\s*false/);
-  assert.match(workflow, /contents:\s*write/);
-  assert.match(workflow, /issues:\s*write/);
-  assert.doesNotMatch(workflow, /pull_request_target/);
-  assert.doesNotMatch(workflow, /^\s*pull_request:/m);
-  assert.doesNotMatch(workflow, /git add \.|git add -A/);
-  assert.doesNotMatch(workflow, /npm run build/);
-  for (const sha of [
-    "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
-    "actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9",
-    "actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9",
-  ]) assert.ok(workflow.includes(sha), `pinned action missing: ${sha}`);
+const CHECKOUT_PIN = "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1";
+const SETUP_NODE_PIN = "actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1";
+const CACHE_PIN = "actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9";
+const CACHE_SAVE_PIN = "actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9";
 
-  const order = [
-    "node scripts/changelog-from-git.mjs",
-    "node scripts/fetch.mjs",
-    "node scripts/check.mjs",
-    "node scripts/check-exit.mjs",
-    "node scripts/parse-all.mjs",
-    "node scripts/build.mjs",
-    "node scripts/history.mjs",
-    "node scripts/landing.mjs",
-    "node scripts/pages.mjs",
-    "node scripts/seo.mjs",
-    "npm test",
-    "node scripts/publish.mjs mirror",
-    "node scripts/publish.mjs stage",
-    "git commit",
-    "node scripts/review-issue.mjs",
-  ];
-  let last = -1;
-  for (const command of order) {
-    const at = workflow.indexOf(command);
-    assert.ok(at > last, `${command} must appear after the previous step`);
-    last = at;
+test("update workflow structure: schedule, write scope, snapshot cache, step order", () => {
+  const workflowText = readFileSync(join(ROOT, ".github/workflows/update.yml"), "utf8");
+  const wf = parseYaml(workflowText);
+
+  assert.deepEqual(Object.keys(wf.on).sort(), ["schedule", "workflow_dispatch"]);
+  assert.equal(wf.on.schedule[0].cron, "17 3 * * *", "daily 03:17 UTC");
+  assert.equal(wf.permissions, undefined, "write permissions belong to the job, not the workflow");
+  assert.deepEqual(wf.concurrency, { group: "update-data", "cancel-in-progress": false });
+
+  const job = wf.jobs.update;
+  assert.deepEqual(job.permissions, { contents: "write", issues: "write" });
+
+  const steps = job.steps;
+  assert.deepEqual(steps.map((s) => s.name), [
+    "Check out main with full history",
+    "Set up Node",
+    "Restore source snapshots",
+    "Generate changelog from git history",
+    "Fetch sources",
+    "Detect source changes",
+    "Parse snapshots",
+    "Build dataset",
+    "Record history",
+    "Generate landing page",
+    "Generate plan and provider pages",
+    "Generate sitemap and feed",
+    "Test",
+    "Mirror generated output into the root",
+    "Stage generated paths only",
+    "Commit and push when changed",
+    "Open or update the manual review issue",
+    "Save source snapshots",
+  ], "generation order and review-before-snapshot-save");
+  const byName = Object.fromEntries(steps.map((s) => [s.name, s]));
+
+  assert.ok(byName["Check out main with full history"].uses.startsWith(CHECKOUT_PIN));
+  assert.equal(byName["Check out main with full history"].with.ref, "main");
+  assert.equal(byName["Check out main with full history"].with["fetch-depth"], 0, "full history for changelog/history");
+  assert.ok(byName["Set up Node"].uses.startsWith(SETUP_NODE_PIN));
+  assert.ok(byName["Restore source snapshots"].uses.startsWith(CACHE_PIN));
+  assert.equal(byName["Restore source snapshots"].with.path, "cache");
+  assert.ok(byName["Save source snapshots"].uses.startsWith(CACHE_SAVE_PIN));
+  assert.equal(byName["Fetch sources"].id, "fetch");
+  assert.equal(byName["Detect source changes"].id, "check");
+
+  // Regression for #3: review reconciliation must not depend on a generated
+  // data commit, because manual SPA pricing can change without one.
+  const review = byName["Open or update the manual review issue"];
+  assert.match(review.if, /always\(\)/);
+  assert.match(review.if, /steps\.fetch\.outcome == 'success'/);
+  assert.match(review.if, /hashFiles\('cache\/manifest\.json'\)/);
+  assert.doesNotMatch(review.if, /steps\.commit\.outputs\.changed/);
+
+  const save = byName["Save source snapshots"];
+  assert.match(save.if, /always\(\)/);
+  assert.match(save.if, /hashFiles\('cache\/manifest\.json'\)/);
+
+  for (const step of steps.filter((s) => s.uses)) {
+    const [, ref] = step.uses.split("@");
+    assert.match(ref, /^[0-9a-f]{40}(\s|$)/, `${step.name}: action must be pinned to a full SHA`);
   }
-  assert.match(workflow, /if:\s*always\(\)\s*&&\s*hashFiles\('cache\/manifest\.json'\)/, "snapshots saved even on failure");
+  // scripts/yaml.mjs does not expand block scalars, so the restore fallback is
+  // checked in the raw text.
+  assert.match(workflowText, /restore-keys:\s*\|\s*\n\s*snapshots-/);
+  assert.doesNotMatch(workflowText, /pull_request_target/);
+  assert.doesNotMatch(workflowText, /^\s*pull_request:/m);
+  assert.doesNotMatch(workflowText, /git add \.|git add -A/);
+  assert.doesNotMatch(workflowText, /npm run build/);
+});
+
+test("PR validation workflow is read-only, pinned and does not run acquisition", () => {
+  const validationText = readFileSync(join(ROOT, ".github/workflows/validate-pipeline.yml"), "utf8");
+  const wf = parseYaml(validationText);
+
+  assert.deepEqual(wf.permissions, { contents: "read" });
+  assert.ok(wf.on.pull_request, "runs on pull requests");
+  assert.ok("workflow_dispatch" in wf.on);
+  assert.ok(!("pull_request_target" in wf.on));
+
+  const job = wf.jobs.validate;
+  assert.equal(job.permissions, undefined, "job must not widen the read-only token");
+  const steps = job.steps;
+  const checkout = steps.find((s) => s.name === "Check out the pull request revision");
+  assert.ok(checkout, "checks out the PR revision");
+  assert.ok(checkout.uses.startsWith(CHECKOUT_PIN));
+  assert.equal(checkout.with["persist-credentials"], false);
+  assert.match(checkout.with.ref, /github\.event\.pull_request\.head\.sha/);
+
+  for (const step of steps.filter((s) => s.uses)) {
+    const [, ref] = step.uses.split("@");
+    assert.match(ref, /^[0-9a-f]{40}(\s|$)/, `${step.name}: action must be pinned to a full SHA`);
+  }
+
+  const runs = steps.map((s) => s.run).filter((run) => run && run !== "|");
+  assert.ok(runs.some((run) => run.includes("node --test tests/pipeline.test.mjs")));
+  assert.ok(runs.some((run) => run.includes("node --test tests/fetch-retry.test.mjs")));
+
+  assert.doesNotMatch(validationText, /\$\{\{\s*secrets\./);
+  assert.doesNotMatch(validationText, /node scripts\/review-issue\.mjs|gh issue (create|comment|list)/);
+  assert.doesNotMatch(validationText, /node scripts\/publish\.mjs|git commit|git push/);
 });
