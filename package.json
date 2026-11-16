@@ -24,7 +24,7 @@
     "sync:data": "curl -fsSL https://vibeplan.cc/data/latest.json -o public/data/latest.json && cp public/data/latest.json data/latest.json"
   },
   "dependencies": {
-    "@google/genai": "^2.4.0",
+    "@google/genai": "^3.2.0",
     "dotenv": "^17.2.3",
     "express": "^4.21.2"
   },
