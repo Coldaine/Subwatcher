@@ -17,6 +17,7 @@ import { join, dirname } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { createHash } from "node:crypto";
 import { parseYaml } from "./yaml.mjs";
+import { fingerprintHtml } from "./fingerprint.mjs";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const CACHE_DIR = join(ROOT, "cache");
@@ -147,10 +148,13 @@ async function fetchSource(source) {
 
     const hash = sha256(buf);
     // Stabiler Hash: für parsebare Quellen den strukturierten Output hashen
-    // (robust gegen HTML-Nonces/Cache-Buster). Für unparsbare SPA-Quellen (kein Parser)
-    // KEIN contentHash, der Roh-HTML-sha ist volatil (Nonces) → nur HTTP-Status zählt.
+    // (robust gegen HTML-Nonces/Cache-Buster). Für unparsbare HTML-Quellen
+    // (JS-SPA, Privacy-Seiten) den normalisierten HTML-Fingerabdruck: damit
+    // wird ein Deployment mit neuen Preisen sichtbar, ohne dass Nonces und
+    // Cache-Buster taeglich eine Aenderung vortaeuschen.
     let contentHash = null;
     let parsedPreview = null;
+    let fingerprint = false;
     try {
       const { PARSERS } = await import("./parsers.mjs");
       if (PARSERS[parser]) {
@@ -158,6 +162,9 @@ async function fetchSource(source) {
         const parsed = PARSERS[parser](raw);
         parsedPreview = Object.keys(parsed ?? {});
         contentHash = sha256(Buffer.from(JSON.stringify(parsed)));
+      } else if (typ !== "json-api") {
+        contentHash = fingerprintHtml(buf.toString("utf-8"));
+        fingerprint = true;
       }
     } catch { /* kein Parser → contentHash bleibt null */ }
     const entry = {
@@ -170,6 +177,7 @@ async function fetchSource(source) {
       contentType: resp.headers.get("content-type") ?? null,
       sha256: hash,
       contentHash, // stabiler Vergleichswert
+      fingerprint, // true = normalisierter HTML-Fingerabdruck (kein Parser)
       parsedFields: parsedPreview,
       bytes: buf.length,
       ok: resp.ok,
@@ -187,8 +195,11 @@ async function fetchSource(source) {
       entry.prevContentHash = prev.contentHash ?? null;
       // changed = stabiler Inhalt hat sich geändert.
       // - parsebare Quelle: contentHash-Vergleich (beide gesetzt)
-      // - unparsbare Quelle (contentHash null): nur HTTP-Status zählt → kein changed-Flag
-      entry.changed = contentHash !== null && (prev.contentHash ?? prev.sha256) !== contentHash;
+      // - Fingerprint-Quelle: nur gegen einen vorhandenen Fingerprint vergleichen,
+      //   der erste Lauf nach dem Upgrade ist die Basislinie (kein Fehlalarm)
+      // - unparsbare JSON-Quelle: kein stabiler Hash → kein changed-Flag
+      const prevHash = prev.contentHash ?? (fingerprint ? null : prev.sha256);
+      entry.changed = contentHash !== null && prevHash !== null && prevHash !== contentHash;
     }
 
     if (resp.ok) {

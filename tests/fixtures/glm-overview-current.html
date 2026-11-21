@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-cn">
+<head><title>GLM Coding Plan</title></head>
+<body>
+  <!-- Inhaltsverzeichnis: wiederholt die Abschnittstitel -->
+  <nav>
+    <ul>
+      <li><a href="#积分额度">积分额度</a></li>
+      <li><a href="#积分抵扣计算方式">积分抵扣计算方式</a></li>
+      <li><a href="#可用额度参考">可用额度参考</a></li>
+    </ul>
+  </nav>
+
+  <h2>积分额度</h2>
+  <table>
+    <thead><tr><th>套餐</th><th>每 5 小时</th><th>每周</th></tr></thead>
+    <tbody>
+      <tr><td>Lite 套餐</td><td>2,000</td><td>10,000</td></tr>
+      <tr><td>Pro 套餐</td><td>12,000</td><td>60,000</td></tr>
+      <tr><td>Max 套餐</td><td>28,000</td><td>140,000</td></tr>
+    </tbody>
+  </table>
+
+  <h3 id="积分抵扣计算方式"><span>积分抵扣计算方式</span></h3>
+  <ul>
+    <li>模型消耗积分数=（输入 Token × Input 抵扣系数 + 缓存命中 Token × Cached Input 抵扣系数 + 输出 Token × Output 抵扣系数） / 10000</li>
+    <li>MCP 消耗积分数=调用次数 × Output 抵扣系数</li>
+  </ul>
+  <table>
+    <thead>
+      <tr><th>产品类型</th><th>产品名称</th><th>Input 抵扣系数</th><th>Cached Input 抵扣系数</th><th>Output 抵扣系数</th></tr>
+    </thead>
+    <tbody>
+      <tr><td rowSpan="2">模型</td><td>GLM-5.3</td><td>6.9</td><td>1.7</td><td>24</td></tr>
+      <tr><td>GLM-5.3-Flash（含视觉理解 MCP）</td><td>2.3</td><td>0.56</td><td>8</td></tr>
+      <tr><td rowSpan="3">MCP 工具</td><td>联网搜索</td><td>—</td><td>—</td><td>1.2</td></tr>
+      <tr><td>网页读取</td><td>—</td><td>—</td><td>1.2</td></tr>
+      <tr><td>开源仓库</td><td>—</td><td>—</td><td>1.2</td></tr>
+    </tbody>
+  </table>
+  <p>非高峰时段内，模型调用按基础积分消耗的 50% 抵扣。高峰时段：每周一至周五的 14:00～18:00 （UTC+8）。</p>
+
+  <h2 id="可用额度参考">可用额度参考</h2>
+  <p>参考区间。</p>
+
+  <!-- Nachgestellter Metadaten-/RSC-Blob: wiederholt die Abschnittstitel mit
+       escaped Quotes. Frueher gewann dieses letzte Vorkommen und der Abschnitt
+       blieb leer. -->
+  <template id="rsc-payload">
+    {"children":[{"title":"积分额度","depth":2},{"title":"积分抵扣计算方式\",\"depth\":3,\"children\":[]},{\"title\":\"可用额度参考"}]}
+  </template>
+</body>
+</html>

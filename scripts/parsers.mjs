@@ -21,16 +21,29 @@ export function htmlToText(html) {
     .trim();
 }
 
-function findSection(text, startKw, endKws = []) {
-  // Letztes Vorkommen (TOC-Erwähnungen überspringen, echte Section ist meist die letzte)
-  const start = text.lastIndexOf(startKw);
-  if (start < 0) return null;
-  let end = text.length;
-  for (const kw of endKws) {
-    const idx = text.indexOf(kw, start + startKw.length);
-    if (idx >= 0 && idx < end) end = idx;
+function findSection(text, startKw, endKws = [], requiredMarker = null) {
+  // Die Ueberschrift steht mehrfach im HTML: im Inhaltsverzeichnis, im gerenderten
+  // Abschnitt und in einem nachgestellten Metadaten-/RSC-Blob (JSON mit escaped
+  // Quotes). Frueher wurde das LETZTE Vorkommen genommen, wodurch der Blob gewann
+  // und der Abschnitt leer blieb (GLM-Koeffizienten fielen still aus dem Katalog).
+  // Deshalb: das erste Vorkommen, dessen Abschnitt den erwarteten Inhalt enthaelt.
+  // Ohne Marker bleibt das alte Verhalten (letztes Vorkommen) erhalten.
+  const starts = [];
+  for (let i = text.indexOf(startKw); i >= 0; i = text.indexOf(startKw, i + startKw.length)) starts.push(i);
+  if (!starts.length) return null;
+  const sliceAt = (start) => {
+    let end = text.length;
+    for (const kw of endKws) {
+      const idx = text.indexOf(kw, start + startKw.length);
+      if (idx >= 0 && idx < end) end = idx;
+    }
+    return text.slice(start, end);
+  };
+  if (requiredMarker) {
+    const withBody = starts.map(sliceAt).find((section) => section.includes(requiredMarker));
+    if (withBody) return withBody;
   }
-  return text.slice(start, end);
+  return sliceAt(starts[starts.length - 1]);
 }
 
 // ---------- Parser: fx-rates (Währungskurse, JSON) ----------
@@ -145,7 +158,9 @@ export function parseGlmOverview(html) {
   }
 
   // Formel: "模型消耗积分数=（输入 Token × Input 抵扣系数 + 缓存命中 Token × Cached Input 抵扣系数 + 输出 Token × Output 抵扣系数） / 10000"
-  const formulaSection = findSection(text, "积分抵扣计算方式", ["可用额度参考"]);
+  // Marker = der Formelsatz selbst: nur der echte Abschnitt enthaelt ihn, TOC und
+  // Metadaten-Blob nicht.
+  const formulaSection = findSection(text, "积分抵扣计算方式", ["可用额度参考"], "模型消耗积分数");
   if (formulaSection) {
     // Tabelle: "模型 GLM-5.3 6.9 1.7 24" und "GLM-5.3-Flash（含视觉理解 MCP） 2.3 0.56 8"
     const modelRe = /GLM-([\d.]+(?:-Flash)?)[^]*?([\d.]+)\s+([\d.]+)\s+([\d.]+)/g;
@@ -153,8 +168,9 @@ export function parseGlmOverview(html) {
     while ((m = modelRe.exec(formulaSection))) {
       out.models.push({ model: `GLM-${m[1]}`, input: parseFloat(m[2]), cachedRead: parseFloat(m[3]), output: parseFloat(m[4]) });
     }
-    // MCP: "MCP 工具 联网搜索 -, 1.2"
-    const mcpRe = /MCP\s*工具\s*联网搜索\s*-\s*-\s*([\d.]+)/;
+    // MCP: "MCP 工具 联网搜索 — — 1.2" (die Quelle nutzt einen Gedankenstrich als
+    // Platzhalter; aeltere Fassungen hatten "-").
+    const mcpRe = /MCP\s*工具\s*联网搜索\s*[-—–]\s*[-—–]\s*([\d.]+)/;
     const mcpM = mcpRe.exec(formulaSection);
     if (mcpM) out.mcpPerCall = parseFloat(mcpM[1]);
     out.formula = "模型消耗积分数=（输入 Token × Input 抵扣系数 + 缓存命中 Token × Cached Input 抵扣系数 + 输出 Token × Output 抵扣系数）/ 10000";

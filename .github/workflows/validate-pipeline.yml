@@ -1,0 +1,76 @@
+name: Validate pipeline
+
+# Read-only check for the automation and helper changes. The production update
+# workflow runs only on a schedule or by hand, so this job proves the task head
+# with the network-free tests: no acquisition, no generated commits, no issues.
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/**"
+      - "scripts/**"
+      - "tests/**"
+      - "sources.yml"
+      - "package.json"
+      - ".gitignore"
+      - "README.md"
+      - "AGENTS.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-pipeline-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out the pull request revision
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
+          # Pipeline scripts use Node built-ins only; nothing to install.
+          package-manager-cache: false
+
+      - name: Syntax-check the pipeline scripts
+        shell: bash
+        run: |
+          status=0
+          for file in scripts/fetch.mjs scripts/parse-all.mjs scripts/build.mjs scripts/check.mjs \
+                      scripts/check-exit.mjs scripts/fingerprint.mjs scripts/publish.mjs \
+                      scripts/review-issue.mjs scripts/changelog-from-git.mjs scripts/history.mjs \
+                      scripts/landing.mjs scripts/pages.mjs scripts/seo.mjs; do
+            node --check "$file" || status=1
+          done
+          exit "$status"
+
+      - name: Verify source configuration parses
+        run: |
+          node --input-type=module -e "
+            import { readFileSync } from 'node:fs';
+            import { parseYaml } from './scripts/yaml.mjs';
+            const sources = parseYaml(readFileSync('sources.yml', 'utf8')).sources ?? [];
+            if (sources.length < 25) throw new Error('sources.yml is incomplete');
+            if (new Set(sources.map((s) => s.id)).size !== sources.length) throw new Error('duplicate source ids');
+            console.log('sources.yml:', sources.length, 'sources');
+          "
+
+      - name: Verify pipeline orchestration and staging policy
+        run: node --test tests/pipeline.test.mjs
+
+      - name: Verify parser fixtures for current provider markup
+        run: node --test tests/parsers.test.mjs
+
+      - name: Verify fetch retry behavior
+        run: node --test tests/fetch-retry.test.mjs
